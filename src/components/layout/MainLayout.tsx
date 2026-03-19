@@ -1,0 +1,47 @@
+import { useEffect, useState, type ReactNode } from "react";
+import { useLocation } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import TopNav from "./TopNav";
+import type { NavItem } from "../../types/navigation";
+
+interface MainLayoutProps {
+  children: ReactNode;
+  navItems: NavItem[];
+  pageTitle: string;
+}
+
+const ContentContainer = ({ children }: { children: ReactNode }) => (
+  <div className="px-4 py-5 md:px-8 md:py-7">
+    <div className="mx-auto">{children}</div>
+  </div>
+);
+
+export default function MainLayout({
+  children,
+  navItems,
+  pageTitle,
+}: MainLayoutProps) {
+  const { pathname } = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  const handleToggleSidebar = () => setSidebarOpen((prev) => !prev);
+  const handleCloseSidebar = () => setSidebarOpen(false);
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Sidebar
+        navItems={navItems}
+        isOpen={sidebarOpen}
+        onClose={handleCloseSidebar}
+      />
+      <main className="min-h-screen lg:ml-60 transition-[margin] duration-300">
+        <TopNav pageTitle={pageTitle} onMenuClick={handleToggleSidebar} />
+        <ContentContainer>{children}</ContentContainer>
+      </main>
+    </div>
+  );
+}

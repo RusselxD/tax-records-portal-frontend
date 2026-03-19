@@ -1,0 +1,152 @@
+import { useState } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { Pencil, ArrowUpRight } from "lucide-react";
+import { CLIENT_STATUS } from "../../../../types/client";
+import usePageTitle from "../../../../hooks/usePageTitle";
+import NotFound from "../../../../pages/NotFound";
+import { getRolePrefix } from "../../../../constants/roles";
+import { Permission, hasPermission } from "../../../../constants";
+import { useAuth } from "../../../../contexts/AuthContext";
+import { ClientInfoPageShell, ClientInfoSections, ActivityLogs } from "../../components/client-info";
+import {
+  ClientDetailsProvider,
+  useClientDetails,
+} from "./context/ClientDetailsContext";
+import ClientAccountCard from "../ClientOnboardingPreview/components/ClientAccountCard";
+import ChangeClientStatusModal from "../ClientOnboardingPreview/components/ChangeClientStatusModal";
+import ClientTasks from "./components/ClientTasks";
+import SnapshotBanner from "./components/SnapshotBanner";
+
+interface LocationState {
+  backLabel?: string;
+  backTo?: string;
+}
+
+function ClientDetailsContent() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const state = (location.state as LocationState) ?? {};
+  const {
+    clientId,
+    mode,
+    header,
+    clientName,
+    status,
+    clientAccount,
+    snapshotDate,
+    isLoading,
+    error,
+    notFound,
+    refetch,
+    setStatus,
+    getSection,
+    fetchSection,
+  } = useClientDetails();
+
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
+
+  if (notFound) return <NotFound inline />;
+
+  const isSnapshot = mode === "snapshot";
+  const isActive = status === CLIENT_STATUS.ACTIVE_CLIENT;
+  const hasPendingUpdate = header?.hasActiveTask;
+  const isAssignedAccountant =
+    header?.assignedCsdOosAccountants?.some((a) => a.id === user?.id) ?? false;
+  const canEditProfile = isActive && !isSnapshot && isAssignedAccountant && !hasPendingUpdate;
+  const canReview = hasPermission(user?.permissions, Permission.CLIENT_INFO_REVIEW);
+  const canManageStatus = !isSnapshot && hasPermission(user?.permissions, Permission.CLIENT_MANAGE);
+  const prefix = getRolePrefix(user?.roleKey ?? "");
+
+  const backLabel = state.backLabel || (isSnapshot ? "Client Onboarding" : "Client List");
+  const backTo = state.backTo || "..";
+
+  const banner = isSnapshot && snapshotDate
+    ? <SnapshotBanner snapshotDate={snapshotDate} />
+    : undefined;
+
+  const sidebar = isSnapshot
+    ? <ActivityLogs taskId={header?.activeTaskId ?? null} />
+    : isActive
+      ? <ClientTasks />
+      : <ActivityLogs taskId={header?.activeTaskId ?? null} />;
+
+  const mainDetailsAction = canEditProfile ? (
+    <button
+      onClick={() => navigate(`/${prefix}/client-edit/${clientId}`)}
+      className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-accent transition-colors"
+    >
+      <Pencil className="w-3.5 h-3.5" />
+      Edit Profile
+    </button>
+  ) : hasPendingUpdate && header?.activeTaskId && (canReview || isAssignedAccountant) ? (
+    <button
+      onClick={() => navigate(`/${prefix}/profile-update-review/${header.activeTaskId}`)}
+      className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-accent transition-colors"
+    >
+      <ArrowUpRight className="w-3.5 h-3.5" />
+      View Pending Update
+    </button>
+  ) : undefined;
+
+  const changeStatusButton = canManageStatus && status ? (
+    <button
+      onClick={() => setStatusModalOpen(true)}
+      className="text-sm font-medium text-gray-500 hover:text-accent transition-colors border border-gray-200 rounded-md px-3 py-1.5 hover:border-accent"
+    >
+      Change Status
+    </button>
+  ) : undefined;
+
+  return (
+    <>
+      <ClientInfoPageShell
+        clientName={clientName}
+        status={isSnapshot ? undefined : status || undefined}
+        backLabel={backLabel}
+        backTo={backTo}
+        isLoading={isLoading}
+        error={error}
+        refetch={refetch}
+        headerActions={changeStatusButton}
+        banner={banner}
+        sidebar={sidebar}
+      >
+        {clientAccount && <ClientAccountCard clientAccount={clientAccount} />}
+
+        {header && (
+          <ClientInfoSections
+            getSection={getSection}
+            fetchSection={fetchSection}
+            classification={header.taxpayerClassification}
+            assignedCsdOos={header.assignedCsdOosAccountants}
+            assignedQtd={header.assignedQtdAccountants}
+            mainDetailsAction={mainDetailsAction}
+          />
+        )}
+      </ClientInfoPageShell>
+
+      {statusModalOpen && status && (
+        <ChangeClientStatusModal
+          clientId={clientId}
+          currentStatus={status}
+          setModalOpen={setStatusModalOpen}
+          onSuccess={(newStatus) => setStatus(newStatus)}
+        />
+      )}
+    </>
+  );
+}
+
+export default function ClientInfoView({ mode = "live" }: { mode?: "live" | "snapshot" }) {
+  const { id } = useParams<{ id: string }>();
+  usePageTitle(mode === "snapshot" ? "Client Snapshot" : "Client Details");
+
+  if (!id) return null;
+
+  return (
+    <ClientDetailsProvider clientId={id} mode={mode}>
+      <ClientDetailsContent />
+    </ClientDetailsProvider>
+  );
+}

@@ -1,0 +1,366 @@
+import type { ProfileReviewStatus, ProfileReviewType } from "./client-profile";
+
+// ── Supporting Types ──
+
+export interface DateField {
+  date: string | null;
+  isImportant: boolean;
+}
+
+export interface FileReference {
+  id: string;
+  name: string;
+}
+
+export interface LinkReference {
+  url: string;
+  label: string;
+}
+
+export interface RichTextContent {
+  type: "doc";
+  content?: Record<string, unknown>[];
+}
+
+export type OrganizationType =
+  | "SOLE_PROPRIETORSHIP"
+  | "PROFESSIONAL"
+  | "PARTNERSHIP"
+  | "OPC"
+  | "REGULAR_CORPORATION";
+
+export type EngagementStatusType = "ACTIVE" | "INACTIVE";
+
+export type TaxpayerClassification = "MICRO" | "SMALL" | "MEDIUM" | "LARGE";
+
+export type BookOfAccountsType = "MANUAL" | "LOOSE_LEAF" | "CAS";
+
+export interface AssignedAccountant {
+  id: string;
+  displayName: string;
+  position: string;
+  role: string;
+  roleKey: string;
+}
+
+export interface PermitDetails {
+  number: string | null;
+  expirationDate: DateField | null;
+}
+
+export interface GrossSalesEntry {
+  year: number;
+  amount: number | null;
+}
+
+export interface RegisteredBookEntry {
+  bookName: string | null;
+  notes: string | null;
+}
+
+export interface PendingActionItem {
+  particulars: string | null;
+  notes: string | null;
+}
+
+// ── Section DTOs ──
+
+// Section 1: Main Details
+export interface MainDetails {
+  mreCode: string | null;
+  commencementOfWork: DateField | null;
+  engagementStatus: EngagementStatusType | null;
+  csdOosAccountantIds?: string[] | null;
+  qtdAccountantId?: string | null;
+}
+
+// Section 2: Client Information (wraps header + 9 sub-sections)
+export interface BirBranchDetails {
+  businessTradeName: string | null;
+  tin: string | null;
+  rdo: string | null;
+  completeRegisteredAddress: string | null;
+  birRegistrationNumber: string | null;
+  typeOfBusiness: string | null;
+  classification: string | null;
+  dateOfBirRegistration: DateField | null;
+  birCertificateOfRegistration: FileReference | null;
+  birForm1901: FileReference | null;
+  birForm1921Atp: FileReference | null;
+  birForm1905: FileReference | null;
+  sampleInvoiceReceipts: FileReference | null;
+  niriPoster: FileReference | null;
+  birBookOfAccountsStamp: FileReference | null;
+  birForm2000Dst: FileReference | null;
+  contractOfLease: FileReference | null;
+}
+
+export interface BirTaxComplianceDetails {
+  grossSales: GrossSalesEntry[];
+  taxpayerClassification: TaxpayerClassification | null;
+  topWithholding: boolean | null;
+  dateClassifiedTopWithholding: DateField | null;
+  incomeTaxRegime: string | null;
+}
+
+export interface BirComplianceItem {
+  category: string | null;
+  taxReturnName: string | null;
+  deadline: string | null;
+  applicable: boolean;
+  notes: string | null;
+}
+
+export interface BirComplianceBreakdown {
+  items: BirComplianceItem[];
+  othersSpecify: string | null;
+}
+
+export interface DtiDetails {
+  // DTI Registration
+  dtiRegistrationNo: string | null;
+  dtiDateOfRegistration: DateField | null;
+  dtiDateOfExpiration: DateField | null;
+  dtiBusinessRegistrationCertificate: FileReference | null;
+  dtiBnrsUndertakingForm: FileReference | null;
+  dtiOfficialReceipt: FileReference | null;
+
+  // BMBE Compliance
+  bmbeTotalAssets: string | null;
+  bmbeNo: string | null;
+  bmbeDateOfRegistration: DateField | null;
+  bmbeDateOfExpiration: DateField | null;
+  bmbeOfficialReceipt: FileReference | null;
+
+  // Others
+  others: string | null;
+}
+
+export interface SecDetails {
+  dateOfIncorporation: DateField | null;
+  secRegistrationNumber: string | null;
+  dateOfActualMeetingPerBylaws: DateField | null;
+  primaryPurposePerArticles: string | null;
+  corporationCategory: string | null;
+  secCertificateOfIncorporation: FileReference | null;
+  articlesOfIncorporation: FileReference | null;
+  bylawsOfCorporation: FileReference | null;
+  certificateOfAuthentication: FileReference | null;
+  authorizeFilerSecretaryCertificate: FileReference | null;
+  secOfficialReceipts: FileReference | null;
+  latestGisOrAppointmentOfOfficer: FileReference | null;
+  stockAndTransferBook: FileReference | null;
+  boardResolutionsSecretaryCertificate: FileReference | null;
+  previousYearAfsAndItr: FileReference | null;
+  others: string | null;
+}
+
+export interface GovernmentAgencyDetails {
+  dateOfRegistration: DateField | null;
+  registrationNumber: string | null;
+  certificatesAndDocuments: FileReference | null;
+  others: string | null;
+}
+
+export interface CityHallDetails {
+  businessPermitCity: string | null;
+  businessPermitNumber: string | null;
+  dateOfRegistration: DateField | null;
+  renewalBasis: string | null;
+  quarterlyDeadlineQ2: DateField | null;
+  quarterlyDeadlineQ3: DateField | null;
+  quarterlyDeadlineQ4: DateField | null;
+  permitExpirationDate: DateField | null;
+  firePermit: PermitDetails | null;
+  sanitaryPermit: PermitDetails | null;
+  otherPermit: PermitDetails | null;
+  mayorBusinessPermit: FileReference | null;
+  businessPermitPlate: FileReference | null;
+  billingAssessment: FileReference | null;
+  officialReceiptOfPayment: FileReference | null;
+  sanitaryPermitFile: FileReference | null;
+  firePermitFile: FileReference | null;
+  barangayPermit: FileReference | null;
+  communityTaxCertificate: FileReference | null;
+  locationalClearance: FileReference | null;
+  environmentalClearance: FileReference | null;
+  comprehensiveGeneralLiabilityInsurance: FileReference | null;
+}
+
+export interface ClientInformation {
+  registeredName: string | null;
+  tradeName: string | null;
+  numberOfBranches: number;
+  organizationType: OrganizationType | null;
+  birMainBranch: BirBranchDetails;
+  birBranches: BirBranchDetails[];
+  birTaxCompliance: BirTaxComplianceDetails;
+  birComplianceBreakdown: BirComplianceBreakdown;
+  dtiDetails: DtiDetails;
+  secDetails: SecDetails;
+  sssDetails: GovernmentAgencyDetails;
+  philhealthDetails: GovernmentAgencyDetails;
+  hdmfDetails: GovernmentAgencyDetails;
+  cityHallDetails: CityHallDetails[];
+}
+
+// Section 3: Corporate Officer Information
+export interface CorporateOfficerDetails {
+  name: string | null;
+  birthday: DateField | null;
+  address: string | null;
+  position: string | null;
+  idScannedWith3Signature: FileReference | null;
+}
+
+export interface PointOfContactDetails {
+  contactPerson: string | null;
+  contactNumber: string | null;
+  deliveryAddress: string | null;
+  landmarkPinLocation: string | null;
+  emailAddress: string | null;
+  preferredMethodOfCommunication: string | null;
+  alternativeContact: string | null;
+}
+
+export interface CorporateOfficerInformation {
+  officers: CorporateOfficerDetails[];
+  pointOfContact: PointOfContactDetails;
+}
+
+// Section 4: Access & Credentials
+export interface AccessCredentialDetails {
+  platform: string | null;
+  linkToPlatform: LinkReference | null;
+  usernameOrEmail: string | null;
+  password: string | null;
+  notes: string | null;
+}
+
+// Section 5: Scope of Engagement
+export interface ConsultationEntry {
+  date: DateField | null;
+  timeStarted: string | null;
+  timeEnded: string | null;
+  topicsAndDocumentation: RichTextContent;
+  numberOfHours: number | null;
+  platform: string | null;
+  amount: number | null;
+  vat: number | null;
+}
+
+export interface ConsultationHoursDetails {
+  freeHoursPerMonth: number | null;
+  ratePerHourAfterFree: number | null;
+  consultations: ConsultationEntry[];
+  totalBillableAmount: number | null;
+}
+
+export interface ScopeOfEngagementDetails {
+  // Header
+  dateOfEngagementLetter: DateField | null;
+  engagementLetter: FileReference | null;
+
+  // A. Documents & Information Gathering
+  salesInvoicesAndDocuments: RichTextContent;
+  purchaseAndExpenseDocuments: RichTextContent;
+  payrollDocuments: RichTextContent;
+  sssPhilhealthHdmfDocuments: RichTextContent;
+  businessPermitsLicensesAndOtherDocuments: RichTextContent;
+  additionalNotes: RichTextContent;
+
+  // B. Client Engagements
+  taxCompliance: RichTextContent;
+  bookOfAccounts: BookOfAccountsType | null;
+  bookkeepingPermitNo: string | null;
+  looseleafCertificateAndBirTemplate: FileReference | null;
+  registeredBooks: RegisteredBookEntry[];
+  bookkeepingProcess: RichTextContent;
+  sssPhilhealthHdmfEngagement: RichTextContent;
+  paymentAssistance: RichTextContent;
+  consultationHours: ConsultationHoursDetails;
+
+  // C. Required Deliverable & Report
+  standardDeliverable: RichTextContent;
+  requiredDeliverableOthers: string | null;
+}
+
+// Section 6: Professional Fees
+export interface ProfessionalFeeEntry {
+  serviceName: string | null;
+  fee: string | null;
+}
+
+// Section 7: Onboarding Details
+export interface OnboardingMeetingEntry {
+  titleOfMeeting: string | null;
+  date: DateField | null;
+  timeStarted: string | null;
+  timeEnded: string | null;
+  agenda: string | null;
+  linkToMeetingRecording: LinkReference | null;
+  minutes: RichTextContent;
+}
+
+export interface OnboardingDetails {
+  nameOfGroupChat: string | null;
+  platformUsed: string | null;
+  gcCreatedBy: string | null;
+  gcCreatedDate: DateField | null;
+  meetings: OnboardingMeetingEntry[];
+  pendingActionItems: PendingActionItem[];
+}
+
+// ── Master Response ──
+
+export type { ClientStatus as ClientStatusType } from "./client";
+
+// Header-only response (lightweight, fetched on page load)
+export interface ClientInfoHeaderResponse {
+  clientDisplayName: string | null;
+  taxpayerClassification: string | null;
+  clientStatus: import("./client").ClientStatus;
+  isProfileApproved: boolean;
+  hasActiveTask: boolean;
+  activeTaskId: string | null;
+  activeTaskType: ProfileReviewType | null;
+  lastReviewStatus: ProfileReviewStatus | null;
+  assignedCsdOosAccountants: AssignedAccountant[];
+  assignedQtdAccountants: AssignedAccountant[];
+  pocEmail: string | null;
+}
+
+// Same as header but includes clientId — returned by GET /client-info/tasks/{taskId}
+export interface ClientInfoTaskResponse extends ClientInfoHeaderResponse {
+  clientId: string;
+}
+
+// Section data map (for lazy-loaded sections)
+export interface ClientInfoSections {
+  mainDetails: MainDetails;
+  clientInformation: ClientInformation;
+  corporateOfficerInformation: CorporateOfficerInformation;
+  accessCredentials: AccessCredentialDetails[];
+  scopeOfEngagement: ScopeOfEngagementDetails;
+  professionalFees: ProfessionalFeeEntry[];
+  onboardingDetails: OnboardingDetails;
+}
+
+export type InfoSectionKey = keyof ClientInfoSections;
+
+// Full response (used by template endpoint and backward compat)
+export interface ClientInfoResponse extends ClientInfoHeaderResponse {
+  id: number;
+  mainDetails: MainDetails;
+  clientInformation: ClientInformation;
+  corporateOfficerInformation: CorporateOfficerInformation;
+  accessCredentials: AccessCredentialDetails[];
+  scopeOfEngagement: ScopeOfEngagementDetails;
+  professionalFees: ProfessionalFeeEntry[];
+  onboardingDetails: OnboardingDetails;
+}
+
+export interface InfoSectionMeta {
+  key: InfoSectionKey;
+  label: string;
+}
