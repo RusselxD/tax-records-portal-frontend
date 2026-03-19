@@ -3,6 +3,8 @@ import type {
   SystemAnalyticsResponse,
   TaskCompletionTrendData,
   TaskApprovalRateData,
+  AccountantWorkloadItem,
+  TasksByCategorySystemItem,
 } from "../types/analytics";
 
 export const systemAnalyticsAPI = {
@@ -20,8 +22,18 @@ export const systemAnalyticsAPI = {
     return res.data as TaskCompletionTrendData;
   },
 
-  getTaskApprovalRate: async (): Promise<TaskApprovalRateData> => {
-    const res = await apiClient.get("/analytics/approval-rate");
+  getTaskApprovalRate: async (range: string): Promise<TaskApprovalRateData> => {
+    const res = await apiClient.get(`/analytics/approval-rate?range=${range}`);
     return res.data as TaskApprovalRateData;
+  },
+
+  getAccountantWorkload: async (): Promise<AccountantWorkloadItem[]> => {
+    const res = await apiClient.get("/analytics/accountant-workload");
+    return res.data as AccountantWorkloadItem[];
+  },
+
+  getTasksByCategory: async (): Promise<TasksByCategorySystemItem[]> => {
+    const res = await apiClient.get("/analytics/tasks-by-category");
+    return res.data as TasksByCategorySystemItem[];
   },
 };

@@ -1,5 +1,4 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
-import { Loader2 } from "lucide-react";
 import { clientAPI } from "../../../../../api/client";
 import { CLIENT_STATUS, type ClientStatus } from "../../../../../types/client";
 import { getErrorMessage } from "../../../../../lib/api-error";
@@ -31,7 +30,9 @@ export default function ChangeClientStatusModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const availableOptions = STATUS_OPTIONS.filter((o) => o.value !== currentStatus);
+  const availableOptions = STATUS_OPTIONS.filter(
+    (o) => o.value !== currentStatus,
+  );
 
   async function handleSubmit() {
     if (!selected) return;
@@ -42,23 +43,37 @@ export default function ChangeClientStatusModal({
       onSuccess(selected as ClientStatus);
       setModalOpen(false);
     } catch (err) {
-      setError(getErrorMessage(err, "Failed to update client status. Try again."));
+      setError(
+        getErrorMessage(err, "Failed to update client status. Try again."),
+      );
     } finally {
       setIsSubmitting(false);
     }
   }
 
   return (
-    <Modal title="Change Client Status" setModalOpen={setModalOpen} maxWidth="max-w-md">
-      <div className="space-y-5">
+    <Modal
+      title="Change Client Status"
+      setModalOpen={setModalOpen}
+      maxWidth="max-w-md"
+      actions={
+        <>
+          <Button variant="ghost" onClick={() => setModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} disabled={!selected} isLoading={isSubmitting}>
+            Confirm
+          </Button>
+        </>
+      }
+    >
+      <div className="space-y-2 mt-2">
         <p className="text-sm text-gray-500">
-          Select a new status for this client. Only the Manager can perform this action.
+          Select a new status for this client.
         </p>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">
-            New Status
-          </label>
+          <label className="field-label">New Status</label>
           <Dropdown
             options={availableOptions}
             value={selected}
@@ -67,25 +82,7 @@ export default function ChangeClientStatusModal({
           />
         </div>
 
-        {error && (
-          <p className="text-sm text-red-600">{error}</p>
-        )}
-
-        <div className="flex justify-end gap-3 pt-1">
-          <button
-            onClick={() => setModalOpen(false)}
-            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
-          >
-            Cancel
-          </button>
-          <Button
-            onClick={handleSubmit}
-            disabled={isSubmitting || !selected}
-          >
-            {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
-            Confirm
-          </Button>
-        </div>
+        {error && <p className="text-sm text-red-600">{error}</p>}
       </div>
     </Modal>
   );

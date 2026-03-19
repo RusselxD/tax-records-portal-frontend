@@ -55,14 +55,7 @@ export default function TaskRow({
         </span>
       </td>
       <td className="px-4 py-3.5">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <StatusBadge status={task.status} />
-          {task.isOverdue && (
-            <span className="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium text-red-600 bg-red-50 border border-red-200">
-              Overdue
-            </span>
-          )}
-        </div>
+        <StatusBadge status={task.status} />
       </td>
       <td className={`px-4 py-3.5 text-sm whitespace-nowrap ${task.isOverdue ? "text-red-500 font-medium" : "text-gray-600"}`}>
         {formatDate(task.deadline)}

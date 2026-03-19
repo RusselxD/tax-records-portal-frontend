@@ -39,3 +39,6 @@ export function deriveClientDisplayName(
   if (!trade || trade === registered) return registered;
   return `${registered} (${trade})`;
 }
+
+export const formatNum = (n: number | null | undefined) =>
+  n != null ? n.toLocaleString() : "—";

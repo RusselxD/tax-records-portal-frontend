@@ -1,24 +1,19 @@
 import { useEffect, useState } from "react";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Dot,
 } from "recharts";
 import type { TaskCompletionTrendData } from "../../../../../types/analytics";
 import { systemAnalyticsAPI } from "../../../../../api/systemAnalytics";
 import { ChartContainer, Dropdown } from "../../../../../components/common";
-import type { DropdownOption } from "../../../../../components/common";
-
-const rangeOptions: DropdownOption[] = [
-  { label: "Last 7 Days", value: "7d" },
-  { label: "Last 1 Month", value: "30d" },
-  { label: "Last 3 Months", value: "3m" },
-];
+import { rangeOptions, ErrorState } from "./chartShared";
 
 interface ChartDataPoint {
   label: string;
@@ -36,7 +31,7 @@ const EmptyState = () => (
 
 const TrendChart = ({ data }: { data: ChartDataPoint[] }) => (
   <ResponsiveContainer width="100%" height={280}>
-    <BarChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
+    <LineChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
       <XAxis
         dataKey="label"
@@ -57,10 +52,17 @@ const TrendChart = ({ data }: { data: ChartDataPoint[] }) => (
           boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
           fontSize: 13,
         }}
-        cursor={{ fill: "rgba(47, 111, 237, 0.06)" }}
+        cursor={{ stroke: "#E5E7EB" }}
       />
-      <Bar dataKey="value" fill="#2F6FED" radius={[4, 4, 0, 0]} barSize={40} />
-    </BarChart>
+      <Line
+        dataKey="value"
+        stroke="#2F6FED"
+        strokeWidth={2}
+        type="monotone"
+        dot={<Dot r={4} fill="#2F6FED" strokeWidth={0} />}
+        activeDot={{ r: 6, fill: "#2F6FED", strokeWidth: 0 }}
+      />
+    </LineChart>
   </ResponsiveContainer>
 );
 
@@ -78,23 +80,6 @@ const ChartSkeleton = () => (
   </div>
 );
 
-const ErrorState = ({
-  message,
-  onRetry,
-}: {
-  message: string;
-  onRetry: () => void;
-}) => (
-  <div className="h-[280px] flex items-center justify-center text-sm text-status-rejected">
-    <span>{message}</span>
-    <button
-      onClick={onRetry}
-      className="ml-2 underline hover:no-underline font-medium"
-    >
-      Retry
-    </button>
-  </div>
-);
 
 export default function TaskCompletionTrend() {
   const [range, setRange] = useState("7d");
@@ -125,7 +110,7 @@ export default function TaskCompletionTrend() {
     <ChartContainer
       title="Task Completion Trend"
       action={
-        <Dropdown options={rangeOptions} value={range} onChange={setRange} />
+        <Dropdown options={rangeOptions} value={range} onChange={setRange} size="sm" />
       }
       className="flex-1"
     >

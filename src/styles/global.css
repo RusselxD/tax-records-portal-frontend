@@ -50,6 +50,10 @@
     @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500;
   }
 
+  .field-label {
+    @apply text-xs font-medium text-gray-400 uppercase tracking-wider;
+  }
+
   .skeleton {
     @apply relative overflow-hidden bg-[#e5e7eb];
   }

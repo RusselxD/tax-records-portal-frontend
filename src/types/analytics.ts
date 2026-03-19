@@ -71,20 +71,49 @@ export interface ClientPortfolioResponse {
 
 // System analytics
 export interface SystemAnalyticsResponse {
+  // Card 1
   totalClients: number;
-  totalActiveClients: number;
-  totalPendingClients: number;
+  onboardingClients: number;
+  activeClients: number;
+  offboardingClients: number;
+  inactiveClients: number;
+
+  // Card 2
   totalTasks: number;
   openTasks: number;
   submittedTasks: number;
-  approvedTasks: number;
+  approvedForFilingTasks: number;
+  filedTasks: number;
+  completedTasks: number;
   rejectedTasks: number;
+
+  // Card 3
   totalOverdueTasks: number;
-  profilesPendingReview: number;
-  tasksApprovedThisMonth: number;
-  avgTaskCompletionInDays: number;
+  tasksDueToday: number;
   tasksDueThisWeek: number;
+
+  // Card 4
+  profilesPendingReview: number;
+  onboardingProfilesPending: number;
+  profileUpdatesPending: number;
+
+  // Card 5
+  tasksCompletedThisMonth: number;
+  tasksCreatedThisMonth: number;
   tasksRejectedThisMonth: number;
+
+  // Card 6
+  avgTaskCompletionInDays: number;
+  onTimeRate: number; // 0.0–1.0
+
+  // Card 7
+  avgRejectionCyclesPerTask: number;
+  firstAttemptApprovalRate: number; // 0.0–1.0
+
+  // Card 8
+  onboardingClientsCopy: number; // same as Card 1 sub-stat, reused
+  onboardingProfilesPendingCopy: number; // same as Card 4 sub-stat, reused
+  clientsActivatedThisMonth: number;
 }
 
 export interface TaskCompletionTrendData {
@@ -93,8 +122,23 @@ export interface TaskCompletionTrendData {
 }
 
 export interface TaskApprovalRateData {
-  approved: number;
+  approvedRate: number;
+  rejectedRate: number;
+}
+
+export interface AccountantWorkloadItem {
+  accountantName: string;
+  activeTasks: number;
+}
+
+export interface TasksByCategorySystemItem {
+  category: string;
+  open: number;
+  submitted: number;
   rejected: number;
+  approvedForFiling: number;
+  filed: number;
+  completed: number;
 }
 
 export interface AccountantsDashboardAnalyticsResponse {

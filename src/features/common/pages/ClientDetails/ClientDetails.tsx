@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { Pencil, ArrowUpRight } from "lucide-react";
+import { Pencil, ArrowUpRight, Settings2 } from "lucide-react";
 import { CLIENT_STATUS } from "../../../../types/client";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import NotFound from "../../../../pages/NotFound";
@@ -49,11 +49,12 @@ function ClientDetailsContent() {
   if (notFound) return <NotFound inline />;
 
   const isSnapshot = mode === "snapshot";
-  const isActive = status === CLIENT_STATUS.ACTIVE_CLIENT;
+  const isOnboarding = status === CLIENT_STATUS.ONBOARDING;
   const hasPendingUpdate = header?.hasActiveTask;
   const isAssignedAccountant =
     header?.assignedCsdOosAccountants?.some((a) => a.id === user?.id) ?? false;
-  const canEditProfile = isActive && !isSnapshot && isAssignedAccountant && !hasPendingUpdate;
+  const canEditProfile = !isOnboarding && !isSnapshot && isAssignedAccountant && !hasPendingUpdate;
+
   const canReview = hasPermission(user?.permissions, Permission.CLIENT_INFO_REVIEW);
   const canManageStatus = !isSnapshot && hasPermission(user?.permissions, Permission.CLIENT_MANAGE);
   const prefix = getRolePrefix(user?.roleKey ?? "");
@@ -65,11 +66,9 @@ function ClientDetailsContent() {
     ? <SnapshotBanner snapshotDate={snapshotDate} />
     : undefined;
 
-  const sidebar = isSnapshot
+  const sidebar = isSnapshot || isOnboarding
     ? <ActivityLogs taskId={header?.activeTaskId ?? null} />
-    : isActive
-      ? <ClientTasks />
-      : <ActivityLogs taskId={header?.activeTaskId ?? null} />;
+    : <ClientTasks />;
 
   const mainDetailsAction = canEditProfile ? (
     <button
@@ -92,9 +91,10 @@ function ClientDetailsContent() {
   const changeStatusButton = canManageStatus && status ? (
     <button
       onClick={() => setStatusModalOpen(true)}
-      className="text-sm font-medium text-gray-500 hover:text-accent transition-colors border border-gray-200 rounded-md px-3 py-1.5 hover:border-accent"
+      title="Change Status"
+      className="p-1.5 rounded-md text-gray-400 hover:text-accent transition-colors border border-gray-200 hover:border-accent"
     >
-      Change Status
+      <Settings2 className="w-4 h-4" />
     </button>
   ) : undefined;
 

@@ -3,7 +3,8 @@ import { getErrorMessage } from "../../../../../lib/api-error";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import type { TaskApprovalRateData } from "../../../../../types/analytics";
 import { systemAnalyticsAPI } from "../../../../../api/systemAnalytics";
-import { ChartContainer } from "../../../../../components/common";
+import { ChartContainer, Dropdown } from "../../../../../components/common";
+import { rangeOptions, ErrorState } from "./chartShared";
 
 const COLORS = { approved: "#16A34A", rejected: "#DC2626" };
 
@@ -14,8 +15,8 @@ interface SliceData {
 }
 
 const buildSlices = (data: TaskApprovalRateData): SliceData[] => [
-  { name: "Approved", value: data.approved, color: COLORS.approved },
-  { name: "Rejected", value: data.rejected, color: COLORS.rejected },
+  { name: "Approved", value: data.approvedRate, color: COLORS.approved },
+  { name: "Rejected", value: data.rejectedRate, color: COLORS.rejected },
 ];
 
 const CenterLabel = ({ rate }: { rate: number }) => (
@@ -64,7 +65,7 @@ const EmptyDonut = () => (
 );
 
 const DonutChart = ({ data }: { data: TaskApprovalRateData }) => {
-  const isEmpty = data.approved === 0 && data.rejected === 0;
+  const isEmpty = data.approvedRate === 0 && data.rejectedRate === 0;
 
   if (isEmpty) return <EmptyDonut />;
 
@@ -88,7 +89,7 @@ const DonutChart = ({ data }: { data: TaskApprovalRateData }) => {
             <Cell key={slice.name} fill={slice.color} />
           ))}
         </Pie>
-        <CenterLabel rate={data.approved} />
+        <CenterLabel rate={data.approvedRate} />
       </PieChart>
     </ResponsiveContainer>
   );
@@ -99,12 +100,12 @@ const Legend = ({ data }: { data: TaskApprovalRateData }) => (
     <LegendItem
       color={COLORS.approved}
       label="Approved"
-      value={data.approved}
+      value={data.approvedRate}
     />
     <LegendItem
       color={COLORS.rejected}
       label="Rejected"
-      value={data.rejected}
+      value={data.rejectedRate}
     />
   </div>
 );
@@ -137,34 +138,18 @@ const ChartSkeleton = () => (
   </div>
 );
 
-const ErrorState = ({
-  message,
-  onRetry,
-}: {
-  message: string;
-  onRetry: () => void;
-}) => (
-  <div className="h-[240px] flex items-center justify-center text-sm text-status-rejected">
-    <span>{message}</span>
-    <button
-      onClick={onRetry}
-      className="ml-2 underline hover:no-underline font-medium"
-    >
-      Retry
-    </button>
-  </div>
-);
 
 export default function TaskApprovalRate() {
+  const [range, setRange] = useState("7d");
   const [data, setData] = useState<TaskApprovalRateData | null>(null);
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = async (selectedRange: string) => {
     setIsFetching(true);
     setError(null);
     try {
-      const res = await systemAnalyticsAPI.getTaskApprovalRate();
+      const res = await systemAnalyticsAPI.getTaskApprovalRate(selectedRange);
       setData(res);
     } catch (err) {
       setError(
@@ -176,15 +161,19 @@ export default function TaskApprovalRate() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(range);
+  }, [range]);
 
   return (
-    <ChartContainer title="Task Approval Rate" className="w-96">
+    <ChartContainer
+      title="Task Approval Rate"
+      className="w-96"
+      action={<Dropdown options={rangeOptions} value={range} onChange={setRange} size="sm" />}
+    >
       {isFetching && <ChartSkeleton />}
 
       {!isFetching && error && (
-        <ErrorState message={error} onRetry={fetchData} />
+        <ErrorState message={error} onRetry={() => fetchData(range)} className="h-[240px]" />
       )}
 
       {!isFetching && !error && data && (

@@ -15,25 +15,30 @@ export interface DropdownProps {
   disabled?: boolean;
   error?: string;
   fullWidth?: boolean;
+  size?: "sm" | "md";
 }
 
 const FilterTrigger = ({
   label,
   isOpen,
   onClick,
+  size = "md",
 }: {
   label: string;
   isOpen: boolean;
   onClick: () => void;
+  size?: "sm" | "md";
 }) => (
   <button
     type="button"
     onClick={onClick}
-    className="flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm text-primary hover:bg-gray-50 transition-colors"
+    className={`flex items-center gap-1.5 rounded-md border border-gray-300 bg-white text-primary hover:bg-gray-50 transition-colors ${
+      size === "sm" ? "px-3 py-2 text-[0.800rem]" : "px-4 py-2.5 text-sm"
+    }`}
   >
     <span>{label}</span>
     <ChevronDown
-      className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+      className={`text-gray-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""} ${size === "sm" ? "w-3 h-3" : "w-3.5 h-3.5"}`}
     />
   </button>
 );
@@ -63,7 +68,9 @@ const FormTrigger = ({
         : "border-gray-300 focus:border-primary/40 focus:ring-primary/20"
     } ${disabled ? "bg-gray-50 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
   >
-    <span className={`truncate ${isPlaceholder ? "text-gray-400" : "text-primary"}`}>
+    <span
+      className={`truncate ${isPlaceholder ? "text-gray-400" : "text-primary"}`}
+    >
       {label}
     </span>
     <ChevronDown
@@ -81,13 +88,15 @@ export default function Dropdown({
   disabled = false,
   error,
   fullWidth = false,
+  size = "md",
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuHeight, setMenuHeight] = useState(0);
 
-  const isFormMode = label !== undefined || placeholder !== undefined || fullWidth;
+  const isFormMode =
+    label !== undefined || placeholder !== undefined || fullWidth;
   const selectedOption = options.find((o) => o.value === value);
   const displayLabel = selectedOption?.label ?? placeholder ?? value;
   const isPlaceholder = !selectedOption && !!placeholder;
@@ -147,6 +156,7 @@ export default function Dropdown({
             label={displayLabel}
             isOpen={isOpen}
             onClick={handleToggle}
+            size={size}
           />
         )}
         <div
@@ -174,9 +184,7 @@ export default function Dropdown({
           ))}
         </div>
       </div>
-      {error && (
-        <p className="mt-1 text-sm text-status-rejected">{error}</p>
-      )}
+      {error && <p className="mt-1 text-sm text-status-rejected">{error}</p>}
     </div>
   );
 }

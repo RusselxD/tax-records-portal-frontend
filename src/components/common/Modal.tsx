@@ -23,7 +23,7 @@ export default function Modal({
         className={`bg-white rounded-lg w-full ${maxWidth} mx-4 custom-shadow`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="py-4 px-6">
+        <div className="p-4">
           <div className="flex items-center justify-between pb-2 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-primary">{title}</h2>
             <button
