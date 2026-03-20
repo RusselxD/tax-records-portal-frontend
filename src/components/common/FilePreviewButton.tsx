@@ -15,7 +15,7 @@ export default function FilePreviewButton({ fileId, fileName }: FilePreviewButto
       <button
         type="button"
         onClick={() => setPreviewOpen(true)}
-        className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-accent hover:bg-accent/10 transition-colors"
+        className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10 transition-colors"
       >
         <Eye className="h-3.5 w-3.5" />
         Preview
