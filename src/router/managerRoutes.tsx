@@ -7,7 +7,6 @@ import UserManagement from "../features/manager/pages/UserManagement";
 import AccountantAnalytics from "../features/manager/pages/AccountantAnalytics";
 import ClientList from "../features/common/pages/ClientList";
 import TaxRecordTasks from "../features/common/pages/TaxRecordTasks";
-import ClientInfoTemplate from "../features/manager/pages/ClientInfoTemplate";
 import ClientInfoReview from "../features/common/pages/ClientOnboardingPreview";
 import ClientInfoView from "../features/common/pages/ClientDetails";
 import TaxRecordTaskDetails from "../features/common/pages/TaxRecordTaskDetails";
@@ -15,6 +14,7 @@ import ClientProfiles from "../features/common/pages/ClientProfiles";
 import UserProfile from "../features/common/pages/UserProfile";
 import EditClientProfile from "../features/common/pages/EditClientProfile";
 import ProfileUpdateReview from "../features/common/pages/ProfileUpdateReview";
+import Notifications from "../features/common/pages/Notifications";
 
 export const managerRoutes: RouteObject = {
   element: <RoleGuard allowedRoles={[UserRole.MANAGER]} />,
@@ -52,10 +52,6 @@ export const managerRoutes: RouteObject = {
           element: <TaxRecordTasks />,
         },
         {
-          path: "client-template",
-          element: <ClientInfoTemplate />,
-        },
-        {
           path: "client-preview/:id",
           element: <ClientInfoReview />,
         },
@@ -74,6 +70,10 @@ export const managerRoutes: RouteObject = {
         {
           path: "tax-record-task/:id",
           element: <TaxRecordTaskDetails />,
+        },
+        {
+          path: "notifications",
+          element: <Notifications />,
         },
         {
           path: "profile",

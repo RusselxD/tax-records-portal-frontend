@@ -6,6 +6,7 @@ import ClientDashboard from "../features/client/pages/ClientDashboard";
 import Profile from "../features/client/pages/Profile";
 import TaxRecords from "../features/client/pages/TaxRecords";
 import Invoice from "../features/client/pages/Invoice";
+import UserProfile from "../features/common/pages/UserProfile";
 
 export const clientRoutes: RouteObject = {
   element: <RoleGuard allowedRoles={[UserRole.CLIENT]} />,
@@ -33,6 +34,10 @@ export const clientRoutes: RouteObject = {
         {
           path: "invoice",
           element: <Invoice />,
+        },
+        {
+          path: "account-settings",
+          element: <UserProfile />,
         },
       ],
     },

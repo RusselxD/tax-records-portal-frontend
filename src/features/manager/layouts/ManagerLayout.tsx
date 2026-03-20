@@ -5,8 +5,8 @@ import {
   BarChart3,
   Building2,
   ClipboardList,
-  FileText,
   UserCheck,
+  Bell,
 } from "lucide-react";
 import MainLayout from "../../../components/layout/MainLayout";
 import type { NavItem } from "../../../types/navigation";
@@ -49,10 +49,10 @@ const managerNavItems: NavItem[] = [
     icon: ClipboardList,
   },
   {
-    id: "client-template",
-    label: "Client Info Template",
-    path: "/manager/client-template",
-    icon: FileText,
+    id: "notifications",
+    label: "Notifications",
+    path: "/manager/notifications",
+    icon: Bell,
   },
 ];
 

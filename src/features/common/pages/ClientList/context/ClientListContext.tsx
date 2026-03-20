@@ -65,28 +65,23 @@ export function ClientListProvider({ children }: { children: ReactNode }) {
     fetchClients();
   }, [fetchClients]);
 
-  const setSearch = (v: string) => {
+  const setSearch = useCallback((v: string) => {
     setSearchState(v);
     setPageState(0);
-  };
+  }, []);
 
-  const setPage = (p: number) => setPageState(p);
+  const setPage = useCallback((p: number) => setPageState(p), []);
+
+  const value = useMemo(
+    () => ({
+      clients, isFetching, error, page, totalPages, totalElements, search,
+      setSearch, setPage, refetch: fetchClients,
+    }),
+    [clients, isFetching, error, page, totalPages, totalElements, search, setSearch, setPage, fetchClients],
+  );
 
   return (
-    <ClientListContext.Provider
-      value={{
-        clients,
-        isFetching,
-        error,
-        page,
-        totalPages,
-        totalElements,
-        search,
-        setSearch,
-        setPage,
-        refetch: fetchClients,
-      }}
-    >
+    <ClientListContext.Provider value={value}>
       {children}
     </ClientListContext.Provider>
   );

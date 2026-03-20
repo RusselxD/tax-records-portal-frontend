@@ -14,26 +14,17 @@ import { clientAPI } from "../../../../../api/client";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { getRolePrefix } from "../../../../../constants/roles";
-import type {
-  ClientInfoHeaderResponse,
-  ClientInfoSections,
-  InfoSectionKey,
-  InfoSectionMeta,
+import {
+  SECTIONS,
+  SECTION_KEYS,
+  type ClientInfoHeaderResponse,
+  type ClientInfoSections,
+  type InfoSectionKey,
 } from "../../../../../types/client-info";
 
+export { SECTIONS };
+
 type SectionLoadStatus = "idle" | "loading" | "loaded" | "error";
-
-export const SECTIONS: InfoSectionMeta[] = [
-  { key: "mainDetails", label: "Main Details" },
-  { key: "clientInformation", label: "Client Information" },
-  { key: "corporateOfficerInformation", label: "Corporate Officers & Point of Contact" },
-  { key: "accessCredentials", label: "Access & Credentials" },
-  { key: "scopeOfEngagement", label: "Scope of Engagement" },
-  { key: "professionalFees", label: "Professional Fees" },
-  { key: "onboardingDetails", label: "Onboarding Details" },
-];
-
-const SECTION_KEYS: InfoSectionKey[] = SECTIONS.map((s) => s.key);
 
 function buildSectionRefs() {
   return Object.fromEntries(

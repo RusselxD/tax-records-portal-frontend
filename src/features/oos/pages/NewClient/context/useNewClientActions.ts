@@ -48,16 +48,15 @@ export default function useNewClientActions({
     if (clientIdRef.current) return clientIdRef.current;
     if (creatingClientRef.current) return creatingClientRef.current;
 
-    const promise = (async () => {
-      try {
-        const res = await oosClientAPI.createClient();
-        clientIdRef.current = res.id;
-        setClientId(res.id);
-        return res.id;
-      } finally {
-        creatingClientRef.current = null;
-      }
-    })();
+    const promise = oosClientAPI.createClient().then((res) => {
+      clientIdRef.current = res.id;
+      setClientId(res.id);
+      return res.id;
+    }).catch((err) => {
+      // Clear so next attempt can retry instead of reusing a rejected promise
+      creatingClientRef.current = null;
+      throw err;
+    });
 
     creatingClientRef.current = promise;
     return promise;

@@ -1,21 +1,13 @@
-import type {
-  InfoSectionKey,
-  InfoSectionMeta,
-  ClientInfoSections,
-  ClientInfoHeaderResponse,
-  AssignedAccountant,
+import {
+  SECTIONS,
+  type InfoSectionKey,
+  type ClientInfoSections,
+  type ClientInfoHeaderResponse,
+  type AssignedAccountant,
 } from "../../../../../types/client-info";
 import type { SaveStatus } from "../../../../../types/client";
 
-export const SECTIONS: InfoSectionMeta[] = [
-  { key: "mainDetails", label: "Main Details" },
-  { key: "clientInformation", label: "Client Information" },
-  { key: "corporateOfficerInformation", label: "Corporate Officers & Point of Contact" },
-  { key: "accessCredentials", label: "Access & Credentials" },
-  { key: "scopeOfEngagement", label: "Scope of Engagement" },
-  { key: "professionalFees", label: "Professional Fees" },
-  { key: "onboardingDetails", label: "Onboarding Details" },
-];
+export { SECTIONS };
 
 export const DEBOUNCE_MS = 800;
 

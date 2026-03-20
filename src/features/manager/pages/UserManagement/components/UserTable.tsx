@@ -1,35 +1,11 @@
 import { useState } from "react";
 import { SquarePen, KeyRound, Power, Send, Loader2, Check } from "lucide-react";
 import { UserRole } from "../../../../../constants";
-import { AccountStatus } from "../../../../../components/common";
+import { AccountStatus, UserAvatar } from "../../../../../components/common";
 import { useUserManagement } from "../context/UserManagementContext";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { usersAPI } from "../../../../../api/users";
-import { getAvatarColor } from "../../../../../lib/avatar-colors";
-import { resolveAssetUrl } from "../../../../../lib/formatters";
 import type { ManagedUser } from "../../../../../types/user";
-
-const getInitials = (name: string): string => {
-  const parts = name.trim().split(" ");
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
-  }
-  return name.charAt(0).toUpperCase();
-};
-
-const UserAvatar = ({ name, profileUrl }: { name: string; profileUrl?: string }) => {
-  const { bg, text } = getAvatarColor(name);
-  if (profileUrl) {
-    return (
-      <img src={resolveAssetUrl(profileUrl) ?? profileUrl} alt={name} className="w-8 h-8 rounded-full object-cover shrink-0" />
-    );
-  }
-  return (
-    <div className={`w-8 h-8 rounded-full ${bg} flex items-center justify-center shrink-0`}>
-      <span className={`text-xs font-medium ${text}`}>{getInitials(name)}</span>
-    </div>
-  );
-};
 
 const roleStyles: Record<string, string> = {
   [UserRole.CSD]: "bg-blue-50 text-blue-700 border border-blue-200",

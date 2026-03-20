@@ -23,6 +23,22 @@ export interface ClientProfileReviewListItem {
   submittedAt: string;
 }
 
+export interface ProfileReviewPageResponse {
+  content: ClientProfileReviewListItem[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
+export interface ProfileReviewFilters {
+  page?: number;
+  size?: number;
+  search?: string;
+  type?: ProfileReviewType;
+  status?: ProfileReviewStatus;
+}
+
 export interface ProfileUpdateReviewResponse {
   taskId: string;
   clientId: string;
@@ -39,6 +55,6 @@ export interface ProfileUpdateReviewResponse {
 
 export interface ChangedSection {
   sectionKey: string;
-  current: Record<string, unknown>;
+  current: Record<string, unknown> | null;
   submitted: Record<string, unknown>;
 }

@@ -2,15 +2,10 @@ import { useState } from "react";
 import { UserCircle, Send, Check } from "lucide-react";
 import { AccountStatus, Input, Button } from "../../../../../components/common";
 import { getAvatarColor } from "../../../../../lib/avatar-colors";
+import { getInitials, resolveAssetUrl } from "../../../../../lib/formatters";
 import { usersAPI } from "../../../../../api/users";
 import { useToast } from "../../../../../contexts/ToastContext";
 import type { ClientAccountResponse } from "../../../../../types/client";
-
-const getInitials = (firstName: string, lastName: string): string => {
-  const first = firstName.charAt(0);
-  const last = lastName.charAt(0);
-  return `${first}${last}`.toUpperCase();
-};
 
 interface ClientAccountCardProps {
   clientAccount: ClientAccountResponse;
@@ -125,14 +120,14 @@ export default function ClientAccountCard({ clientAccount }: ClientAccountCardPr
       <div className="flex items-center gap-4 px-6 py-5">
         {profileUrl ? (
           <img
-            src={profileUrl}
+            src={resolveAssetUrl(profileUrl) ?? profileUrl}
             alt={fullName}
             className="w-10 h-10 rounded-full object-cover"
           />
         ) : (
           <div className={`w-10 h-10 ${getAvatarColor(fullName).bg} rounded-full flex items-center justify-center`}>
             <span className={`text-sm ${getAvatarColor(fullName).text} font-medium`}>
-              {getInitials(displayData.firstName, displayData.lastName)}
+              {getInitials(`${displayData.firstName} ${displayData.lastName}`)}
             </span>
           </div>
         )}

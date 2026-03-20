@@ -83,8 +83,9 @@ export function ProfileUpdateReviewProvider({
       await clientAPI.approveClientInfo(taskId, comment);
       toastSuccess("Approved", "The profile update has been approved.");
       setLogsVersion((v) => v + 1);
+      refetch();
     },
-    [taskId, toastSuccess],
+    [taskId, toastSuccess, refetch],
   );
 
   const rejectUpdate = useCallback(
@@ -92,8 +93,9 @@ export function ProfileUpdateReviewProvider({
       await clientAPI.rejectClientInfo(taskId, comment);
       toastSuccess("Rejected", "The profile update has been sent back for revision.");
       setLogsVersion((v) => v + 1);
+      refetch();
     },
-    [taskId, toastSuccess],
+    [taskId, toastSuccess, refetch],
   );
 
   const value = useMemo(

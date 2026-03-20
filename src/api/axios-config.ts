@@ -85,7 +85,8 @@ apiClient.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${tokens.accessToken}`;
           return apiClient(originalRequest);
         }
-      } catch {
+      } catch (refreshError) {
+        console.error("[auth] Token refresh failed:", refreshError);
         redirectToLogin();
       }
     }

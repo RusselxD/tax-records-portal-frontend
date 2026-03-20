@@ -50,6 +50,63 @@ function humanize(key: string): string {
 // Keys to skip in diff comparison (internal/computed)
 const SKIP_KEYS = new Set(["id"]);
 
+export interface FieldEntry {
+  label: string;
+  value: string;
+}
+
+/**
+ * Flattens an object into label/value pairs (no diffing — used for approved view)
+ */
+export function extractFields(
+  obj: Record<string, unknown>,
+  parentLabel = "",
+): FieldEntry[] {
+  const fields: FieldEntry[] = [];
+
+  for (const key of Object.keys(obj)) {
+    if (SKIP_KEYS.has(key)) continue;
+
+    const val = obj[key];
+    const label = parentLabel ? `${parentLabel} › ${humanize(key)}` : humanize(key);
+
+    if (val === null || val === undefined) continue;
+
+    if (isRichText(val)) {
+      fields.push({ label, value: "[Rich text content]" });
+      continue;
+    }
+
+    if (isDateField(val) || isFileRef(val) || isLinkRef(val)) {
+      const formatted = formatValue(val);
+      if (formatted !== "—") fields.push({ label, value: formatted });
+      continue;
+    }
+
+    if (Array.isArray(val)) {
+      if (val.length === 0) continue;
+      if (val.some(isPlainObject)) {
+        for (let i = 0; i < val.length; i++) {
+          fields.push(...extractFields(val[i] as Record<string, unknown>, `${label} #${i + 1}`));
+        }
+      } else {
+        fields.push({ label, value: formatValue(val) });
+      }
+      continue;
+    }
+
+    if (isPlainObject(val)) {
+      fields.push(...extractFields(val, label));
+      continue;
+    }
+
+    const formatted = formatValue(val);
+    if (formatted !== "—") fields.push({ label, value: formatted });
+  }
+
+  return fields;
+}
+
 export function extractChanges(
   current: Record<string, unknown>,
   submitted: Record<string, unknown>,

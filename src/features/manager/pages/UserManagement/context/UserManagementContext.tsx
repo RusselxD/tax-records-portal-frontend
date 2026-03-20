@@ -13,14 +13,17 @@ import type { ManagedUser } from "../../../../../types/user";
 
 interface UserManagementContextType {
   users: ManagedUser[];
+  positions: string[];
   isFetching: boolean;
   error: string | null;
   search: string;
   roleFilter: string;
   statusFilter: string;
+  positionFilter: string;
   setSearch: (value: string) => void;
   setRoleFilter: (value: string) => void;
   setStatusFilter: (value: string) => void;
+  setPositionFilter: (value: string) => void;
   addUser: (user: ManagedUser) => void;
   refetch: () => void;
 }
@@ -36,6 +39,7 @@ export function UserManagementProvider({ children }: { children: ReactNode }) {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [positionFilter, setPositionFilter] = useState("");
 
   const fetchUsers = useCallback(async () => {
     setIsFetching(true);
@@ -58,6 +62,11 @@ export function UserManagementProvider({ children }: { children: ReactNode }) {
     setAllUsers((prev) => [user, ...prev]);
   }, []);
 
+  const positions = useMemo(() => {
+    const set = new Set(allUsers.map((u) => u.position).filter(Boolean));
+    return [...set].sort();
+  }, [allUsers]);
+
   const users = useMemo(() => {
     const query = search.toLowerCase();
 
@@ -69,23 +78,27 @@ export function UserManagementProvider({ children }: { children: ReactNode }) {
 
       const matchesRole = !roleFilter || user.roleName === roleFilter;
       const matchesStatus = !statusFilter || user.status === statusFilter;
+      const matchesPosition = !positionFilter || user.position === positionFilter;
 
-      return matchesSearch && matchesRole && matchesStatus;
+      return matchesSearch && matchesRole && matchesStatus && matchesPosition;
     });
-  }, [allUsers, search, roleFilter, statusFilter]);
+  }, [allUsers, search, roleFilter, statusFilter, positionFilter]);
 
   return (
     <UserManagementContext.Provider
       value={{
         users,
+        positions,
         isFetching,
         error,
         search,
         roleFilter,
         statusFilter,
+        positionFilter,
         setSearch,
         setRoleFilter,
         setStatusFilter,
+        setPositionFilter,
         addUser,
         refetch: fetchUsers,
       }}

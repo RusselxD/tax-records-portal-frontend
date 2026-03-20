@@ -2,6 +2,7 @@ import { useState } from "react";
 import { usersAPI } from "../../../../../api/users";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { getErrorMessage } from "../../../../../lib/api-error";
+
 import Input from "../../../../../components/common/Input";
 import Button from "../../../../../components/common/Button";
 
@@ -18,10 +19,11 @@ const EMPTY_FORM: FormState = {
 };
 
 export default function ChangePasswordCard() {
-  const { toastSuccess, toastError } = useToast();
+  const { toastSuccess } = useToast();
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [errors, setErrors] = useState<Partial<FormState>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const set = (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -46,6 +48,7 @@ export default function ChangePasswordCard() {
     if (!validate()) return;
 
     setIsSubmitting(true);
+    setSubmitError(null);
     try {
       await usersAPI.changePassword({
         currentPassword: form.currentPassword,
@@ -55,7 +58,7 @@ export default function ChangePasswordCard() {
       setForm(EMPTY_FORM);
       setErrors({});
     } catch (err) {
-      toastError(getErrorMessage(err));
+      setSubmitError(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -95,6 +98,12 @@ export default function ChangePasswordCard() {
           error={errors.confirmPassword}
           autoComplete="new-password"
         />
+
+        {submitError && (
+          <p className="text-sm text-red-700 bg-red-50 rounded-md px-3 py-2 border border-red-200">
+            {submitError}
+          </p>
+        )}
 
         <div className="flex justify-end pt-2">
           <Button type="submit" disabled={isSubmitting} isLoading={isSubmitting}>

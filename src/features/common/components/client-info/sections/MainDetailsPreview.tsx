@@ -1,5 +1,5 @@
 import type { MainDetails, AssignedAccountant } from "../../../../../types/client-info";
-import { ENGAGEMENT_STATUS_LABELS, TAXPAYER_CLASSIFICATION_LABELS } from "../enum-labels";
+import { TAXPAYER_CLASSIFICATION_LABELS } from "../enum-labels";
 import { TextDisplay, DateFieldDisplay, EnumDisplay } from "../field-displays";
 import SubsectionHeading from "./SubsectionHeading";
 
@@ -22,11 +22,6 @@ export default function MainDetailsPreview({
         <TextDisplay label="MRE Code" value={data.mreCode} />
         <DateFieldDisplay label="Commencement of Work" value={data.commencementOfWork} />
         <EnumDisplay
-          label="Engagement Status"
-          value={data.engagementStatus}
-          labels={ENGAGEMENT_STATUS_LABELS}
-        />
-        <EnumDisplay
           label="Taxpayer Classification"
           value={classification}
           labels={TAXPAYER_CLASSIFICATION_LABELS}
@@ -42,10 +37,11 @@ export default function MainDetailsPreview({
                 <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
                   Assigned OOS / CSD Accountants
                 </p>
-                <ul className="space-y-1">
+                <ul className="space-y-2.5">
                   {assignedCsdOos.map((a) => (
-                    <li key={a.id} className="text-sm text-primary leading-relaxed">
-                      {a.displayName}
+                    <li key={a.id}>
+                      <p className="text-sm text-primary font-medium leading-relaxed">{a.displayName}</p>
+                      <p className="text-xs text-gray-400">{[a.position, a.role].filter(Boolean).join(" · ")}</p>
                     </li>
                   ))}
                 </ul>
@@ -57,9 +53,14 @@ export default function MainDetailsPreview({
                 <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
                   Assigned QTD Accountant
                 </p>
-                <p className="text-sm text-primary leading-relaxed">
-                  {assignedQtd.map((a) => a.displayName).join(", ")}
-                </p>
+                <ul className="space-y-2.5">
+                  {assignedQtd.map((a) => (
+                    <li key={a.id}>
+                      <p className="text-sm text-primary font-medium leading-relaxed">{a.displayName}</p>
+                      <p className="text-xs text-gray-400">{[a.position, a.role].filter(Boolean).join(" · ")}</p>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>

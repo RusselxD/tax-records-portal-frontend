@@ -3,19 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { Bell, ChevronDown, Menu } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotifications } from "../../contexts/NotificationsContext";
-import { getRolePrefix } from "../../constants";
-import { getAvatarColor } from "../../lib/avatar-colors";
-import { resolveAssetUrl } from "../../lib/formatters";
+import { getRolePrefix, UserRole } from "../../constants";
+import UserAvatar from "../common/UserAvatar";
 
 interface TopNavProps {
   pageTitle: string;
   onMenuClick: () => void;
-}
-
-interface UserAvatarProps {
-  name: string;
-  profileUrl?: string | null;
-  size?: "sm" | "md" | "lg";
 }
 
 const NotificationBell = () => {
@@ -40,38 +33,6 @@ const UnreadBadge = () => (
   <span className="absolute top-1 right-1 w-2 h-2 bg-accent rounded-full" />
 );
 
-const getInitials = (name: string): string => {
-  const parts = name.trim().split(" ");
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
-  }
-  return name.charAt(0).toUpperCase();
-};
-
-const UserAvatar = ({ name, profileUrl, size = "md" }: UserAvatarProps) => {
-  const sizeClasses =
-    size === "sm" ? "w-6 h-6 text-[10px]" :
-    size === "lg" ? "w-10 h-10 text-sm" :
-    "w-8 h-8 text-xs";
-  const { bg, text } = getAvatarColor(name);
-
-  if (profileUrl) {
-    return (
-      <img
-        src={resolveAssetUrl(profileUrl) ?? profileUrl}
-        alt={name}
-        className={`${sizeClasses} rounded-full object-cover`}
-      />
-    );
-  }
-
-  return (
-    <div className={`${sizeClasses} ${bg} rounded-full flex items-center justify-center shrink-0`}>
-      <span className={`${text} font-medium`}>{getInitials(name)}</span>
-    </div>
-  );
-};
-
 const MenuButton = ({ onClick }: { onClick: () => void }) => (
   <button
     onClick={onClick}
@@ -88,12 +49,17 @@ const PageTitle = ({ title }: { title: string }) => (
   </div>
 );
 
+interface MenuAction {
+  label: string;
+  onClick: () => void;
+}
+
 interface UserMenuDropdownProps {
   name: string;
   subtitle: string;
   profileUrl?: string | null;
+  actions: MenuAction[];
   onClose: () => void;
-  onViewProfile: () => void;
   onLogout: () => void;
 }
 
@@ -101,8 +67,8 @@ const UserMenuDropdown = ({
   name,
   subtitle,
   profileUrl,
+  actions,
   onClose,
-  onViewProfile,
   onLogout,
 }: UserMenuDropdownProps) => (
   <>
@@ -113,18 +79,21 @@ const UserMenuDropdown = ({
         <UserAvatar name={name} profileUrl={profileUrl} size="lg" />
         <div className="min-w-0">
           <div className="text-sm font-semibold text-primary truncate">{name}</div>
-          <div className="text-xs text-gray-500 truncate">{subtitle}</div>
+          {subtitle && <div className="text-xs text-gray-500 truncate">{subtitle}</div>}
         </div>
       </div>
 
       {/* Actions */}
       <div className="py-1">
-        <button
-          onClick={onViewProfile}
-          className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-        >
-          View Profile
-        </button>
+        {actions.map((action) => (
+          <button
+            key={action.label}
+            onClick={action.onClick}
+            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            {action.label}
+          </button>
+        ))}
       </div>
 
       <div className="border-t border-gray-100 py-1">
@@ -144,14 +113,20 @@ export default function TopNav({ pageTitle, onMenuClick }: TopNavProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  const isClient = user?.roleKey === UserRole.CLIENT;
   const fullName = user?.name || "User";
-  const subtitle = user?.position || user?.role || "";
+  const subtitle = isClient ? "" : (user?.position || user?.role || "");
 
-  const handleViewProfile = () => {
-    setShowUserMenu(false);
-    const prefix = getRolePrefix(user!.roleKey);
-    navigate(`${prefix}/profile`);
-  };
+  const prefix = getRolePrefix(user!.roleKey);
+
+  const menuActions: MenuAction[] = isClient
+    ? [
+        { label: "View Profile", onClick: () => { setShowUserMenu(false); navigate(`${prefix}/profile`); } },
+        { label: "Account Settings", onClick: () => { setShowUserMenu(false); navigate(`${prefix}/account-settings`); } },
+      ]
+    : [
+        { label: "View Profile", onClick: () => { setShowUserMenu(false); navigate(`${prefix}/profile`); } },
+      ];
 
   return (
     <header className="h-[70px] bg-white border-b border-gray-200">
@@ -162,7 +137,7 @@ export default function TopNav({ pageTitle, onMenuClick }: TopNavProps) {
         </div>
 
         <div className="flex items-center gap-4">
-          <NotificationBell />
+          {!isClient && <NotificationBell />}
 
           <div className="relative">
             <button
@@ -182,8 +157,8 @@ export default function TopNav({ pageTitle, onMenuClick }: TopNavProps) {
                 name={fullName}
                 subtitle={subtitle}
                 profileUrl={user?.profileUrl}
+                actions={menuActions}
                 onClose={() => setShowUserMenu(false)}
-                onViewProfile={handleViewProfile}
                 onLogout={logout}
               />
             )}

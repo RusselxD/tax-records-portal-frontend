@@ -8,6 +8,7 @@ interface MainLayoutProps {
   children: ReactNode;
   navItems: NavItem[];
   pageTitle: string;
+  sidebarBottomAction?: ReactNode;
 }
 
 const ContentContainer = ({ children }: { children: ReactNode }) => (
@@ -20,6 +21,7 @@ export default function MainLayout({
   children,
   navItems,
   pageTitle,
+  sidebarBottomAction,
 }: MainLayoutProps) {
   const { pathname } = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -37,6 +39,7 @@ export default function MainLayout({
         navItems={navItems}
         isOpen={sidebarOpen}
         onClose={handleCloseSidebar}
+        bottomAction={sidebarBottomAction}
       />
       <main className="min-h-screen lg:ml-60 transition-[margin] duration-300">
         <TopNav pageTitle={pageTitle} onMenuClick={handleToggleSidebar} />

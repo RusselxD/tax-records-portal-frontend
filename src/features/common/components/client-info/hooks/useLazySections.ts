@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { clientAPI } from "../../../../../api/client";
 import type {
   InfoSectionKey,
@@ -26,12 +26,20 @@ const INITIAL_STATE: SectionsMap = {
   onboardingDetails: { data: null, status: "idle" },
 };
 
-export default function useLazySections(clientId: string | null) {
+export type SectionFetcher = <K extends InfoSectionKey>(key: K) => Promise<ClientInfoSections[K]>;
+
+export default function useLazySections(
+  clientId: string | null,
+  customFetcher?: SectionFetcher,
+) {
   const [sections, setSections] = useState<SectionsMap>({ ...INITIAL_STATE });
+  const inFlight = useRef<Set<InfoSectionKey>>(new Set());
 
   const fetchSection = useCallback(
     async <K extends InfoSectionKey>(key: K) => {
-      if (!clientId) return;
+      if (!customFetcher && !clientId) return;
+      if (inFlight.current.has(key)) return; // deduplicate in-flight requests
+      inFlight.current.add(key);
 
       setSections((prev) => ({
         ...prev,
@@ -39,7 +47,9 @@ export default function useLazySections(clientId: string | null) {
       }));
 
       try {
-        const data = await clientAPI.getClientInfoSection(clientId, key);
+        const data = customFetcher
+          ? await customFetcher(key)
+          : await clientAPI.getClientInfoSection(clientId!, key);
         setSections((prev) => ({
           ...prev,
           [key]: { data, status: "loaded" },
@@ -49,9 +59,11 @@ export default function useLazySections(clientId: string | null) {
           ...prev,
           [key]: { ...prev[key], status: "error" },
         }));
+      } finally {
+        inFlight.current.delete(key);
       }
     },
-    [clientId],
+    [clientId, customFetcher],
   );
 
   const getSection = useCallback(
@@ -63,6 +75,7 @@ export default function useLazySections(clientId: string | null) {
 
   const resetSections = useCallback(() => {
     setSections({ ...INITIAL_STATE });
+    inFlight.current.clear();
   }, []);
 
   return { sections, fetchSection, getSection, resetSections };

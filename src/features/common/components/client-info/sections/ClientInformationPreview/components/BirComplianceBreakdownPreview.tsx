@@ -1,11 +1,14 @@
 import type { BirComplianceBreakdown } from "../../../../../../../types/client-info";
 import { TextDisplay } from "../../../field-displays";
 
-export default function BirComplianceBreakdownPreview({ data }: { data: BirComplianceBreakdown }) {
-  const applicableItems = data.items.filter((item) => item.applicable);
-  const hasData = applicableItems.length > 0 || !!data.othersSpecify;
+export function hasBirComplianceBreakdownData(data: BirComplianceBreakdown): boolean {
+  return data.items.some((item) => item.applicable) || !!data.othersSpecify;
+}
 
-  if (!hasData) return null;
+export default function BirComplianceBreakdownPreview({ data }: { data: BirComplianceBreakdown }) {
+  if (!hasBirComplianceBreakdownData(data)) return null;
+
+  const applicableItems = data.items.filter((item) => item.applicable);
 
   return (
     <div className="space-y-4">

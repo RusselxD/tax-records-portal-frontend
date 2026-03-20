@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 import { X } from "lucide-react";
 import { useNotifications } from "../../contexts/NotificationsContext";
@@ -7,6 +8,7 @@ interface SidebarProps {
   navItems: NavItem[];
   isOpen: boolean;
   onClose: () => void;
+  bottomAction?: ReactNode;
 }
 
 const Logo = ({ onClose }: { onClose: () => void }) => (
@@ -102,7 +104,12 @@ const Overlay = ({
   />
 );
 
-export default function Sidebar({ navItems, isOpen, onClose }: SidebarProps) {
+export default function Sidebar({
+  navItems,
+  isOpen,
+  onClose,
+  bottomAction,
+}: SidebarProps) {
   return (
     <>
       <Overlay isOpen={isOpen} onClick={onClose} />
@@ -113,6 +120,11 @@ export default function Sidebar({ navItems, isOpen, onClose }: SidebarProps) {
       >
         <Logo onClose={onClose} />
         <Navigation items={navItems} onItemClick={onClose} />
+        {bottomAction && (
+          <div className="px-4 pb-6 border-t border-white/10 pt-4">
+            {bottomAction}
+          </div>
+        )}
       </aside>
     </>
   );

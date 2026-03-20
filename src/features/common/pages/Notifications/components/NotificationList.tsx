@@ -35,9 +35,11 @@ const typeConfig: Record<
 function NotificationItem({
   notification,
   onRead,
+  onDelete,
 }: {
   notification: NotificationListItemResponse;
   onRead: (id: string) => void;
+  onDelete?: (id: string) => void;
 }) {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -57,10 +59,15 @@ function NotificationItem({
     }
   };
 
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete?.(notification.id);
+  };
+
   return (
     <div
       onClick={handleClick}
-      className={`flex cursor-pointer gap-3 rounded-lg border p-4 transition-colors hover:bg-gray-50 ${
+      className={`group relative flex cursor-pointer gap-3 rounded-lg border p-4 transition-colors hover:bg-gray-50 ${
         notification.isRead
           ? "border-gray-200 bg-white"
           : "border-blue-200 bg-blue-50/30"
@@ -78,11 +85,21 @@ function NotificationItem({
             {notification.message}
           </p>
           {!notification.isRead && (
-            <span className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-accent" />
+            <span className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-accent group-hover:opacity-0 transition-opacity" />
           )}
         </div>
         <p className="mt-1 text-xs text-gray-400">{formatDateTime(notification.createdAt)}</p>
       </div>
+
+      {onDelete && (
+        <button
+          onClick={handleDelete}
+          className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"
+          title="Delete"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      )}
     </div>
   );
 }
@@ -93,6 +110,7 @@ export default function NotificationList({
   loadingMore,
   hasMore,
   onRead,
+  onDelete,
   onLoadMore,
 }: {
   notifications: NotificationListItemResponse[];
@@ -100,6 +118,7 @@ export default function NotificationList({
   loadingMore: boolean;
   hasMore: boolean;
   onRead: (id: string) => void;
+  onDelete?: (id: string) => void;
   onLoadMore: () => void;
 }) {
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -141,7 +160,12 @@ export default function NotificationList({
   return (
     <div className="space-y-2">
       {notifications.map((notification) => (
-        <NotificationItem key={notification.id} notification={notification} onRead={onRead} />
+        <NotificationItem
+          key={notification.id}
+          notification={notification}
+          onRead={onRead}
+          onDelete={onDelete}
+        />
       ))}
 
       <div ref={sentinelRef} className="py-2 flex justify-center">

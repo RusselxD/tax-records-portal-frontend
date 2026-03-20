@@ -76,7 +76,11 @@ export function ClientInfoReviewProvider({
   const clientId = resolvedClientId ?? "";
   const { getSection, fetchSection, resetSections } = useLazySections(clientId || null);
 
-  const fetchData = useCallback(async () => {
+  const [version, setVersion] = useState(0);
+  const refetchData = useCallback(() => setVersion((v) => v + 1), []);
+
+  useEffect(() => {
+    let cancelled = false;
     setIsLoading(true);
     setError(null);
     setNotFound(false);
@@ -84,30 +88,34 @@ export function ClientInfoReviewProvider({
     setActiveTaskOverride(null);
     setReviewStatusOverride(null);
     resetSections();
-    try {
-      // Single call: get header + clientId from task endpoint
-      const taskData = await clientAPI.getClientInfoTask(taskId);
-      setResolvedClientId(taskData.clientId);
-      setHeader(taskData);
 
-      if (canManageOnboarding) {
-        const accountInfo = await clientAPI.getClientAccount(taskData.clientId).catch(() => null);
-        setClientAccount(accountInfo);
-      }
-    } catch (err) {
-      if (isNotFoundError(err)) {
-        setNotFound(true);
-      } else {
-        setError(getErrorMessage(err, "Failed to load client details. Try again."));
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [taskId, canManageOnboarding, resetSections]);
+    const fetchData = async () => {
+      try {
+        const taskData = await clientAPI.getClientInfoTask(taskId);
+        if (cancelled) return;
+        setResolvedClientId(taskData.clientId);
+        setHeader(taskData);
 
-  useEffect(() => {
+        if (canManageOnboarding) {
+          const accountInfo = await clientAPI.getClientAccount(taskData.clientId).catch(() => null);
+          if (cancelled) return;
+          setClientAccount(accountInfo);
+        }
+      } catch (err) {
+        if (cancelled) return;
+        if (isNotFoundError(err)) {
+          setNotFound(true);
+        } else {
+          setError(getErrorMessage(err, "Failed to load client details. Try again."));
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
     fetchData();
-  }, [fetchData]);
+
+    return () => { cancelled = true; };
+  }, [taskId, canManageOnboarding, resetSections, version]);
 
   const clientName = header?.clientDisplayName ?? "";
   const status = statusOverride ?? header?.clientStatus ?? null;
@@ -148,7 +156,7 @@ export function ClientInfoReviewProvider({
       isLoading,
       error,
       notFound,
-      refetch: fetchData,
+      refetch: refetchData,
       logsVersion,
       signalLogsRefetch,
       getSection,
@@ -170,7 +178,7 @@ export function ClientInfoReviewProvider({
       isLoading,
       error,
       notFound,
-      fetchData,
+      refetchData,
       logsVersion,
       signalLogsRefetch,
       getSection,

@@ -8,8 +8,49 @@ function bookHasData(book: RegisteredBookEntry): boolean {
   return !!(book.bookName || book.notes);
 }
 
+function hasRichText(value: unknown): boolean {
+  if (!value || typeof value !== "object") return false;
+  const v = value as { content?: unknown[] };
+  if (!v.content || v.content.length === 0) return false;
+  return v.content.some((node: unknown) => {
+    const n = node as { type?: string; content?: unknown[] };
+    if (n.type === "image") return true;
+    return n.content && Array.isArray(n.content) && n.content.length > 0;
+  });
+}
+
+export function hasClientEngagementsData(data: ScopeOfEngagementDetails): boolean {
+  return !!(
+    hasRichText(data.taxCompliance) ||
+    data.bookOfAccounts ||
+    data.bookkeepingPermitNo ||
+    data.looseleafCertificateAndBirTemplate ||
+    data.registeredBooks.some(bookHasData) ||
+    hasRichText(data.bookkeepingProcess) ||
+    hasRichText(data.sssPhilhealthHdmfEngagement) ||
+    hasRichText(data.paymentAssistance) ||
+    data.consultationHours.freeHoursPerMonth !== null ||
+    data.consultationHours.ratePerHourAfterFree !== null ||
+    data.consultationHours.totalBillableAmount !== null ||
+    data.consultationHours.consultations.length > 0
+  );
+}
+
 export default function ClientEngagementsPreview({ data }: { data: ScopeOfEngagementDetails }) {
+  if (!hasClientEngagementsData(data)) return null;
+
   const hasBooks = data.registeredBooks.some(bookHasData);
+  const hasConsultation = !!(
+    data.consultationHours.freeHoursPerMonth !== null ||
+    data.consultationHours.ratePerHourAfterFree !== null ||
+    data.consultationHours.totalBillableAmount !== null ||
+    data.consultationHours.consultations.length > 0
+  );
+
+  const hasMiddleFields =
+    hasRichText(data.bookkeepingProcess) ||
+    hasRichText(data.sssPhilhealthHdmfEngagement) ||
+    hasRichText(data.paymentAssistance);
 
   return (
     <div className="space-y-5">
@@ -61,14 +102,20 @@ export default function ClientEngagementsPreview({ data }: { data: ScopeOfEngage
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-x-8 gap-y-5">
-        <RichTextPreview label="Bookkeeping Process" value={data.bookkeepingProcess} />
-        <RichTextPreview label="SSS, PhilHealth, HDMF Engagement" value={data.sssPhilhealthHdmfEngagement} />
-        <RichTextPreview label="Payment Assistance" value={data.paymentAssistance} />
-      </div>
+      {hasMiddleFields && (
+        <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+          <RichTextPreview label="Bookkeeping Process" value={data.bookkeepingProcess} />
+          <RichTextPreview label="SSS, PhilHealth, HDMF Engagement" value={data.sssPhilhealthHdmfEngagement} />
+          <RichTextPreview label="Payment Assistance" value={data.paymentAssistance} />
+        </div>
+      )}
 
-      <SubsectionHeading label="Consultation Hours" />
-      <ConsultationHoursPreview data={data.consultationHours} />
+      {hasConsultation && (
+        <>
+          <SubsectionHeading label="Consultation Hours" />
+          <ConsultationHoursPreview data={data.consultationHours} />
+        </>
+      )}
     </div>
   );
 }

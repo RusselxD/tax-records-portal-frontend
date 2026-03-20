@@ -4,7 +4,7 @@ import { UserRole } from "../constants";
 import QtdLayout from "../features/qtd/layouts/QtdLayout";
 import QtdDashboard from "../features/qtd/pages/QtdDashboard";
 import ClientList from "../features/common/pages/ClientList";
-import QtdNotifications from "../features/qtd/pages/Notifications";
+import Notifications from "../features/common/pages/Notifications";
 import TaxRecordTasks from "../features/common/pages/TaxRecordTasks";
 import ClientInfoReview from "../features/common/pages/ClientOnboardingPreview";
 import ClientInfoView from "../features/common/pages/ClientDetails";
@@ -58,7 +58,7 @@ export const qtdRoutes: RouteObject = {
         },
         {
           path: "notifications",
-          element: <QtdNotifications />,
+          element: <Notifications />,
         },
         {
           path: "profile",

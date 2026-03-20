@@ -29,8 +29,6 @@ export type OrganizationType =
   | "OPC"
   | "REGULAR_CORPORATION";
 
-export type EngagementStatusType = "ACTIVE" | "INACTIVE";
-
 export type TaxpayerClassification = "MICRO" | "SMALL" | "MEDIUM" | "LARGE";
 
 export type BookOfAccountsType = "MANUAL" | "LOOSE_LEAF" | "CAS";
@@ -69,7 +67,6 @@ export interface PendingActionItem {
 export interface MainDetails {
   mreCode: string | null;
   commencementOfWork: DateField | null;
-  engagementStatus: EngagementStatusType | null;
   csdOosAccountantIds?: string[] | null;
   qtdAccountantId?: string | null;
 }
@@ -364,3 +361,15 @@ export interface InfoSectionMeta {
   key: InfoSectionKey;
   label: string;
 }
+
+export const SECTIONS: InfoSectionMeta[] = [
+  { key: "mainDetails", label: "Main Details" },
+  { key: "clientInformation", label: "Client Information" },
+  { key: "corporateOfficerInformation", label: "Corporate Officers & Point of Contact" },
+  { key: "accessCredentials", label: "Access & Credentials" },
+  { key: "scopeOfEngagement", label: "Scope of Engagement" },
+  { key: "professionalFees", label: "Professional Fees" },
+  { key: "onboardingDetails", label: "Onboarding Details" },
+];
+
+export const SECTION_KEYS: InfoSectionKey[] = SECTIONS.map((s) => s.key);

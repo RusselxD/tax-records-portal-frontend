@@ -6,10 +6,6 @@ export const ORGANIZATION_TYPE_LABELS: Record<string, string> = {
   REGULAR_CORPORATION: "Regular Corporation",
 };
 
-export const ENGAGEMENT_STATUS_LABELS: Record<string, string> = {
-  ACTIVE: "Active",
-  INACTIVE: "Inactive",
-};
 
 export const BOOK_OF_ACCOUNTS_LABELS: Record<string, string> = {
   MANUAL: "Manual",

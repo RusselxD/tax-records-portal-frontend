@@ -2,18 +2,12 @@ import { useState, useEffect } from "react";
 import { Input, Dropdown, MultiSelect } from "../../../../../../components/common";
 import type {
   MainDetails,
-  EngagementStatusType,
   AssignedAccountant,
 } from "../../../../../../types/client-info";
 import { usersAPI } from "../../../../../../api/users";
 import type { AccountantListItemResponse } from "../../../../../../types/user";
 import DateFieldInput from "./DateFieldInput";
 import { useNewClient } from "../../context/NewClientContext";
-
-const ENGAGEMENT_STATUS_OPTIONS = [
-  { value: "ACTIVE", label: "Active" },
-  { value: "INACTIVE", label: "Inactive" },
-];
 
 function resolveAccountants(
   ids: string[] | null,
@@ -65,7 +59,7 @@ export default function MainDetailsSection({
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <Input
           label="MRE Code"
           value={data.mreCode ?? ""}
@@ -76,17 +70,6 @@ export default function MainDetailsSection({
           label="Commencement of Work"
           value={data.commencementOfWork}
           onChange={(v) => update({ commencementOfWork: v })}
-        />
-        <Dropdown
-          label="Engagement Status"
-          options={ENGAGEMENT_STATUS_OPTIONS}
-          value={data.engagementStatus ?? ""}
-          onChange={(v) =>
-            update({
-              engagementStatus: (v || null) as EngagementStatusType | null,
-            })
-          }
-          placeholder="Select status"
         />
       </div>
 

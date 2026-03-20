@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Plus } from "lucide-react";
 import Button from "../../../../../components/common/Button";
 import Dropdown from "../../../../../components/common/Dropdown";
@@ -9,15 +9,15 @@ import AddUserModal from "./AddUserModal";
 
 const roleOptions = [
   { label: "All Roles", value: "" },
-  { label: "QTD", value: UserRole.QTD },
-  { label: "CSD", value: UserRole.CSD },
-  { label: "OOS", value: UserRole.OOS },
-  { label: "Billing", value: UserRole.BILLING },
   { label: "Manager", value: UserRole.MANAGER },
+  { label: "Onboarding, Offboarding & Support", value: UserRole.OOS },
+  { label: "Quality, Training & Development", value: UserRole.QTD },
+  { label: "Client Service Delivery", value: UserRole.CSD },
+  { label: "Internal Accounting / Billing", value: UserRole.BILLING },
 ];
 
 const statusOptions = [
-  { label: "All", value: "" },
+  { label: "All Statuses", value: "" },
   { label: "Pending", value: "PENDING" },
   { label: "Active", value: "ACTIVE" },
   { label: "Deactivated", value: "DEACTIVATED" },
@@ -29,11 +29,22 @@ export default function UserFilters() {
     search,
     roleFilter,
     statusFilter,
+    positionFilter,
+    positions,
     setSearch,
     setRoleFilter,
     setStatusFilter,
+    setPositionFilter,
     addUser,
   } = useUserManagement();
+
+  const positionOptions = useMemo(
+    () => [
+      { label: "All Positions", value: "" },
+      ...positions.map((p) => ({ label: p, value: p })),
+    ],
+    [positions],
+  );
 
   return (
     <>
@@ -48,6 +59,11 @@ export default function UserFilters() {
             options={roleOptions}
             value={roleFilter}
             onChange={setRoleFilter}
+          />
+          <Dropdown
+            options={positionOptions}
+            value={positionFilter}
+            onChange={setPositionFilter}
           />
           <Dropdown
             options={statusOptions}

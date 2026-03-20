@@ -1,6 +1,27 @@
 import type { SecDetails } from "../../../../../../../types/client-info";
 import { TextDisplay, DateFieldDisplay, FileDisplay } from "../../../field-displays";
 
+export function hasSecData(data: SecDetails): boolean {
+  return !!(
+    data.dateOfIncorporation?.date ||
+    data.secRegistrationNumber ||
+    data.dateOfActualMeetingPerBylaws?.date ||
+    data.primaryPurposePerArticles ||
+    data.corporationCategory ||
+    data.secCertificateOfIncorporation ||
+    data.articlesOfIncorporation ||
+    data.bylawsOfCorporation ||
+    data.certificateOfAuthentication ||
+    data.authorizeFilerSecretaryCertificate ||
+    data.secOfficialReceipts ||
+    data.latestGisOrAppointmentOfOfficer ||
+    data.stockAndTransferBook ||
+    data.boardResolutionsSecretaryCertificate ||
+    data.previousYearAfsAndItr ||
+    data.others
+  );
+}
+
 export default function SecDetailsPreview({ data }: { data: SecDetails }) {
   const hasData = !!(
     data.dateOfIncorporation?.date ||

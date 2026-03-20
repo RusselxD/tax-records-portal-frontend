@@ -1,5 +1,5 @@
 import { CheckCircle, XCircle } from "lucide-react";
-import { createContext, useContext } from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
 import { toast } from "react-toastify";
 
 interface ToastContextValue {
@@ -10,7 +10,7 @@ interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue | undefined>(undefined);
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
-  const toastSuccess = (title: string, message?: string) => {
+  const toastSuccess = useCallback((title: string, message?: string) => {
     toast(
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0 mt-0.5">
@@ -70,9 +70,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         icon: false,
       },
     );
-  };
+  }, []);
 
-  const toastError = (title: string, message?: string) => {
+  const toastError = useCallback((title: string, message?: string) => {
     toast(
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0 mt-0.5">
@@ -132,10 +132,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         icon: false,
       },
     );
-  };
+  }, []);
+
+  const value = useMemo(() => ({ toastSuccess, toastError }), [toastSuccess, toastError]);
 
   return (
-    <ToastContext.Provider value={{ toastSuccess, toastError }}>
+    <ToastContext.Provider value={value}>
       {children}
     </ToastContext.Provider>
   );

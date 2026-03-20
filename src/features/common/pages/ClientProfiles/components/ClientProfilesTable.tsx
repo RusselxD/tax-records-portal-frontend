@@ -3,6 +3,7 @@ import { formatDate } from "../../../../../lib/formatters";
 import { PROFILE_REVIEW_TYPE } from "../../../../../types/client-profile";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { getRolePrefix } from "../../../../../constants";
+import { Pagination } from "../../../../../components/common";
 import { useClientProfiles } from "../context/ClientProfilesContext";
 import type {
   ClientProfileReviewListItem,
@@ -157,7 +158,7 @@ const EmptyState = () => (
 );
 
 export default function ClientProfilesTable() {
-  const { reviews, isFetching, error, refetch } = useClientProfiles();
+  const { reviews, isFetching, error, refetch, page, totalPages, totalElements, setPage } = useClientProfiles();
 
   if (error) {
     return (
@@ -189,6 +190,13 @@ export default function ClientProfilesTable() {
           </tbody>
         )}
       </table>
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        totalElements={totalElements}
+        pageSize={20}
+        onPageChange={setPage}
+      />
     </div>
   );
 }

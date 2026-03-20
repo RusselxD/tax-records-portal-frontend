@@ -17,7 +17,7 @@ export default function LinkDisplay({ label, value, fullWidth }: LinkDisplayProp
         href={value.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 text-sm text-accent font-medium hover:underline"
+        className="inline-flex items-center gap-1.5 text-sm text-blue-600 font-medium hover:text-blue-800 hover:underline"
       >
         {value.label || value.url}
         <ExternalLink className="h-3.5 w-3.5" />

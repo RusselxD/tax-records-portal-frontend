@@ -2,9 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../../../contexts/AuthContext";
 import { hasPermission, Permission } from "../../../../../../constants/permissions";
 import { getRolePrefix } from "../../../../../../constants/roles";
+import { Pagination } from "../../../../../../components/common";
 import { useTaxRecordTasks } from "../../context/TaxRecordTasksContext";
 import TaskRow from "./components/TaskRow";
-import Pagination from "./components/Pagination";
 
 interface HeaderDef {
   label: string;
@@ -50,7 +50,7 @@ const EmptyState = ({ colCount }: { colCount: number }) => (
 );
 
 export default function TaxRecordTasksTable() {
-  const { tasks, isFetching, error, refetch } = useTaxRecordTasks();
+  const { tasks, isFetching, error, refetch, page, totalPages, totalElements, setPage } = useTaxRecordTasks();
   const { user } = useAuth();
   const navigate = useNavigate();
   const canViewAll = hasPermission(user?.permissions, Permission.TASK_VIEW_ALL);
@@ -116,7 +116,13 @@ export default function TaxRecordTasksTable() {
           )}
         </table>
       </div>
-      <Pagination />
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        totalElements={totalElements}
+        pageSize={20}
+        onPageChange={setPage}
+      />
     </div>
   );
 }

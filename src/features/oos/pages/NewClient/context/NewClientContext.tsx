@@ -120,11 +120,14 @@ export function NewClientProvider({
   );
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchData = async () => {
       try {
         if (editClientId) {
           // Edit mode: fetch header only, sections load lazily
           const headerData = await clientAPI.getClientInfoHeader(editClientId);
+          if (cancelled) return;
 
           if (headerData.hasActiveTask) {
             navigate(`/oos/client-preview/${editClientId}`, { replace: true });
@@ -136,6 +139,8 @@ export function NewClientProvider({
         } else {
           // New mode: template returns everything at once
           const data = await oosClientAPI.getClientInfoTemplate();
+          if (cancelled) return;
+
           setHeader(data);
           setSections({
             mainDetails: data.mainDetails,
@@ -157,12 +162,15 @@ export function NewClientProvider({
           });
         }
       } catch (err) {
+        if (cancelled) return;
         setFetchError(getErrorMessage(err, "Failed to load client data. Please refresh the page."));
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     };
     fetchData();
+
+    return () => { cancelled = true; };
   }, [editClientId]);
 
   // Populate accountant IDs into mainDetails once both header and section are loaded

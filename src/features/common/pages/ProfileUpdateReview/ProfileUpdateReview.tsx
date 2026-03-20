@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronRight, AlertTriangle, Clock, Pencil } from "lucide-react";
+import { ChevronRight, AlertTriangle, Clock, Pencil, CheckCircle2 } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import { Button } from "../../../../components/common";
 import NotFound from "../../../../pages/NotFound";
@@ -125,9 +125,28 @@ function ProfileUpdateReviewContent() {
             )}
           </div>
 
+          {/* Approved banner */}
+          {review.status === PROFILE_REVIEW_STATUS.APPROVED && (
+            <div className="rounded-lg border border-green-200 bg-green-50 p-5">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-green-800">This profile update has been approved.</p>
+                  <p className="text-sm text-green-700 mt-1">The changes have been applied to the client's live profile.</p>
+                  <button
+                    onClick={() => navigate(`/${prefix}/client-details/${clientId}`)}
+                    className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-white border border-green-200 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-100 transition-colors"
+                  >
+                    View Client Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Rejection banner */}
           {review.status === PROFILE_REVIEW_STATUS.REJECTED && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }}>
+            <div className="rounded-lg border border-red-200 bg-red-50 p-5">
               <p className="text-sm font-medium text-red-700 mb-1">This profile update was rejected.</p>
               <p className="text-sm text-red-600 mb-4">Check the activity logs for details. You can revise and resubmit.</p>
               <button

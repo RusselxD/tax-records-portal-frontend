@@ -7,15 +7,20 @@ import {
   EnumDisplay,
 } from "../../../field-displays";
 
-export default function BirTaxCompliancePreview({ data }: { data: BirTaxComplianceDetails }) {
-  const hasGrossSales = data.grossSales.some((gs) => gs.amount !== null);
-  const hasData = hasGrossSales ||
+export function hasBirTaxComplianceData(data: BirTaxComplianceDetails): boolean {
+  return !!(
+    data.grossSales.some((gs) => gs.amount !== null) ||
     data.taxpayerClassification ||
     data.topWithholding !== null ||
     data.dateClassifiedTopWithholding?.date ||
-    data.incomeTaxRegime;
+    data.incomeTaxRegime
+  );
+}
 
-  if (!hasData) return null;
+export default function BirTaxCompliancePreview({ data }: { data: BirTaxComplianceDetails }) {
+  if (!hasBirTaxComplianceData(data)) return null;
+
+  const hasGrossSales = data.grossSales.some((gs) => gs.amount !== null);
 
   return (
     <div className="space-y-4">

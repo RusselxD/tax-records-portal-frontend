@@ -36,3 +36,7 @@ export type { InputProps } from "./Input";
 
 export { default as Modal } from "./Modal";
 export type { ModalProps } from "./Modal";
+
+export { default as Pagination } from "./Pagination";
+
+export { default as UserAvatar } from "./UserAvatar";

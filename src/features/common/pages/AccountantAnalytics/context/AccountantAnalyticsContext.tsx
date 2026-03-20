@@ -36,7 +36,6 @@ function useWidgetFetch<T>(apiFn: () => Promise<T>) {
   const fetch = useCallback(async () => {
     setState({ data: null, loading: true, error: null });
     try {
-      await new Promise((res) => setTimeout(res, 2000)); // artificial delay for better skeleton visibility
       const data = await apiFnRef.current();
       setState({ data, loading: false, error: null });
     } catch (err) {

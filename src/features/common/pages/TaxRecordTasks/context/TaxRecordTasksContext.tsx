@@ -92,42 +92,34 @@ export function TaxRecordTasksProvider({ children }: { children: ReactNode }) {
     fetchTasks();
   }, [fetchTasks]);
 
-  const resetPage = () => setPageState(0);
+  const setSearch = useCallback((v: string) => { setSearchState(v); setPageState(0); }, []);
+  const setClientFilter = useCallback((v: string) => { setClientId(v); setPageState(0); }, []);
+  const setCategoryFilter = useCallback((v: string) => { setCategoryId(v); setPageState(0); }, []);
+  const setSubCategoryFilter = useCallback((v: string) => { setSubCategoryId(v); setPageState(0); }, []);
+  const setTaskNameFilter = useCallback((v: string) => { setTaskNameId(v); setPageState(0); }, []);
+  const setYearFilter = useCallback((v: string) => { setYear(v); setPageState(0); }, []);
+  const setPeriodFilter = useCallback((v: string) => { setPeriod(v); setPageState(0); }, []);
+  const setStatusFilter = useCallback((v: string) => { setStatus(v); setPageState(0); }, []);
+  const setAccountantFilter = useCallback((v: string) => { setAccountantId(v); setPageState(0); }, []);
+  const setPage = useCallback((p: number) => setPageState(p), []);
 
-  const setSearch = (v: string) => { setSearchState(v); resetPage(); };
-  const setClientFilter = (v: string) => { setClientId(v); resetPage(); };
-  const setCategoryFilter = (v: string) => { setCategoryId(v); resetPage(); };
-  const setSubCategoryFilter = (v: string) => { setSubCategoryId(v); resetPage(); };
-  const setTaskNameFilter = (v: string) => { setTaskNameId(v); resetPage(); };
-  const setYearFilter = (v: string) => { setYear(v); resetPage(); };
-  const setPeriodFilter = (v: string) => { setPeriod(v); resetPage(); };
-  const setStatusFilter = (v: string) => { setStatus(v); resetPage(); };
-  const setAccountantFilter = (v: string) => { setAccountantId(v); resetPage(); };
-  const setPage = (p: number) => setPageState(p);
+  const value = useMemo(
+    () => ({
+      tasks, isFetching, error, page, totalPages, totalElements, filters,
+      setSearch, setClientFilter, setCategoryFilter, setSubCategoryFilter,
+      setTaskNameFilter, setYearFilter, setPeriodFilter, setStatusFilter,
+      setAccountantFilter, setPage, refetch: fetchTasks,
+    }),
+    [
+      tasks, isFetching, error, page, totalPages, totalElements, filters,
+      setSearch, setClientFilter, setCategoryFilter, setSubCategoryFilter,
+      setTaskNameFilter, setYearFilter, setPeriodFilter, setStatusFilter,
+      setAccountantFilter, setPage, fetchTasks,
+    ],
+  );
 
   return (
-    <TaxRecordTasksContext.Provider
-      value={{
-        tasks,
-        isFetching,
-        error,
-        page,
-        totalPages,
-        totalElements,
-        filters,
-        setSearch,
-        setClientFilter,
-        setCategoryFilter,
-        setSubCategoryFilter,
-        setTaskNameFilter,
-        setYearFilter,
-        setPeriodFilter,
-        setStatusFilter,
-        setAccountantFilter,
-        setPage,
-        refetch: fetchTasks,
-      }}
-    >
+    <TaxRecordTasksContext.Provider value={value}>
       {children}
     </TaxRecordTasksContext.Provider>
   );

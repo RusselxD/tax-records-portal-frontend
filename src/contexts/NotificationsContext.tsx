@@ -4,9 +4,11 @@ import {
   useState,
   useCallback,
   useEffect,
+  useMemo,
   type ReactNode,
 } from "react";
 import { useAuth } from "./AuthContext";
+import { UserRole } from "../constants";
 import { notificationAPI } from "../api/notification";
 
 interface NotificationsContextType {
@@ -31,7 +33,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || user.roleKey === UserRole.CLIENT) return;
     fetchUnreadCount();
   }, [user, fetchUnreadCount]);
 
@@ -39,10 +41,13 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     setUnreadCount((prev) => Math.max(0, prev - 1));
   }, []);
 
+  const value = useMemo(
+    () => ({ unreadCount, decrementUnread, refetchUnreadCount: fetchUnreadCount }),
+    [unreadCount, decrementUnread, fetchUnreadCount],
+  );
+
   return (
-    <NotificationsContext.Provider
-      value={{ unreadCount, decrementUnread, refetchUnreadCount: fetchUnreadCount }}
-    >
+    <NotificationsContext.Provider value={value}>
       {children}
     </NotificationsContext.Provider>
   );

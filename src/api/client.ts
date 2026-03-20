@@ -16,7 +16,7 @@ import type {
   ClientInfoSections,
   InfoSectionKey,
 } from "../types/client-info";
-import type { ClientProfileReviewListItem, ProfileUpdateReviewResponse } from "../types/client-profile";
+import type { ProfileReviewPageResponse, ProfileReviewFilters, ProfileUpdateReviewResponse } from "../types/client-profile";
 import type { LookupResponse } from "../types/tax-record-task";
 import apiClient from "./axios-config";
 
@@ -148,9 +148,15 @@ export const clientAPI = {
     return res.data;
   },
 
-  getProfileReviews: async (): Promise<ClientProfileReviewListItem[]> => {
-    const res = await apiClient.get("/client-info/tasks/reviews");
-    return res.data as ClientProfileReviewListItem[];
+  getProfileReviews: async (filters: ProfileReviewFilters = {}): Promise<ProfileReviewPageResponse> => {
+    const params: Record<string, string | number> = {};
+    if (filters.page != null) params.page = filters.page;
+    if (filters.size != null) params.size = filters.size;
+    if (filters.search) params.search = filters.search;
+    if (filters.type) params.type = filters.type;
+    if (filters.status) params.status = filters.status;
+    const res = await apiClient.get("/client-info/tasks/reviews", { params });
+    return res.data;
   },
 
   submitProfileUpdate: async (
@@ -179,5 +185,29 @@ export const clientAPI = {
     status: ClientStatus,
   ): Promise<void> => {
     await apiClient.patch(`/clients/${clientId}/status`, { status });
+  },
+
+  checkEngagementLetter: async (): Promise<{ exists: boolean }> => {
+    const res = await apiClient.get("/clients/me/engagement-letter-exists");
+    return res.data;
+  },
+
+  downloadEngagementLetter: async (): Promise<Blob> => {
+    const res = await apiClient.get("/clients/me/engagement-letter", {
+      responseType: "blob",
+    });
+    return res.data;
+  },
+
+  getMyClientInfoHeader: async (): Promise<ClientInfoHeaderResponse> => {
+    const res = await apiClient.get("/clients/me/info");
+    return res.data;
+  },
+
+  getMyClientInfoSection: async <K extends InfoSectionKey>(
+    sectionKey: K,
+  ): Promise<ClientInfoSections[K]> => {
+    const res = await apiClient.get(`/clients/me/info/${sectionKey}`);
+    return res.data;
   },
 };

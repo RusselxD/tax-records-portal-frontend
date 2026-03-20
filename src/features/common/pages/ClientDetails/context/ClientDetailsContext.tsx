@@ -97,45 +97,54 @@ export function ClientDetailsProvider({
   // For live mode, lazy section loading
   const lazy = useLazySections(mode === "live" ? clientId : null);
 
-  const fetchData = useCallback(async () => {
+  const [version, setVersion] = useState(0);
+  const refetchData = useCallback(() => setVersion((v) => v + 1), []);
+
+  useEffect(() => {
+    let cancelled = false;
     setIsLoading(true);
     setError(null);
     setNotFound(false);
-    try {
-      if (mode === "snapshot") {
-        const snapshot = await clientAPI.getArchiveSnapshot(clientId);
-        setHeader(snapshotToHeader(snapshot));
-        setSnapshotSections(snapshotToSections(snapshot));
-        setSnapshotDate(snapshot.submittedAt);
-      } else {
-        const [data, account] = await Promise.all([
-          clientAPI.getClientInfoHeader(clientId),
-          clientAPI.getClientAccount(clientId).catch(() => null),
-        ]);
-        setHeader(data);
-        setClientAccount(account);
-      }
-    } catch (err) {
-      if (isNotFoundError(err)) {
-        setNotFound(true);
-      } else {
-        setError(
-          getErrorMessage(
-            err,
-            mode === "snapshot"
-              ? "Failed to load snapshot. Try again."
-              : "Failed to load client details. Try again.",
-          ),
-        );
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [clientId, mode]);
 
-  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (mode === "snapshot") {
+          const snapshot = await clientAPI.getArchiveSnapshot(clientId);
+          if (cancelled) return;
+          setHeader(snapshotToHeader(snapshot));
+          setSnapshotSections(snapshotToSections(snapshot));
+          setSnapshotDate(snapshot.submittedAt);
+        } else {
+          const [data, account] = await Promise.all([
+            clientAPI.getClientInfoHeader(clientId),
+            clientAPI.getClientAccount(clientId).catch(() => null),
+          ]);
+          if (cancelled) return;
+          setHeader(data);
+          setClientAccount(account);
+        }
+      } catch (err) {
+        if (cancelled) return;
+        if (isNotFoundError(err)) {
+          setNotFound(true);
+        } else {
+          setError(
+            getErrorMessage(
+              err,
+              mode === "snapshot"
+                ? "Failed to load snapshot. Try again."
+                : "Failed to load client details. Try again.",
+            ),
+          );
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
     fetchData();
-  }, [fetchData]);
+
+    return () => { cancelled = true; };
+  }, [clientId, mode, version]);
 
   const clientName = header?.clientDisplayName ?? "";
   const status = statusOverride ?? header?.clientStatus ?? null;
@@ -177,12 +186,12 @@ export function ClientDetailsProvider({
       isLoading,
       error,
       notFound,
-      refetch: fetchData,
+      refetch: refetchData,
       setStatus,
       getSection,
       fetchSection,
     }),
-    [clientId, mode, header, clientName, status, clientAccount, snapshotDate, isLoading, error, notFound, fetchData, setStatus, getSection, fetchSection],
+    [clientId, mode, header, clientName, status, clientAccount, snapshotDate, isLoading, error, notFound, refetchData, setStatus, getSection, fetchSection],
   );
 
   return (

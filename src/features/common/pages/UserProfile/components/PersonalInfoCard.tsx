@@ -1,22 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { Camera, Loader2, Pencil, X } from "lucide-react";
 import { useAuth } from "../../../../../contexts/AuthContext";
+import { UserRole } from "../../../../../constants";
 import { usersAPI } from "../../../../../api/users";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { getAvatarColor } from "../../../../../lib/avatar-colors";
 import { getErrorMessage } from "../../../../../lib/api-error";
-import { resolveAssetUrl } from "../../../../../lib/formatters";
+import { getInitials, resolveAssetUrl } from "../../../../../lib/formatters";
 import InfoField from "../../../../../components/common/InfoField";
 import Input from "../../../../../components/common/Input";
 import Button from "../../../../../components/common/Button";
 import TitlesEditor from "./TitlesEditor";
 import type { MyProfileResponse, UserTitle } from "../../../../../types/user";
-
-const getInitials = (name: string): string => {
-  const parts = name.trim().split(" ");
-  if (parts.length >= 2) return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
-  return name.charAt(0).toUpperCase();
-};
 
 interface EditForm {
   firstName: string;
@@ -43,6 +38,7 @@ export default function PersonalInfoCard() {
 
   if (!user) return null;
 
+  const isClient = user.roleKey === UserRole.CLIENT;
   const { bg, text } = getAvatarColor(user.name);
   const isBusy = isUploading || isRemoving;
 
@@ -177,20 +173,24 @@ export default function PersonalInfoCard() {
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
               <InfoField label="Full Name" value={user.name} />
               <InfoField label="Email" value={user.email} />
-              <InfoField label="Position" value={user.position ?? undefined} />
-              <InfoField label="Role" value={user.role} />
-              <InfoField label="Status">
-                <span className="inline-flex items-center gap-1.5">
-                  <span className={`w-1.5 h-1.5 rounded-full ${user.status === "ACTIVE" ? "bg-green-500" : "bg-yellow-400"}`} />
-                  <span className="text-sm text-gray-700 capitalize">{user.status.toLowerCase()}</span>
-                </span>
-              </InfoField>
+              {!isClient && (
+                <>
+                  <InfoField label="Position" value={user.position ?? undefined} />
+                  <InfoField label="Role" value={user.role} />
+                  <InfoField label="Status">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className={`w-1.5 h-1.5 rounded-full ${user.status === "ACTIVE" ? "bg-green-500" : "bg-yellow-400"}`} />
+                      <span className="text-sm text-gray-700 capitalize">{user.status.toLowerCase()}</span>
+                    </span>
+                  </InfoField>
+                </>
+              )}
             </dl>
           )}
         </div>
       </div>
 
-      {!isEditing && (
+      {!isEditing && !isClient && (
         <p className="mt-6 text-xs text-gray-400">
           Position and role can only be updated by your manager.
         </p>
