@@ -97,6 +97,25 @@ export interface ArchiveSnapshotResponse {
   onboardingDetails: OnboardingDetails;
 }
 
+export const NOTICE_TYPE = {
+  REMINDER: "REMINDER",
+  PENDING_DOCUMENT: "PENDING_DOCUMENT",
+  HIGHLIGHT: "HIGHLIGHT",
+} as const;
+
+export type NoticeType = (typeof NOTICE_TYPE)[keyof typeof NOTICE_TYPE];
+
+export interface CreateClientNoticeRequest {
+  type: NoticeType;
+  content: string;
+}
+
+export interface ClientNoticeResponse {
+  id: number;
+  type: NoticeType;
+  content: string;
+}
+
 export interface ClientSummaryResponse {
   id: string;
   name: string;

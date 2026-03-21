@@ -34,7 +34,7 @@ export default function MainLayout({
   const handleCloseSidebar = () => setSidebarOpen(false);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       <Sidebar
         navItems={navItems}
         isOpen={sidebarOpen}

@@ -111,29 +111,30 @@ export function TaxRecordTaskDetailsProvider({
     setError(null);
     setNotFound(false);
 
-    Promise.all([
-      taxRecordTaskAPI.getTask(taskId),
-      taxRecordTaskAPI.getTaskFiles(taskId),
-      taxRecordTaskAPI.getTaskLogs(taskId),
-    ])
-      .then(([taskData, filesData, logsData]) => {
+    async function fetch() {
+      try {
+        const [taskData, filesData, logsData] = await Promise.all([
+          taxRecordTaskAPI.getTask(taskId),
+          taxRecordTaskAPI.getTaskFiles(taskId),
+          taxRecordTaskAPI.getTaskLogs(taskId),
+        ]);
         if (cancelled) return;
         setTask(taskData);
         setFiles(filesData);
         setLogs(logsData);
-      })
-      .catch((err) => {
+      } catch (err) {
         if (cancelled) return;
         if (isNotFoundError(err)) {
           setNotFound(true);
         } else {
           setError("Failed to load task details.");
         }
-      })
-      .finally(() => {
+      } finally {
         if (!cancelled) setIsLoading(false);
-      });
+      }
+    }
 
+    fetch();
     return () => {
       cancelled = true;
     };

@@ -54,3 +54,23 @@ export interface DrillSelection {
   id: string;
   label: string;
 }
+
+export interface ImportantDateResponse {
+  date: string;
+  label: string;
+}
+
+export type RecentTaxRecordRange = "7d" | "30d" | "3m";
+
+export interface RecentTaxRecordEntryResponse {
+  id: string;
+  categoryId: number;
+  categoryName: string;
+  subCategoryId: number;
+  subCategoryName: string;
+  taskNameId: number;
+  taskName: string;
+  year: number;
+  period: Period;
+  createdAt: string;
+}

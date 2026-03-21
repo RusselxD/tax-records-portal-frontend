@@ -43,8 +43,14 @@ export default function MainDetailsSection({
   >([]);
 
   useEffect(() => {
-    usersAPI.getAccountants("CSD,OOS").then(setCsdOosAccountants).catch(() => {});
-    usersAPI.getAccountants("QTD").then(setQtdAccountants).catch(() => {});
+    async function fetchCsdOos() {
+      try { setCsdOosAccountants(await usersAPI.getAccountants("CSD,OOS")); } catch {}
+    }
+    async function fetchQtd() {
+      try { setQtdAccountants(await usersAPI.getAccountants("QTD")); } catch {}
+    }
+    fetchCsdOos();
+    fetchQtd();
   }, []);
 
   const csdOosOptions = csdOosAccountants.map((a) => ({

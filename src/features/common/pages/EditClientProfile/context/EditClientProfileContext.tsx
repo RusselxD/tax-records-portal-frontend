@@ -95,19 +95,18 @@ export function EditClientProfileProvider({
     );
     loadingRef.current.clear();
 
-    clientAPI.getClientInfoHeader(clientId)
-      .then((hdr) => {
-        if (cancelled) return;
-        setHeader(hdr);
-      })
-      .catch((err) => {
-        if (cancelled) return;
-        setError(getErrorMessage(err, "Failed to load client data."));
-      })
-      .finally(() => {
+    async function fetch() {
+      try {
+        const hdr = await clientAPI.getClientInfoHeader(clientId);
+        if (!cancelled) setHeader(hdr);
+      } catch (err) {
+        if (!cancelled) setError(getErrorMessage(err, "Failed to load client data."));
+      } finally {
         if (!cancelled) setIsLoading(false);
-      });
+      }
+    }
 
+    fetch();
     return () => { cancelled = true; };
   }, [clientId, version]);
 
@@ -186,7 +185,7 @@ export function EditClientProfileProvider({
         const unloaded = SECTION_KEYS.filter((k) => !merged[k]);
         if (unloaded.length > 0) {
           const fetched = await Promise.all(
-            unloaded.map((k) => clientAPI.getClientInfoSection(clientId, k).then((data) => [k, data] as const)),
+            unloaded.map(async (k) => [k, await clientAPI.getClientInfoSection(clientId, k)] as const),
           );
           fetched.forEach(([k, data]) => {
             (merged as Record<string, unknown>)[k] = data;

@@ -8,6 +8,8 @@ import type {
   ArchiveSnapshotResponse,
   ClientSummaryResponse,
   ClientStatus,
+  CreateClientNoticeRequest,
+  ClientNoticeResponse,
 } from "../types/client";
 import type {
   ClientInfoResponse,
@@ -180,6 +182,28 @@ export const clientAPI = {
     return res.data;
   },
 
+  getNotices: async (
+    clientId: string,
+  ): Promise<ClientNoticeResponse[]> => {
+    const res = await apiClient.get(`/clients/${clientId}/notices`);
+    return res.data;
+  },
+
+  createNotice: async (
+    clientId: string,
+    body: CreateClientNoticeRequest,
+  ): Promise<ClientNoticeResponse> => {
+    const res = await apiClient.post(`/clients/${clientId}/notices`, body);
+    return res.data;
+  },
+
+  deleteNotice: async (
+    clientId: string,
+    noticeId: number,
+  ): Promise<void> => {
+    await apiClient.delete(`/clients/${clientId}/notices/${noticeId}`);
+  },
+
   updateClientStatus: async (
     clientId: string,
     status: ClientStatus,
@@ -196,6 +220,11 @@ export const clientAPI = {
     const res = await apiClient.get("/clients/me/engagement-letter", {
       responseType: "blob",
     });
+    return res.data;
+  },
+
+  getMyNotices: async (): Promise<ClientNoticeResponse[]> => {
+    const res = await apiClient.get("/clients/me/notices");
     return res.data;
   },
 

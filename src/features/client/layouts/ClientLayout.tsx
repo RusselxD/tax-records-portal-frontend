@@ -46,9 +46,13 @@ export default function ClientLayout() {
   const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
-    clientAPI.checkEngagementLetter().then((res) => {
-      setHasEngagementLetter(res.exists);
-    }).catch(() => {});
+    async function checkLetter() {
+      try {
+        const res = await clientAPI.checkEngagementLetter();
+        setHasEngagementLetter(res.exists);
+      } catch {}
+    }
+    checkLetter();
   }, []);
 
   const handleDownload = useCallback(async () => {

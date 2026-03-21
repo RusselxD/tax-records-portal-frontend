@@ -33,7 +33,10 @@ export default function PersonalInfoCard() {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    usersAPI.getMe().then(setProfile).catch(() => {});
+    async function fetchProfile() {
+      try { setProfile(await usersAPI.getMe()); } catch {}
+    }
+    fetchProfile();
   }, []);
 
   if (!user) return null;

@@ -15,6 +15,7 @@ import {
 import ClientAccountCard from "../ClientOnboardingPreview/components/ClientAccountCard";
 import ChangeClientStatusModal from "../ClientOnboardingPreview/components/ChangeClientStatusModal";
 import ClientTasks from "./components/ClientTasks";
+import CreateNotice from "./components/CreateNotice";
 import SnapshotBanner from "./components/SnapshotBanner";
 
 interface LocationState {
@@ -57,6 +58,7 @@ function ClientDetailsContent() {
 
   const canReview = hasPermission(user?.permissions, Permission.CLIENT_INFO_REVIEW);
   const canManageStatus = !isSnapshot && hasPermission(user?.permissions, Permission.CLIENT_MANAGE);
+  const canPostNotice = !isSnapshot && !isOnboarding && hasPermission(user?.permissions, Permission.REMINDER_CREATE);
   const prefix = getRolePrefix(user?.roleKey ?? "");
 
   const backLabel = state.backLabel || (isSnapshot ? "Client Onboarding" : "Client List");
@@ -124,6 +126,8 @@ function ClientDetailsContent() {
             mainDetailsAction={mainDetailsAction}
           />
         )}
+
+        {canPostNotice && <CreateNotice clientId={clientId} />}
       </ClientInfoPageShell>
 
       {statusModalOpen && status && (

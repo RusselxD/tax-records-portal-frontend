@@ -57,22 +57,23 @@ export function ProfileUpdateReviewProvider({
     setError(null);
     setNotFound(false);
 
-    clientAPI.getProfileUpdateReview(taskId)
-      .then((data) => {
+    async function fetch() {
+      try {
+        const data = await clientAPI.getProfileUpdateReview(taskId);
         if (!cancelled) setReview(data);
-      })
-      .catch((err) => {
+      } catch (err) {
         if (cancelled) return;
         if (isNotFoundError(err)) {
           setNotFound(true);
         } else {
           setError(getErrorMessage(err, "Failed to load profile update review."));
         }
-      })
-      .finally(() => {
+      } finally {
         if (!cancelled) setIsLoading(false);
-      });
+      }
+    }
 
+    fetch();
     return () => { cancelled = true; };
   }, [taskId, version]);
 

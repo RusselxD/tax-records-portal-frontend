@@ -93,14 +93,17 @@ export default function ReviewerStats() {
       <div className="bg-white rounded-2xl custom-shadow p-8 text-center">
         <p className="text-sm text-status-rejected mb-3">{error}</p>
         <button
-          onClick={() => {
+          onClick={async () => {
             setIsLoading(true);
             setError(null);
-            accountantAnalyticsAPI
-              .getReviewerDashboardStats()
-              .then(setStats)
-              .catch((err) => setError(getErrorMessage(err)))
-              .finally(() => setIsLoading(false));
+            try {
+              const data = await accountantAnalyticsAPI.getReviewerDashboardStats();
+              setStats(data);
+            } catch (err) {
+              setError(getErrorMessage(err));
+            } finally {
+              setIsLoading(false);
+            }
           }}
           className="text-sm text-accent hover:text-accent-hover font-medium"
         >

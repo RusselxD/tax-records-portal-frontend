@@ -26,7 +26,7 @@ export default function DrillDownList({ items, levelLabel, onSelect }: DrillDown
               </span>
             </div>
             <div className="flex items-center gap-3 shrink-0">
-              <span className="text-xs font-medium text-gray-400 bg-gray-100 rounded-full px-2.5 py-0.5">
+              <span className="text-xs font-medium text-gray-700 bg-gray-100 rounded-full px-2.5 py-1">
                 {item.count} {item.count === 1 ? "record" : "records"}
               </span>
               <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-accent transition-colors" />

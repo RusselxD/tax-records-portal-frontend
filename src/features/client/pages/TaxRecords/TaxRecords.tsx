@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import { Loader2, AlertTriangle, FolderOpen } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import { taxRecordAPI } from "../../../../api/tax-record";
@@ -47,7 +48,10 @@ function buildFilters(selections: DrillSelection[]): DrillDownFilters {
 export default function TaxRecords() {
   usePageTitle("Tax Records");
 
-  const [selections, setSelections] = useState<DrillSelection[]>([]);
+  const location = useLocation();
+  const initialSelections = (location.state as { selections?: DrillSelection[] })?.selections ?? [];
+
+  const [selections, setSelections] = useState<DrillSelection[]>(initialSelections);
   const [items, setItems] = useState<DrillDownItem[]>([]);
   const [record, setRecord] = useState<TaxRecordEntryResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);

@@ -87,13 +87,17 @@ export default function ReviewActivity() {
       ) : queueError ? (
         <ErrorRetry
           message={queueError}
-          onRetry={() => {
+          onRetry={async () => {
             setQueueFetching(true);
             setQueueError(null);
-            taxRecordTaskAPI.getReviewerQueue()
-              .then(setQueue)
-              .catch((err) => setQueueError(getErrorMessage(err)))
-              .finally(() => setQueueFetching(false));
+            try {
+              const data = await taxRecordTaskAPI.getReviewerQueue();
+              setQueue(data);
+            } catch (err) {
+              setQueueError(getErrorMessage(err));
+            } finally {
+              setQueueFetching(false);
+            }
           }}
         />
       ) : (
@@ -105,13 +109,17 @@ export default function ReviewActivity() {
       ) : decidedError ? (
         <ErrorRetry
           message={decidedError}
-          onRetry={() => {
+          onRetry={async () => {
             setDecidedFetching(true);
             setDecidedError(null);
-            taxRecordTaskAPI.getRecentlyDecided()
-              .then(setDecided)
-              .catch((err) => setDecidedError(getErrorMessage(err)))
-              .finally(() => setDecidedFetching(false));
+            try {
+              const data = await taxRecordTaskAPI.getRecentlyDecided();
+              setDecided(data);
+            } catch (err) {
+              setDecidedError(getErrorMessage(err));
+            } finally {
+              setDecidedFetching(false);
+            }
           }}
         />
       ) : decided.length > 0 ? (

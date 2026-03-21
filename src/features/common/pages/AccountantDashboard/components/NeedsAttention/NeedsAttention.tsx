@@ -123,14 +123,17 @@ export default function NeedsAttention() {
           </h3>
           <ErrorRetry
             message={overDueTasksError}
-            onRetry={() => {
+            onRetry={async () => {
               setOverDueTasksIsFetching(true);
               setOverDueTasksError(null);
-              taxRecordTaskAPI
-                .getOverdueTasks()
-                .then(setOverDueTasks)
-                .catch((err) => setOverDueTasksError(getErrorMessage(err)))
-                .finally(() => setOverDueTasksIsFetching(false));
+              try {
+                const data = await taxRecordTaskAPI.getOverdueTasks();
+                setOverDueTasks(data);
+              } catch (err) {
+                setOverDueTasksError(getErrorMessage(err));
+              } finally {
+                setOverDueTasksIsFetching(false);
+              }
             }}
           />
         </>
@@ -152,14 +155,17 @@ export default function NeedsAttention() {
           </h3>
           <ErrorRetry
             message={rejectedTasksError}
-            onRetry={() => {
+            onRetry={async () => {
               setRejectedTasksIsFetching(true);
               setRejectedTasksError(null);
-              taxRecordTaskAPI
-                .getRejectedTasks()
-                .then(setRejectedTasks)
-                .catch((err) => setRejectedTasksError(getErrorMessage(err)))
-                .finally(() => setRejectedTasksIsFetching(false));
+              try {
+                const data = await taxRecordTaskAPI.getRejectedTasks();
+                setRejectedTasks(data);
+              } catch (err) {
+                setRejectedTasksError(getErrorMessage(err));
+              } finally {
+                setRejectedTasksIsFetching(false);
+              }
             }}
           />
         </>

@@ -63,12 +63,16 @@ export default function TaxRecordTasksFilters({ onNewTask, onImport }: TaxRecord
 
   useEffect(() => {
     if (!canViewAll) return;
-    usersAPI.getAccountants("CSD,OOS").then((data) => {
-      setAccountantOptions([
-        { label: "All Accountants", value: "" },
-        ...data.map((a) => ({ label: a.displayName, value: a.id })),
-      ]);
-    }).catch(() => {});
+    async function fetchAccountants() {
+      try {
+        const data = await usersAPI.getAccountants("CSD,OOS");
+        setAccountantOptions([
+          { label: "All Accountants", value: "" },
+          ...data.map((a) => ({ label: a.displayName, value: a.id })),
+        ]);
+      } catch {}
+    }
+    fetchAccountants();
   }, [canViewAll]);
 
   return (

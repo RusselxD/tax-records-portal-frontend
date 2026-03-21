@@ -1,6 +1,7 @@
 import { FileText, ExternalLink, FileCheck, ShieldCheck } from "lucide-react";
 import { FilePreviewButton } from "../../../../../components/common";
 import type { TaxRecordEntryResponse } from "../../../../../types/tax-record";
+import { periodLabels } from "../../../../../constants/tax-record-task";
 
 interface TaxRecordDetailProps {
   record: TaxRecordEntryResponse;
@@ -35,7 +36,7 @@ export default function TaxRecordDetail({ record }: TaxRecordDetailProps) {
           </div>
           <div>
             <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Period</p>
-            <p className="text-sm text-primary leading-relaxed">{record.period}</p>
+            <p className="text-sm text-primary leading-relaxed">{periodLabels[record.period] ?? record.period}</p>
           </div>
         </div>
       </div>
@@ -103,7 +104,7 @@ export default function TaxRecordDetail({ record }: TaxRecordDetailProps) {
             {linkEntries.map((l, i) => (
               <a
                 key={i}
-                href={l.url}
+                href={l.url ?? undefined}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-50 px-4 py-3 hover:bg-gray-100 transition-colors"

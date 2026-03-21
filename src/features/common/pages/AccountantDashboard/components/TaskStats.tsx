@@ -89,14 +89,17 @@ export default function TaskStats() {
       <div className="bg-white rounded-2xl custom-shadow p-8 text-center">
         <p className="text-sm text-status-rejected mb-3">{error}</p>
         <button
-          onClick={() => {
+          onClick={async () => {
             setIsLoading(true);
             setError(null);
-            accountantAnalyticsAPI
-              .getDashboardAnalytics()
-              .then(setStats)
-              .catch((err) => setError(getErrorMessage(err)))
-              .finally(() => setIsLoading(false));
+            try {
+              const data = await accountantAnalyticsAPI.getDashboardAnalytics();
+              setStats(data);
+            } catch (err) {
+              setError(getErrorMessage(err));
+            } finally {
+              setIsLoading(false);
+            }
           }}
           className="text-sm text-accent hover:text-accent-hover font-medium"
         >

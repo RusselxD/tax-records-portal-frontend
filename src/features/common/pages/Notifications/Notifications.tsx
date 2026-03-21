@@ -60,30 +60,32 @@ export default function Notifications() {
     );
   }, []);
 
-  const handleDelete = useCallback((id: string) => {
+  const handleDelete = useCallback(async (id: string) => {
     // Optimistic: remove immediately, revert on failure
     const prev = notifications;
     setNotifications((list) => list.filter((n) => n.id !== id));
 
-    notificationAPI.deleteNotification(id).then(() => {
+    try {
+      await notificationAPI.deleteNotification(id);
       refetchUnreadCount();
-    }).catch(() => {
+    } catch {
       setNotifications(prev);
       toastError("Failed to delete notification.");
-    });
+    }
   }, [notifications, refetchUnreadCount, toastError]);
 
-  const handleMarkAllRead = useCallback(() => {
+  const handleMarkAllRead = useCallback(async () => {
     // Optimistic: mark all read immediately, revert on failure
     snapshotRef.current = notifications;
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
 
-    notificationAPI.markAllAsRead().then(() => {
+    try {
+      await notificationAPI.markAllAsRead();
       refetchUnreadCount();
-    }).catch(() => {
+    } catch {
       setNotifications(snapshotRef.current);
       toastError("Failed to mark all as read.");
-    });
+    }
   }, [notifications, refetchUnreadCount, toastError]);
 
   const handleFilterChange = (tab: FilterTab) => {
