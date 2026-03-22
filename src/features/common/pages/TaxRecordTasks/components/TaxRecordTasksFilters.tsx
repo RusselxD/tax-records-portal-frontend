@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Search, Plus, Upload } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 import Button from "../../../../../components/common/Button";
 import Dropdown from "../../../../../components/common/Dropdown";
+import SearchInput from "../../../../../components/common/SearchInput";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { hasPermission, Permission } from "../../../../../constants/permissions";
 import { usersAPI } from "../../../../../api/users";
@@ -79,16 +80,11 @@ export default function TaxRecordTasksFilters({ onNewTask, onImport }: TaxRecord
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="relative w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by task name or client..."
-              value={filters.search || ""}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-md border border-gray-300 bg-white pl-9 pr-4 py-2.5 text-sm text-primary placeholder-gray-400 transition-colors focus:outline-none focus:ring-1 focus:border-primary/40 focus:ring-primary/20"
-            />
-          </div>
+          <SearchInput
+            placeholder="Search by task name or client..."
+            value={filters.search || ""}
+            onChange={setSearch}
+          />
           <Dropdown
             options={statusOptions}
             value={(filters.status as string) || ""}

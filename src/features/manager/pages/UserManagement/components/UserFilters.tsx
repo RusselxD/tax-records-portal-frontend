@@ -3,17 +3,16 @@ import { Plus } from "lucide-react";
 import Button from "../../../../../components/common/Button";
 import Dropdown from "../../../../../components/common/Dropdown";
 import SearchInput from "../../../../../components/common/SearchInput";
-import { UserRole } from "../../../../../constants";
 import { useUserManagement } from "../context/UserManagementContext";
-import AddUserModal from "./AddUserModal";
+import UserFormModal from "./UserFormModal";
 
 const roleOptions = [
   { label: "All Roles", value: "" },
-  { label: "Manager", value: UserRole.MANAGER },
-  { label: "Onboarding, Offboarding & Support", value: UserRole.OOS },
-  { label: "Quality, Training & Development", value: UserRole.QTD },
-  { label: "Client Service Delivery", value: UserRole.CSD },
-  { label: "Internal Accounting / Billing", value: UserRole.BILLING },
+  { label: "Manager", value: "Manager" },
+  { label: "Onboarding, Offboarding & Support", value: "Onboarding, Offboarding & Support" },
+  { label: "Quality, Training & Development", value: "Quality, Training & Development" },
+  { label: "Client Service Delivery", value: "Client Service Delivery" },
+  { label: "Internal Accounting / Billing", value: "Internal Accounting / Billing" },
 ];
 
 const statusOptions = [
@@ -59,6 +58,7 @@ export default function UserFilters() {
             options={roleOptions}
             value={roleFilter}
             onChange={setRoleFilter}
+            className="min-w-[280px]"
           />
           <Dropdown
             options={positionOptions}
@@ -78,7 +78,7 @@ export default function UserFilters() {
       </div>
 
       {showAddModal && (
-        <AddUserModal setModalOpen={setShowAddModal} onSuccess={addUser} />
+        <UserFormModal setModalOpen={setShowAddModal} onSuccess={addUser} />
       )}
     </>
   );

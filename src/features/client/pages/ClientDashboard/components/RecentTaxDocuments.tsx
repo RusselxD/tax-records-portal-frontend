@@ -47,9 +47,9 @@ export default function RecentTaxDocuments() {
   }, []);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg">
+    <div className="bg-white border border-gray-200 rounded-lg h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100">
+      <div className="flex items-center justify-between px-3 py-3 border-b border-gray-100">
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-accent" />
           <h2 className="text-sm font-semibold text-primary">

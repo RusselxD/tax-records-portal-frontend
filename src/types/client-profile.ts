@@ -50,11 +50,41 @@ export interface ProfileUpdateReviewResponse {
   };
   submittedAt: string;
   comment: string | null;
-  changes: ChangedSection[];
+  sections: DiffSection[];
 }
 
-export interface ChangedSection {
+export interface DiffSection {
   sectionKey: string;
-  current: Record<string, unknown> | null;
-  submitted: Record<string, unknown>;
+  sectionLabel: string;
+  changes: DiffChange[];
+}
+
+export type DiffChange =
+  | DiffFieldChange
+  | DiffModifiedChange
+  | DiffAddedChange
+  | DiffRemovedChange;
+
+export interface DiffFieldChange {
+  type: "field";
+  field: string;
+  old: string | null;
+  new: string | null;
+}
+
+export interface DiffModifiedChange {
+  type: "modified";
+  itemLabel: string;
+  fields: { field: string; old: string; new: string }[];
+}
+
+export interface DiffAddedChange {
+  type: "added";
+  itemLabel: string;
+  fields: { field: string; value: string }[];
+}
+
+export interface DiffRemovedChange {
+  type: "removed";
+  itemLabel: string;
 }

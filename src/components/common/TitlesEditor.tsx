@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
-import type { UserTitle } from "../../../../../types/user";
+import type { UserTitle } from "../../types/user";
 
 interface Props {
   titles: UserTitle[];

@@ -1,3 +1,4 @@
+import { uid } from "../../../../../../../lib/uid";
 import { Input, Dropdown } from "../../../../../../../components/common";
 import type {
   ClientInformation,
@@ -41,6 +42,7 @@ export default function ClientInformationSection({
     onChange({ ...data, ...fields });
 
   const emptyBranch = (): BirBranchDetails => ({
+    _uid: uid(),
     businessTradeName: null,
     tin: null,
     rdo: null,

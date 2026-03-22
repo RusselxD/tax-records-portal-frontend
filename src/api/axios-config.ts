@@ -34,11 +34,18 @@ apiClient.interceptors.request.use(
   },
 );
 
+const DEACTIVATED_MESSAGE = "Your account has been deactivated.";
+
 const redirectToLogin = (): void => {
   tokenStorage.clearTokens();
   if (!window.location.pathname.includes("/auth/login")) {
     window.location.href = "/auth/login";
   }
+};
+
+const isDeactivatedResponse = (error: AxiosError): boolean => {
+  const data = error.response?.data as { message?: string } | undefined;
+  return error.response?.status === 403 && data?.message === DEACTIVATED_MESSAGE;
 };
 
 export const refreshAccessToken = async (): Promise<TokenPair | null> => {
@@ -68,7 +75,19 @@ apiClient.interceptors.response.use(
       _retry?: boolean;
     };
 
+    // Deactivated account — don't attempt refresh, just redirect
+    if (isDeactivatedResponse(error)) {
+      redirectToLogin();
+      return Promise.reject(error);
+    }
+
     const status = error.response?.status;
+
+    // 429 — rate limited, don't retry or refresh
+    if (status === 429) {
+      return Promise.reject(error);
+    }
+
     if ((status === 401 || status === 403) && !originalRequest._retry) {
       originalRequest._retry = true;
 

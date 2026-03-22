@@ -92,7 +92,7 @@ const TableHeader = () => (
 function ReviewRow({ review }: { review: ClientProfileReviewListItem }) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const prefix = getRolePrefix(user!.roleKey);
+  const prefix = getRolePrefix(user?.roleKey ?? "");
 
   const handleNavigate = () => {
     if (review.type === PROFILE_REVIEW_TYPE.ONBOARDING) {

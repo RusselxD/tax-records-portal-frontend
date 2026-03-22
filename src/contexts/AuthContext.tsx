@@ -82,6 +82,14 @@ function claimsToUser(claims: JwtClaims): User {
   };
 }
 
+function handleDeactivated(): null {
+  tokenStorage.clearTokens();
+  if (!window.location.pathname.includes("/auth/login")) {
+    window.location.href = "/auth/login?deactivated=true";
+  }
+  return null;
+}
+
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -101,7 +109,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const claims = decodeJwt(accessToken);
 
         if (claims && !isTokenExpired(claims.exp)) {
-          setUser(claimsToUser(claims));
+          if (claims.status === "DEACTIVATED") {
+            handleDeactivated();
+          } else {
+            setUser(claimsToUser(claims));
+          }
         } else if (tokenStorage.getRefreshToken()) {
           // Access token expired but refresh token exists — attempt refresh
           try {
@@ -109,7 +121,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
             if (tokens) {
               const newClaims = decodeJwt(tokens.accessToken);
               if (newClaims) {
-                setUser(claimsToUser(newClaims));
+                if (newClaims.status === "DEACTIVATED") {
+                  handleDeactivated();
+                } else {
+                  setUser(claimsToUser(newClaims));
+                }
               } else {
                 tokenStorage.clearTokens();
               }

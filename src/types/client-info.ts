@@ -47,16 +47,19 @@ export interface PermitDetails {
 }
 
 export interface GrossSalesEntry {
+  _uid?: string;
   year: number;
   amount: number | null;
 }
 
 export interface RegisteredBookEntry {
+  _uid?: string;
   bookName: string | null;
   notes: string | null;
 }
 
 export interface PendingActionItem {
+  _uid?: string;
   particulars: string | null;
   notes: string | null;
 }
@@ -73,6 +76,7 @@ export interface MainDetails {
 
 // Section 2: Client Information (wraps header + 9 sub-sections)
 export interface BirBranchDetails {
+  _uid?: string;
   businessTradeName: string | null;
   tin: string | null;
   rdo: string | null;
@@ -101,6 +105,7 @@ export interface BirTaxComplianceDetails {
 }
 
 export interface BirComplianceItem {
+  _uid?: string;
   category: string | null;
   taxReturnName: string | null;
   deadline: string | null;
@@ -160,6 +165,7 @@ export interface GovernmentAgencyDetails {
 }
 
 export interface CityHallDetails {
+  _uid?: string;
   businessPermitCity: string | null;
   businessPermitNumber: string | null;
   dateOfRegistration: DateField | null;
@@ -203,6 +209,7 @@ export interface ClientInformation {
 
 // Section 3: Corporate Officer Information
 export interface CorporateOfficerDetails {
+  _uid?: string;
   name: string | null;
   birthday: DateField | null;
   address: string | null;
@@ -227,6 +234,7 @@ export interface CorporateOfficerInformation {
 
 // Section 4: Access & Credentials
 export interface AccessCredentialDetails {
+  _uid?: string;
   platform: string | null;
   linkToPlatform: LinkReference | null;
   usernameOrEmail: string | null;
@@ -236,6 +244,7 @@ export interface AccessCredentialDetails {
 
 // Section 5: Scope of Engagement
 export interface ConsultationEntry {
+  _uid?: string;
   date: DateField | null;
   timeStarted: string | null;
   timeEnded: string | null;
@@ -284,12 +293,14 @@ export interface ScopeOfEngagementDetails {
 
 // Section 6: Professional Fees
 export interface ProfessionalFeeEntry {
+  _uid?: string;
   serviceName: string | null;
   fee: string | null;
 }
 
 // Section 7: Onboarding Details
 export interface OnboardingMeetingEntry {
+  _uid?: string;
   titleOfMeeting: string | null;
   date: DateField | null;
   timeStarted: string | null;

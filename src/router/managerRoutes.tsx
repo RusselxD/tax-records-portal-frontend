@@ -5,6 +5,7 @@ import ManagerLayout from "../features/manager/layouts/ManagerLayout";
 import AdminDashboard from "../features/manager/pages/AdminDashboard/AdminDashboard";
 import UserManagement from "../features/manager/pages/UserManagement";
 import AccountantAnalytics from "../features/manager/pages/AccountantAnalytics";
+import AccountantDetail from "../features/manager/pages/AccountantAnalytics/AccountantDetail";
 import ClientList from "../features/common/pages/ClientList";
 import TaxRecordTasks from "../features/common/pages/TaxRecordTasks";
 import ClientInfoReview from "../features/common/pages/ClientOnboardingPreview";
@@ -15,6 +16,7 @@ import UserProfile from "../features/common/pages/UserProfile";
 import EditClientProfile from "../features/common/pages/EditClientProfile";
 import ProfileUpdateReview from "../features/common/pages/ProfileUpdateReview";
 import Notifications from "../features/common/pages/Notifications";
+import Help from "../features/common/pages/Help";
 
 export const managerRoutes: RouteObject = {
   element: <RoleGuard allowedRoles={[UserRole.MANAGER]} />,
@@ -38,6 +40,10 @@ export const managerRoutes: RouteObject = {
         {
           path: "analytics",
           element: <AccountantAnalytics />,
+        },
+        {
+          path: "accountant-analytics/:id",
+          element: <AccountantDetail />,
         },
         {
           path: "clients",
@@ -78,6 +84,10 @@ export const managerRoutes: RouteObject = {
         {
           path: "profile",
           element: <UserProfile />,
+        },
+        {
+          path: "help",
+          element: <Help />,
         },
       ],
     },

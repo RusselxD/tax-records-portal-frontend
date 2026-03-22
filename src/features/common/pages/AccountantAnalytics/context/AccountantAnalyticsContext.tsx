@@ -33,25 +33,31 @@ function useWidgetFetch<T>(apiFn: () => Promise<T>) {
     error: null,
   });
 
-  const fetch = useCallback(async () => {
-    setState({ data: null, loading: true, error: null });
-    try {
-      const data = await apiFnRef.current();
-      setState({ data, loading: false, error: null });
-    } catch (err) {
-      setState({
-        data: null,
-        loading: false,
-        error: getErrorMessage(err, "Failed to load. Please try again."),
-      });
-    }
-  }, []);
+  const [version, setVersion] = useState(0);
+  const retry = useCallback(() => setVersion((v) => v + 1), []);
 
   useEffect(() => {
-    fetch();
-  }, [fetch]);
+    let cancelled = false;
+    setState({ data: null, loading: true, error: null });
 
-  return { ...state, retry: fetch };
+    (async () => {
+      try {
+        const data = await apiFnRef.current();
+        if (!cancelled) setState({ data, loading: false, error: null });
+      } catch (err) {
+        if (!cancelled)
+          setState({
+            data: null,
+            loading: false,
+            error: getErrorMessage(err, "Failed to load. Please try again."),
+          });
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [version]);
+
+  return { ...state, retry };
 }
 
 interface AccountantAnalyticsContextValue {
@@ -67,16 +73,36 @@ const AccountantAnalyticsContext =
 
 export function AccountantAnalyticsProvider({
   children,
+  userId,
 }: {
   children: ReactNode;
+  userId?: string;
 }) {
-  const taskSummary = useWidgetFetch(accountantAnalyticsAPI.getTaskSummary);
-  const onTimeRate = useWidgetFetch(accountantAnalyticsAPI.getOnTimeRate);
-  const qualityMetrics = useWidgetFetch(
-    accountantAnalyticsAPI.getQualityMetrics,
+  const taskSummary = useWidgetFetch(
+    userId
+      ? () => accountantAnalyticsAPI.getUserTaskSummary(userId)
+      : accountantAnalyticsAPI.getTaskSummary,
   );
-  const byCategory = useWidgetFetch(accountantAnalyticsAPI.getTasksByCategory);
-  const pipeline = useWidgetFetch(accountantAnalyticsAPI.getOnboardingPipeline);
+  const onTimeRate = useWidgetFetch(
+    userId
+      ? () => accountantAnalyticsAPI.getUserOnTimeRate(userId)
+      : accountantAnalyticsAPI.getOnTimeRate,
+  );
+  const qualityMetrics = useWidgetFetch(
+    userId
+      ? () => accountantAnalyticsAPI.getUserQualityMetrics(userId)
+      : accountantAnalyticsAPI.getQualityMetrics,
+  );
+  const byCategory = useWidgetFetch(
+    userId
+      ? () => accountantAnalyticsAPI.getUserTasksByCategory(userId)
+      : accountantAnalyticsAPI.getTasksByCategory,
+  );
+  const pipeline = useWidgetFetch(
+    userId
+      ? () => accountantAnalyticsAPI.getUserOnboardingPipeline(userId)
+      : accountantAnalyticsAPI.getOnboardingPipeline,
+  );
 
   return (
     <AccountantAnalyticsContext.Provider

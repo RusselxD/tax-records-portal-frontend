@@ -6,8 +6,8 @@ import type { OnTimeRateResponse } from "../../../../../types/analytics";
 const COLORS = { onTime: "#16A34A", late: "#DC2626" };
 
 const Donut = ({ data }: { data: OnTimeRateResponse }) => {
-  const rate = Math.round(data.onTimeRate * 100);
-  const isEmpty = data.totalCompleted === 0;
+  const rate = Math.round((data.onTimeRate ?? 0) * 100);
+  const isEmpty = !data.totalCompleted;
 
   if (isEmpty) {
     return (
@@ -79,11 +79,11 @@ const Legend = ({ data }: { data: OnTimeRateResponse }) => (
   <div className="flex items-center justify-center gap-5 mt-1">
     <div className="flex items-center gap-1.5 text-sm text-gray-600">
       <span className="w-2.5 h-2.5 rounded-full bg-status-approved inline-block" />
-      On Time: {data.completedOnTime}
+      On Time: {data.completedOnTime ?? 0}
     </div>
     <div className="flex items-center gap-1.5 text-sm text-gray-600">
       <span className="w-2.5 h-2.5 rounded-full bg-status-rejected inline-block" />
-      Late: {data.completedLate}
+      Late: {data.completedLate ?? 0}
     </div>
   </div>
 );
@@ -113,8 +113,8 @@ export default function OnTimeRateWidget() {
           <Donut data={data} />
           <Legend data={data} />
           <p className="text-center text-xs text-gray-400 mt-3">
-            Based on {data.totalCompleted} completed{" "}
-            {data.totalCompleted === 1 ? "task" : "tasks"}
+            Based on {data.totalCompleted ?? 0} completed{" "}
+            {(data.totalCompleted ?? 0) === 1 ? "task" : "tasks"}
           </p>
         </>
       )}

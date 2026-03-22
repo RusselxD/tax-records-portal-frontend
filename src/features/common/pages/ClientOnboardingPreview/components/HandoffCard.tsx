@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getErrorMessage } from "../../../../../lib/api-error";
+import { getErrorMessage, isConflictError } from "../../../../../lib/api-error";
 import { ArrowRightLeft, Loader2 } from "lucide-react";
 import { Button, Alert } from "../../../../../components/common";
 import { clientAPI } from "../../../../../api/client";
@@ -12,9 +12,9 @@ import { useInfoReview } from "../context/ClientOnboardingPreviewContext";
 export default function HandoffCard() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { clientId } = useInfoReview();
+  const { clientId, refetch } = useInfoReview();
   const { toastSuccess } = useToast();
-  const prefix = getRolePrefix(user!.roleKey);
+  const prefix = getRolePrefix(user?.roleKey ?? "");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -30,6 +30,7 @@ export default function HandoffCard() {
       );
       navigate(`${prefix}/client-onboarding`);
     } catch (err) {
+      if (isConflictError(err)) refetch();
       setSubmitError(getErrorMessage(err, "Failed to hand off client. Please try again."));
     } finally {
       setIsSubmitting(false);

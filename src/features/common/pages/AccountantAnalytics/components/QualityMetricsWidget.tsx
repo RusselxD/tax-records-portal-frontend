@@ -30,7 +30,7 @@ export default function QualityMetricsWidget() {
   const { qualityMetrics } = useAccountantAnalytics();
   const { data, loading, error, retry } = qualityMetrics;
 
-  const approvalRate = data ? Math.round(data.firstAttemptApprovalRate * 100) : 0;
+  const approvalRate = data ? Math.round((data.firstAttemptApprovalRate ?? 0) * 100) : 0;
   const rateHighlight =
     approvalRate >= 80 ? "green" : approvalRate >= 50 ? "neutral" : "red";
 
@@ -55,12 +55,12 @@ export default function QualityMetricsWidget() {
         <div className="divide-y divide-gray-100">
           <StatRow
             label="Total Submissions"
-            value={data.totalSubmitted.toLocaleString()}
+            value={(data.totalSubmitted ?? 0).toLocaleString()}
           />
           <StatRow
             label="First-Attempt Approvals"
             sub="Approved with zero rejections"
-            value={data.firstAttemptApproved.toLocaleString()}
+            value={(data.firstAttemptApproved ?? 0).toLocaleString()}
           />
           <StatRow
             label="First-Attempt Approval Rate"
@@ -70,8 +70,8 @@ export default function QualityMetricsWidget() {
           <StatRow
             label="Avg Rejection Cycles"
             sub="Per submitted task"
-            value={data.avgRejectionCyclesPerTask.toFixed(1)}
-            highlight={data.avgRejectionCyclesPerTask > 1.5 ? "red" : "neutral"}
+            value={(data.avgRejectionCyclesPerTask ?? 0).toFixed(1)}
+            highlight={(data.avgRejectionCyclesPerTask ?? 0) > 1.5 ? "red" : "neutral"}
           />
         </div>
       )}

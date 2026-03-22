@@ -2,16 +2,13 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect,
   useCallback,
   useMemo,
   type ReactNode,
 } from "react";
-import { getErrorMessage } from "../../../../../lib/api-error";
 import { clientAPI } from "../../../../../api/client";
+import usePaginatedFetch from "../../../../../hooks/usePaginatedFetch";
 import type { ClientListItemResponse } from "../../../../../types/client";
-
-const PAGE_SIZE = 20;
 
 interface ClientListContextType {
   clients: ClientListItemResponse[];
@@ -29,55 +26,23 @@ interface ClientListContextType {
 const ClientListContext = createContext<ClientListContextType | null>(null);
 
 export function ClientListProvider({ children }: { children: ReactNode }) {
-  const [clients, setClients] = useState<ClientListItemResponse[]>([]);
-  const [isFetching, setIsFetching] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [page, setPageState] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
   const [search, setSearchState] = useState("");
+  const setSearch = useCallback((v: string) => setSearchState(v), []);
 
   const params = useMemo(
-    () => ({
-      page,
-      size: PAGE_SIZE,
-      ...(search ? { search } : {}),
-    }),
-    [page, search],
+    () => (search ? { search } : {}),
+    [search],
   );
 
-  const fetchClients = useCallback(async () => {
-    setIsFetching(true);
-    setError(null);
-    try {
-      const data = await clientAPI.getClients(params);
-      setClients(data.content);
-      setTotalPages(data.totalPages);
-      setTotalElements(data.totalElements);
-    } catch (err) {
-      setError(getErrorMessage(err, "Failed to fetch clients. Try again."));
-    } finally {
-      setIsFetching(false);
-    }
-  }, [params]);
-
-  useEffect(() => {
-    fetchClients();
-  }, [fetchClients]);
-
-  const setSearch = useCallback((v: string) => {
-    setSearchState(v);
-    setPageState(0);
-  }, []);
-
-  const setPage = useCallback((p: number) => setPageState(p), []);
+  const { items: clients, isFetching, error, page, totalPages, totalElements, setPage, refetch } =
+    usePaginatedFetch(clientAPI.getClients, params, 20, "Failed to fetch clients. Try again.");
 
   const value = useMemo(
     () => ({
       clients, isFetching, error, page, totalPages, totalElements, search,
-      setSearch, setPage, refetch: fetchClients,
+      setSearch, setPage, refetch,
     }),
-    [clients, isFetching, error, page, totalPages, totalElements, search, setSearch, setPage, fetchClients],
+    [clients, isFetching, error, page, totalPages, totalElements, search, setSearch, setPage, refetch],
   );
 
   return (

@@ -97,7 +97,10 @@ export function ClientInfoReviewProvider({
         setHeader(taskData);
 
         if (canManageOnboarding) {
-          const accountInfo = await clientAPI.getClientAccount(taskData.clientId).catch(() => null);
+          const accountInfo = await clientAPI.getClientAccount(taskData.clientId).catch((err) => {
+            console.error("Failed to fetch client account:", err);
+            return null;
+          });
           if (cancelled) return;
           setClientAccount(accountInfo);
         }

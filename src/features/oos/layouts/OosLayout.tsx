@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   ClipboardList,
@@ -6,6 +6,7 @@ import {
   Bell,
   UserPlus,
   BarChart2,
+  HelpCircle,
 } from "lucide-react";
 import MainLayout from "../../../components/layout/MainLayout";
 import type { NavItem } from "../../../types/navigation";
@@ -56,14 +57,35 @@ const pageTitles: Record<string, string> = {
   "/oos/client-onboarding": "Client Onboarding",
   "/oos/analytics": "My Analytics",
   "/oos/notifications": "Notifications",
+  "/oos/help": "Help & Guides",
 };
+
+const HelpLink = () => (
+  <NavLink
+    to="/oos/help"
+    className={({ isActive }) =>
+      `flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+        isActive
+          ? "bg-accent text-primary"
+          : "text-white/70 hover:bg-white/10 hover:text-white"
+      }`
+    }
+  >
+    <HelpCircle className="w-4 h-4" />
+    <span>Help & Guides</span>
+  </NavLink>
+);
 
 export default function OosLayout() {
   const location = useLocation();
   const pageTitle = pageTitles[location.pathname] || "";
 
   return (
-    <MainLayout navItems={oosNavItems} pageTitle={pageTitle}>
+    <MainLayout
+      navItems={oosNavItems}
+      pageTitle={pageTitle}
+      sidebarBottomAction={<HelpLink />}
+    >
       <Outlet />
     </MainLayout>
   );

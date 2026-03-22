@@ -1,33 +1,25 @@
 import { useState } from "react";
-import { SquarePen, KeyRound, Power, Send, Loader2, Check } from "lucide-react";
-import { UserRole } from "../../../../../constants";
+import { SquarePen, Send, Power } from "lucide-react";
 import { AccountStatus, UserAvatar } from "../../../../../components/common";
 import { useUserManagement } from "../context/UserManagementContext";
-import { useToast } from "../../../../../contexts/ToastContext";
-import { usersAPI } from "../../../../../api/users";
 import type { ManagedUser } from "../../../../../types/user";
+import UserFormModal from "./UserFormModal";
+import ResendActivationModal from "./ResendActivationModal";
+import DeactivateUserModal from "./DeactivateUserModal";
 
 const roleStyles: Record<string, string> = {
-  [UserRole.CSD]: "bg-blue-50 text-blue-700 border border-blue-200",
-  [UserRole.QTD]: "bg-violet-50 text-violet-700 border border-violet-200",
-  [UserRole.OOS]: "bg-amber-50 text-amber-700 border border-amber-200",
-  [UserRole.BILLING]: "bg-teal-50 text-teal-700 border border-teal-200",
-  [UserRole.MANAGER]: "bg-rose-50 text-rose-700 border border-rose-200",
+  "Client Service Delivery": "bg-blue-50 text-blue-700 border border-blue-200",
+  "Quality, Training & Development": "bg-violet-50 text-violet-700 border border-violet-200",
+  "Onboarding, Offboarding & Support": "bg-amber-50 text-amber-700 border border-amber-200",
+  "Internal Accounting / Billing": "bg-teal-50 text-teal-700 border border-teal-200",
+  "Manager": "bg-rose-50 text-rose-700 border border-rose-200",
 };
 
-const roleLabels: Record<string, string> = {
-  [UserRole.CSD]: "CSD",
-  [UserRole.QTD]: "QTD",
-  [UserRole.OOS]: "OOS",
-  [UserRole.BILLING]: "Billing",
-  [UserRole.MANAGER]: "Manager",
-};
-
-const RoleBadge = ({ role }: { role: ManagedUser["roleName"] }) => (
+const RoleBadge = ({ role }: { role: string }) => (
   <span
     className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium ${roleStyles[role] ?? "bg-gray-100 text-gray-600 border border-gray-200"}`}
   >
-    {roleLabels[role] ?? role}
+    {role}
   </span>
 );
 
@@ -37,10 +29,7 @@ const TableHeader = () => (
   <thead>
     <tr className="border-b border-gray-200">
       {COLUMNS.map((header) => (
-        <th
-          key={header}
-          className="th-label"
-        >
+        <th key={header} className="th-label">
           {header}
         </th>
       ))}
@@ -48,81 +37,126 @@ const TableHeader = () => (
   </thead>
 );
 
-function ResendActivationButton({ userId }: { userId: string }) {
-  const { toastSuccess } = useToast();
-  const [state, setState] = useState<"idle" | "loading" | "sent">("idle");
+type ModalType = "edit" | "resend" | "deactivate";
 
-  const handleResend = async () => {
-    setState("loading");
-    try {
-      await usersAPI.resendActivation(userId);
-      setState("sent");
-      toastSuccess("Activation email resent successfully.");
-    } catch {
-      setState("idle");
-    }
-  };
-
-  if (state === "sent") {
-    return (
-      <span className="p-1 text-emerald-500">
-        <Check className="w-4 h-4" />
-      </span>
-    );
-  }
+function UserActions({
+  user,
+  onOpenModal,
+}: {
+  user: ManagedUser;
+  onOpenModal: (type: ModalType) => void;
+}) {
+  const isPending = user.status === "PENDING";
+  const isActive = user.status === "ACTIVE";
+  const isDeactivated = user.status === "DEACTIVATED";
 
   return (
-    <button
-      onClick={handleResend}
-      disabled={state === "loading"}
-      title="Resend activation email"
-      className="p-1 text-gray-400 hover:text-accent transition-colors disabled:opacity-50"
-    >
-      {state === "loading" ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
-      ) : (
-        <Send className="w-4 h-4" />
+    <div className="flex items-center gap-1">
+      {/* Resend Activation — PENDING only */}
+      {isPending && (
+        <button
+          onClick={() => onOpenModal("resend")}
+          title="Resend activation email"
+          className="p-1.5 text-gray-400 hover:text-accent transition-colors rounded hover:bg-gray-100"
+        >
+          <Send className="w-4 h-4" />
+        </button>
       )}
-    </button>
+
+      {/* Edit — ACTIVE or DEACTIVATED */}
+      {(isActive || isDeactivated) && (
+        <button
+          onClick={() => onOpenModal("edit")}
+          title="Edit user"
+          className="p-1.5 text-gray-400 hover:text-accent transition-colors rounded hover:bg-gray-100"
+        >
+          <SquarePen className="w-4 h-4" />
+        </button>
+      )}
+
+      {/* Deactivate/Reactivate — ACTIVE or DEACTIVATED */}
+      {(isActive || isDeactivated) && (
+        <button
+          onClick={() => onOpenModal("deactivate")}
+          title={isActive ? "Deactivate user" : "Reactivate user"}
+          className={`p-1.5 transition-colors rounded hover:bg-gray-100 ${
+            isDeactivated
+              ? "text-emerald-400 hover:text-emerald-600"
+              : "text-gray-400 hover:text-red-500"
+          }`}
+        >
+          <Power className="w-4 h-4" />
+        </button>
+      )}
+    </div>
   );
 }
 
-const UserRow = ({ user }: { user: ManagedUser }) => (
-  <tr className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50/50 transition-colors">
-    <td className="px-4 py-4">
-      <div className="flex items-center gap-3">
-        <UserAvatar name={user.name} profileUrl={user.profileUrl} />
-        <span className="text-sm font-medium text-primary">{user.name}</span>
-      </div>
-    </td>
-    <td className="px-4 py-4 text-sm text-gray-600">{user.email}</td>
-    <td className="px-4 py-4">
-      <RoleBadge role={user.roleName} />
-    </td>
-    <td className="px-4 py-4 text-sm text-gray-600">
-      {user.position}
-    </td>
-    <td className="px-4 py-4">
-      <AccountStatus status={user.status} />
-    </td>
-    <td className="px-4 py-4">
-      <div className="flex items-center gap-2">
-        {user.status === "PENDING" && (
-          <ResendActivationButton userId={user.id} />
-        )}
-        <button className="p-1 text-gray-400 hover:text-accent transition-colors">
-          <SquarePen className="w-4 h-4" />
-        </button>
-        <button className="p-1 text-gray-400 hover:text-accent transition-colors">
-          <KeyRound className="w-4 h-4" />
-        </button>
-        <button className="p-1 text-gray-400 hover:text-accent transition-colors">
-          <Power className="w-4 h-4" />
-        </button>
-      </div>
-    </td>
-  </tr>
-);
+function UserRow({ user }: { user: ManagedUser }) {
+  const { updateUser, refetch } = useUserManagement();
+  const [activeModal, setActiveModal] = useState<ModalType | null>(null);
+
+  const closeModal = () => setActiveModal(null);
+
+  return (
+    <>
+      <tr className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50/50 transition-colors">
+        <td className="px-4 py-4">
+          <div className="flex items-center gap-3">
+            <UserAvatar name={user.name} profileUrl={user.profileUrl} />
+            <span className="text-sm font-medium text-primary">
+              {user.name}
+            </span>
+          </div>
+        </td>
+        <td className="px-4 py-4 text-sm text-gray-600">{user.email}</td>
+        <td className="px-4 py-4">
+          <RoleBadge role={user.roleName} />
+        </td>
+        <td className="px-4 py-4 text-sm text-gray-600">{user.position}</td>
+        <td className="px-4 py-4">
+          <AccountStatus status={user.status} />
+        </td>
+        <td className="px-4 py-4">
+          <UserActions
+            user={user}
+            onOpenModal={(type) => setActiveModal(type)}
+          />
+        </td>
+      </tr>
+
+      {activeModal === "edit" && (
+        <UserFormModal
+          user={user}
+          setModalOpen={(open) => {
+            if (!open) closeModal();
+          }}
+          onSuccess={(updated) => updateUser(updated)}
+        />
+      )}
+
+      {activeModal === "resend" && (
+        <ResendActivationModal
+          user={user}
+          setModalOpen={(open) => {
+            if (!open) closeModal();
+          }}
+          onSuccess={() => refetch()}
+        />
+      )}
+
+      {activeModal === "deactivate" && (
+        <DeactivateUserModal
+          user={user}
+          setModalOpen={(open) => {
+            if (!open) closeModal();
+          }}
+          onSuccess={(updated) => updateUser(updated)}
+        />
+      )}
+    </>
+  );
+}
 
 const TableSkeleton = () => (
   <tbody>
@@ -147,7 +181,10 @@ const TableSkeleton = () => (
 const EmptyState = () => (
   <tbody>
     <tr>
-      <td colSpan={6} className="px-4 py-12 text-center text-sm text-gray-500">
+      <td
+        colSpan={6}
+        className="px-4 py-12 text-center text-sm text-gray-500"
+      >
         No users found.
       </td>
     </tr>
@@ -182,7 +219,7 @@ export default function UserTable() {
         ) : (
           <tbody>
             {users.map((user) => (
-              <UserRow key={user.email} user={user} />
+              <UserRow key={user.id} user={user} />
             ))}
           </tbody>
         )}

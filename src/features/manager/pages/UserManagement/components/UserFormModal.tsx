@@ -4,32 +4,46 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import { getErrorMessage } from "../../../../../../lib/api-error";
 import { Plus } from "lucide-react";
-import { Modal, Alert, Button, Input, Dropdown } from "../../../../../../components/common";
-import { usersAPI } from "../../../../../../api/users";
-import type { ManagedUser, UserTitle } from "../../../../../../types/user";
-import { useToast } from "../../../../../../contexts/ToastContext";
-import TitleEntry from "./components/TitleEntry";
-import PositionInlineCreate from "./components/PositionInlineCreate";
-import useFormOptions from "./hooks/useFormOptions";
-import { validate, type FormErrors } from "./utils/validation";
+import { getErrorMessage } from "../../../../../lib/api-error";
+import {
+  Modal,
+  Alert,
+  Button,
+  Input,
+  Dropdown,
+  TitlesEditor,
+} from "../../../../../components/common";
+import { usersAPI } from "../../../../../api/users";
+import type { ManagedUser, UserTitle } from "../../../../../types/user";
+import { useToast } from "../../../../../contexts/ToastContext";
+import PositionInlineCreate from "./AddUserModal/components/PositionInlineCreate";
+import useFormOptions from "./AddUserModal/hooks/useFormOptions";
+import { validate, type FormErrors } from "./AddUserModal/utils/validation";
 
-interface AddUserModalProps {
+interface UserFormModalProps {
+  user?: ManagedUser;
   setModalOpen: Dispatch<SetStateAction<boolean>>;
   onSuccess: (user: ManagedUser) => void;
 }
 
-export default function AddUserModal({
+export default function UserFormModal({
+  user,
   setModalOpen,
   onSuccess,
-}: AddUserModalProps) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [roleId, setRoleId] = useState("");
-  const [positionId, setPositionId] = useState("");
-  const [titles, setTitles] = useState<UserTitle[]>([]);
+}: UserFormModalProps) {
+  const isEdit = !!user;
+
+  const [firstName, setFirstName] = useState(user?.firstName ?? "");
+  const [lastName, setLastName] = useState(user?.lastName ?? "");
+  const [email, setEmail] = useState(user?.email ?? "");
+  const [roleId, setRoleId] = useState(
+    user?.roleId != null ? String(user.roleId) : "",
+  );
+  const [positionId, setPositionId] = useState(
+    user?.positionId != null ? String(user.positionId) : "",
+  );
+  const [titles, setTitles] = useState<UserTitle[]>(user?.titles ?? []);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,15 +51,25 @@ export default function AddUserModal({
   const { toastSuccess } = useToast();
 
   const {
-    roles, positions, rolesLoading, positionsLoading,
-    error: optionsError, addPosition,
+    roles,
+    positions,
+    rolesLoading,
+    positionsLoading,
+    error: optionsError,
+    addPosition,
   } = useFormOptions();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSubmitError(null);
 
-    const validationErrors = validate(firstName, lastName, email, roleId, positionId);
+    const validationErrors = validate(
+      firstName,
+      lastName,
+      email,
+      roleId,
+      positionId,
+    );
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
@@ -53,26 +77,55 @@ export default function AddUserModal({
 
     setIsSubmitting(true);
     try {
-      const createdUser = await usersAPI.createUser({
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        email: email.trim(),
-        roleId: Number(roleId),
-        positionId: Number(positionId),
-        titles: cleanTitles.length > 0 ? cleanTitles : undefined,
-      });
-      onSuccess(createdUser);
-      toastSuccess("User Created", "The account has been created successfully.");
+      let result: ManagedUser;
+
+      if (isEdit) {
+        result = await usersAPI.updateUser(user.id, {
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          email: email.trim(),
+          roleId: Number(roleId),
+          positionId: positionId ? Number(positionId) : null,
+          titles: cleanTitles,
+        });
+        toastSuccess("User Updated", "The user's details have been saved.");
+      } else {
+        result = await usersAPI.createUser({
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          email: email.trim(),
+          roleId: Number(roleId),
+          positionId: Number(positionId),
+          titles: cleanTitles.length > 0 ? cleanTitles : undefined,
+        });
+        toastSuccess(
+          "User Created",
+          "The account has been created successfully.",
+        );
+      }
+
+      onSuccess(result);
       setModalOpen(false);
     } catch (err) {
-      setSubmitError(getErrorMessage(err, "Failed to create user. Please try again."));
+      setSubmitError(
+        getErrorMessage(
+          err,
+          isEdit
+            ? "Failed to update user. Please try again."
+            : "Failed to create user. Please try again.",
+        ),
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Modal setModalOpen={setModalOpen} title="Add User" maxWidth="max-w-lg">
+    <Modal
+      setModalOpen={setModalOpen}
+      title={isEdit ? "Edit User" : "Add User"}
+      maxWidth="max-w-lg"
+    >
       {(submitError || optionsError) && (
         <Alert variant="error" className="mt-4">
           {submitError || optionsError}
@@ -86,7 +139,7 @@ export default function AddUserModal({
             label="First Name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            placeholder="John"
+            placeholder={isEdit ? undefined : "John"}
             error={errors.firstName}
           />
           <Input
@@ -94,7 +147,7 @@ export default function AddUserModal({
             label="Last Name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            placeholder="Doe"
+            placeholder={isEdit ? undefined : "Doe"}
             error={errors.lastName}
           />
         </div>
@@ -105,7 +158,7 @@ export default function AddUserModal({
           label="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="john.doe@company.com"
+          placeholder={isEdit ? undefined : "john.doe@company.com"}
           error={errors.email}
         />
 
@@ -137,7 +190,10 @@ export default function AddUserModal({
               )}
             </div>
             <Dropdown
-              options={positions.map((p) => ({ label: p.name, value: String(p.id) }))}
+              options={positions.map((p) => ({
+                label: p.name,
+                value: String(p.id),
+              }))}
               value={positionId}
               onChange={setPositionId}
               placeholder="Select a position"
@@ -159,40 +215,7 @@ export default function AddUserModal({
           />
         )}
 
-        <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label className="text-sm font-medium text-primary">
-              Titles
-              <span className="ml-1 text-xs text-gray-400">(optional)</span>
-            </label>
-            <button
-              type="button"
-              onClick={() => setTitles((prev) => [...prev, { prefix: true, title: "" }])}
-              className="flex items-center gap-1 text-xs font-medium text-accent hover:text-accent-hover transition-colors"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              Add Title
-            </button>
-          </div>
-          {titles.length === 0 ? (
-            <p className="text-xs text-gray-400">No titles added.</p>
-          ) : (
-            <div className="space-y-2">
-              {titles.map((title, index) => (
-                <TitleEntry
-                  key={index}
-                  title={title}
-                  onUpdate={(updated) =>
-                    setTitles((prev) => prev.map((t, i) => (i === index ? updated : t)))
-                  }
-                  onRemove={() =>
-                    setTitles((prev) => prev.filter((_, i) => i !== index))
-                  }
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        <TitlesEditor titles={titles} onChange={setTitles} />
 
         <div className="flex justify-end gap-3 pt-2">
           <Button
@@ -203,7 +226,13 @@ export default function AddUserModal({
             Cancel
           </Button>
           <Button type="submit" isLoading={isSubmitting}>
-            {isSubmitting ? "Creating..." : "Create User"}
+            {isSubmitting
+              ? isEdit
+                ? "Saving..."
+                : "Creating..."
+              : isEdit
+                ? "Save Changes"
+                : "Create User"}
           </Button>
         </div>
       </form>

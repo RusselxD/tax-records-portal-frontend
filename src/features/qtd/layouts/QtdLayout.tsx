@@ -1,5 +1,5 @@
-import { Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, ListTodo, Bell, UserCheck } from "lucide-react";
+import { Outlet, useLocation, NavLink } from "react-router-dom";
+import { LayoutDashboard, Users, ListTodo, Bell, UserCheck, HelpCircle } from "lucide-react";
 import MainLayout from "../../../components/layout/MainLayout";
 import type { NavItem } from "../../../types/navigation";
 
@@ -42,7 +42,24 @@ const pageTitles: Record<string, string> = {
   "/qtd/client-profiles": "Client Profiles",
   "/qtd/tasks": "Task Management",
   "/qtd/notifications": "Notifications",
+  "/qtd/help": "Help & Guides",
 };
+
+const HelpLink = () => (
+  <NavLink
+    to="/qtd/help"
+    className={({ isActive }) =>
+      `flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+        isActive
+          ? "bg-accent text-primary"
+          : "text-white/70 hover:bg-white/10 hover:text-white"
+      }`
+    }
+  >
+    <HelpCircle className="w-4 h-4" />
+    <span>Help & Guides</span>
+  </NavLink>
+);
 
 export default function QtdLayout() {
   const location = useLocation();
@@ -52,6 +69,7 @@ export default function QtdLayout() {
     <MainLayout
       navItems={qtdNavItems}
       pageTitle={pageTitle}
+      sidebarBottomAction={<HelpLink />}
     >
       <Outlet />
     </MainLayout>

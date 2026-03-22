@@ -23,11 +23,11 @@ export default function ClientDashboard() {
         <OutstandingBilling />
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="lg:w-3/5">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="lg:col-span-3">
           <RecentTaxDocuments />
         </div>
-        <div className="lg:w-2/5">
+        <div className="lg:col-span-2">
           <Highlights highlights={highlights} isLoading={noticesLoading} />
         </div>
       </div>

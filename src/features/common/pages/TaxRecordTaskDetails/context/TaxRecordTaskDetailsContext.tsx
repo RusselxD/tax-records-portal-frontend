@@ -10,7 +10,8 @@ import {
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { hasPermission, Permission } from "../../../../../constants/permissions";
 import { taxRecordTaskAPI } from "../../../../../api/tax-record-task";
-import { isNotFoundError } from "../../../../../lib/api-error";
+import { isNotFoundError, isConflictError, getErrorMessage } from "../../../../../lib/api-error";
+import { useToast } from "../../../../../contexts/ToastContext";
 import {
   TAX_RECORD_TASK_STATUS,
   type TaxRecordTaskDetailResponse,
@@ -68,6 +69,7 @@ export function TaxRecordTaskDetailsProvider({
   children: ReactNode;
 }) {
   const { user } = useAuth();
+  const { toastError } = useToast();
 
   const [task, setTask] = useState<TaxRecordTaskDetailResponse | null>(null);
   const [files, setFiles] = useState<TaxRecordTaskFilesResponse | null>(null);
@@ -79,13 +81,25 @@ export function TaxRecordTaskDetailsProvider({
 
   const refetch = useCallback(() => setVersion((v) => v + 1), []);
 
+  /** On 409 conflict: show toast, full refetch, then re-throw so caller UI resets */
+  const handleConflict = useCallback(
+    (err: unknown) => {
+      if (isConflictError(err)) {
+        toastError("Conflict", getErrorMessage(err));
+        refetch();
+      }
+      throw err;
+    },
+    [toastError, refetch],
+  );
+
   // Refetch only files (no loading spinner, no full page refresh)
   const refetchFiles = useCallback(async () => {
     try {
       const filesData = await taxRecordTaskAPI.getTaskFiles(taskId);
       setFiles(filesData);
-    } catch {
-      // silently fail — files section will stay stale
+    } catch (err) {
+      console.error("Failed to refetch files:", err);
     }
   }, [taskId]);
 
@@ -94,8 +108,8 @@ export function TaxRecordTaskDetailsProvider({
     try {
       const logsData = await taxRecordTaskAPI.getTaskLogs(taskId);
       setLogs(logsData);
-    } catch {
-      // silently fail
+    } catch (err) {
+      console.error("Failed to refetch logs:", err);
     }
   }, [taskId]);
 
@@ -165,100 +179,100 @@ export function TaxRecordTaskDetailsProvider({
   // Working file actions — only refetch files
   const uploadWorkingFile = useCallback(
     async (file: File) => {
-      await taxRecordTaskAPI.uploadWorkingFile(taskId, file);
+      await taxRecordTaskAPI.uploadWorkingFile(taskId, file).catch(handleConflict);
       await refetchFiles();
     },
-    [taskId, refetchFiles],
+    [taskId, refetchFiles, handleConflict],
   );
 
   const addWorkingLink = useCallback(
     async (url: string, label: string) => {
-      await taxRecordTaskAPI.addWorkingLink(taskId, url, label);
+      await taxRecordTaskAPI.addWorkingLink(taskId, url, label).catch(handleConflict);
       await refetchFiles();
     },
-    [taskId, refetchFiles],
+    [taskId, refetchFiles, handleConflict],
   );
 
   const deleteWorkingFile = useCallback(
     async (workingFileId: string) => {
-      await taxRecordTaskAPI.deleteWorkingFile(taskId, workingFileId);
+      await taxRecordTaskAPI.deleteWorkingFile(taskId, workingFileId).catch(handleConflict);
       await refetchFiles();
     },
-    [taskId, refetchFiles],
+    [taskId, refetchFiles, handleConflict],
   );
 
   // Single file actions — only refetch files
   const uploadOutputFile = useCallback(
     async (file: File) => {
-      await taxRecordTaskAPI.uploadOutputFile(taskId, file);
+      await taxRecordTaskAPI.uploadOutputFile(taskId, file).catch(handleConflict);
       await refetchFiles();
     },
-    [taskId, refetchFiles],
+    [taskId, refetchFiles, handleConflict],
   );
 
   const deleteOutputFile = useCallback(async () => {
-    await taxRecordTaskAPI.deleteOutputFile(taskId);
+    await taxRecordTaskAPI.deleteOutputFile(taskId).catch(handleConflict);
     await refetchFiles();
-  }, [taskId, refetchFiles]);
+  }, [taskId, refetchFiles, handleConflict]);
 
   const uploadProofOfFiling = useCallback(
     async (file: File) => {
-      await taxRecordTaskAPI.uploadProofOfFiling(taskId, file);
+      await taxRecordTaskAPI.uploadProofOfFiling(taskId, file).catch(handleConflict);
       await refetchFiles();
     },
-    [taskId, refetchFiles],
+    [taskId, refetchFiles, handleConflict],
   );
 
   const deleteProofOfFiling = useCallback(async () => {
-    await taxRecordTaskAPI.deleteProofOfFiling(taskId);
+    await taxRecordTaskAPI.deleteProofOfFiling(taskId).catch(handleConflict);
     await refetchFiles();
-  }, [taskId, refetchFiles]);
+  }, [taskId, refetchFiles, handleConflict]);
 
   // Workflow actions — full refetch (status changes, logs update)
   const submitTask = useCallback(
     async (comment: string) => {
-      await taxRecordTaskAPI.submitTask(taskId, comment);
+      await taxRecordTaskAPI.submitTask(taskId, comment).catch(handleConflict);
       updateStatus("SUBMITTED");
       refetchLogs();
     },
-    [taskId, updateStatus, refetchLogs],
+    [taskId, updateStatus, refetchLogs, handleConflict],
   );
 
   const approveTask = useCallback(
     async (comment: string) => {
-      await taxRecordTaskAPI.approveTask(taskId, comment);
+      await taxRecordTaskAPI.approveTask(taskId, comment).catch(handleConflict);
       updateStatus("APPROVED_FOR_FILING");
       refetchLogs();
     },
-    [taskId, updateStatus, refetchLogs],
+    [taskId, updateStatus, refetchLogs, handleConflict],
   );
 
   const rejectTask = useCallback(
     async (comment: string) => {
-      await taxRecordTaskAPI.rejectTask(taskId, comment);
+      await taxRecordTaskAPI.rejectTask(taskId, comment).catch(handleConflict);
       updateStatus("REJECTED");
       refetchLogs();
     },
-    [taskId, updateStatus, refetchLogs],
+    [taskId, updateStatus, refetchLogs, handleConflict],
   );
 
   const markFiled = useCallback(async () => {
-    await taxRecordTaskAPI.markFiled(taskId);
+    await taxRecordTaskAPI.markFiled(taskId).catch(handleConflict);
     updateStatus("FILED");
     refetchLogs();
-  }, [taskId, updateStatus, refetchLogs]);
+  }, [taskId, updateStatus, refetchLogs, handleConflict]);
 
   const markCompleted = useCallback(async () => {
-    await taxRecordTaskAPI.markCompleted(taskId);
+    await taxRecordTaskAPI.markCompleted(taskId).catch(handleConflict);
     updateStatus("COMPLETED");
     refetchLogs();
-  }, [taskId, updateStatus, refetchLogs]);
+  }, [taskId, updateStatus, refetchLogs, handleConflict]);
 
   const recallTask = useCallback(async () => {
-    await taxRecordTaskAPI.recallTask(taskId);
+    await taxRecordTaskAPI.recallTask(taskId).catch(handleConflict);
     updateStatus("OPEN");
     refetchLogs();
-  }, [taskId, updateStatus, refetchLogs]);
+  }, [taskId, updateStatus, refetchLogs, handleConflict]);
 
   const value = useMemo(
     () => ({

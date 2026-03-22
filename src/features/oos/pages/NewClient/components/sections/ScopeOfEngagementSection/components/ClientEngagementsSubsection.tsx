@@ -1,3 +1,4 @@
+import { uid } from "../../../../../../../../lib/uid";
 import { Plus, Trash2 } from "lucide-react";
 import { Input, Button, Dropdown } from "../../../../../../../../components/common";
 import type {
@@ -36,7 +37,7 @@ export default function ClientEngagementsSubsection({
     onUpdate({
       registeredBooks: [
         ...data.registeredBooks,
-        { bookName: null, notes: null },
+        { _uid: uid(), bookName: null, notes: null },
       ],
     });
 
@@ -92,7 +93,7 @@ export default function ClientEngagementsSubsection({
           </h4>
           <div className="space-y-3">
             {data.registeredBooks.map((book, index) => (
-              <div key={index} className="flex items-end gap-3">
+              <div key={book._uid ?? index} className="flex items-end gap-3">
                 <div className="grid flex-1 grid-cols-2 gap-4">
                   <Input
                     label="Book Name"

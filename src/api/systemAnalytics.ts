@@ -5,6 +5,7 @@ import type {
   TaskApprovalRateData,
   AccountantWorkloadItem,
   TasksByCategorySystemItem,
+  AccountantOverviewItem,
 } from "../types/analytics";
 
 export const systemAnalyticsAPI = {
@@ -35,5 +36,10 @@ export const systemAnalyticsAPI = {
   getTasksByCategory: async (): Promise<TasksByCategorySystemItem[]> => {
     const res = await apiClient.get("/analytics/tasks-by-category");
     return res.data as TasksByCategorySystemItem[];
+  },
+
+  getAccountantOverview: async (): Promise<AccountantOverviewItem[]> => {
+    const res = await apiClient.get("/analytics/accountant-overview");
+    return res.data as AccountantOverviewItem[];
   },
 };

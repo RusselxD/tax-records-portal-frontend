@@ -12,6 +12,7 @@ import TaxRecordTaskDetails from "../features/common/pages/TaxRecordTaskDetails"
 import UserProfile from "../features/common/pages/UserProfile";
 import ClientProfiles from "../features/common/pages/ClientProfiles";
 import ProfileUpdateReview from "../features/common/pages/ProfileUpdateReview";
+import Help from "../features/common/pages/Help";
 
 export const qtdRoutes: RouteObject = {
   element: <RoleGuard allowedRoles={[UserRole.QTD]} />,
@@ -63,6 +64,10 @@ export const qtdRoutes: RouteObject = {
         {
           path: "profile",
           element: <UserProfile />,
+        },
+        {
+          path: "help",
+          element: <Help />,
         },
       ],
     },

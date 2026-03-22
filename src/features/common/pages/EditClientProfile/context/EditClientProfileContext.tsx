@@ -21,6 +21,7 @@ import {
   type ClientInfoSections,
   type InfoSectionKey,
 } from "../../../../../types/client-info";
+import { hydrateSectionUids } from "../../../../../lib/hydrate-sections";
 
 export { SECTIONS };
 
@@ -122,12 +123,14 @@ export function EditClientProfileProvider({
       });
 
       try {
-        const data = await clientAPI.getClientInfoSection(clientId, key);
+        const raw = await clientAPI.getClientInfoSection(clientId, key);
+        const data = hydrateSectionUids(key, raw);
         setSections((prev) => ({ ...prev, [key]: data }));
         setSectionLoadStatus((prev) => ({ ...prev, [key]: "loaded" }));
-      } catch {
+      } catch (err) {
         loadingRef.current.delete(key);
         setSectionLoadStatus((prev) => ({ ...prev, [key]: "error" }));
+        console.error(`Failed to load section "${key}":`, err);
       }
     },
     [clientId],
@@ -157,10 +160,13 @@ export function EditClientProfileProvider({
     });
   }, []);
 
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
   const scrollToSection = useCallback(
     (key: InfoSectionKey) => {
       setExpandedSections((prev) => new Set([...prev, key]));
-      setTimeout(() => {
+      clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = setTimeout(() => {
         const el = sectionRefs[key]?.current;
         if (el) {
           const top = el.getBoundingClientRect().top + window.scrollY - 24;
@@ -170,6 +176,8 @@ export function EditClientProfileProvider({
     },
     [sectionRefs],
   );
+
+  useEffect(() => () => clearTimeout(scrollTimerRef.current), []);
 
   const sectionsRef = useRef(sections);
   sectionsRef.current = sections;

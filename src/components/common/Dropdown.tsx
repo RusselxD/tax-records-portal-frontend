@@ -16,6 +16,7 @@ export interface DropdownProps {
   error?: string;
   fullWidth?: boolean;
   size?: "sm" | "md";
+  className?: string;
 }
 
 const FilterTrigger = ({
@@ -89,6 +90,7 @@ export default function Dropdown({
   error,
   fullWidth = false,
   size = "md",
+  className,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -161,7 +163,7 @@ export default function Dropdown({
         )}
         <div
           ref={menuRef}
-          className="absolute left-0 mt-1 w-full min-w-[140px] overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg z-20 transition-all duration-200"
+          className={`absolute left-0 mt-1 w-full min-w-[140px] overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg z-20 transition-all duration-200 ${className ?? ""}`}
           style={{
             maxHeight: isOpen ? Math.min(menuHeight, 200) : 0,
             opacity: isOpen ? 1 : 0,

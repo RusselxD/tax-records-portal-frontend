@@ -9,12 +9,17 @@ export interface UserTitle {
 
 export interface ManagedUser {
   id: string;
+  firstName: string;
+  lastName: string;
   name: string;
   email: string;
-  roleName: UserRoleType;
+  roleName: string;
+  roleId: number;
   position: string;
+  positionId: number | null;
   profileUrl: string;
   status: UserStatus;
+  titles: UserTitle[];
 }
 
 export interface CreateUserRequest {
@@ -23,6 +28,15 @@ export interface CreateUserRequest {
   email: string;
   roleId: number;
   positionId: number;
+  titles?: UserTitle[];
+}
+
+export interface UpdateUserRequest {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  roleId?: number;
+  positionId?: number | null;
   titles?: UserTitle[];
 }
 

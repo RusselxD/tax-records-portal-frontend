@@ -9,7 +9,7 @@ const usePageTitle = (title: string) => {
     return () => {
       document.title = DEFAULT_TITLE; // Reset to default title on unmount
     };
-  }, []);
+  }, [title]);
 };
 
 export default usePageTitle;

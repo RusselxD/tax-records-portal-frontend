@@ -15,6 +15,7 @@ import UserProfile from "../features/common/pages/UserProfile";
 import AccountantAnalytics from "../features/common/pages/AccountantAnalytics";
 import EditClientProfile from "../features/common/pages/EditClientProfile";
 import ProfileUpdateReview from "../features/common/pages/ProfileUpdateReview";
+import Help from "../features/common/pages/Help";
 
 export const oosRoutes: RouteObject = {
   element: <RoleGuard allowedRoles={[UserRole.OOS]} />,
@@ -86,6 +87,10 @@ export const oosRoutes: RouteObject = {
         {
           path: "profile",
           element: <UserProfile />,
+        },
+        {
+          path: "help",
+          element: <Help />,
         },
       ],
     },

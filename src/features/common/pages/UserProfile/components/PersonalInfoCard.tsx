@@ -10,7 +10,7 @@ import { getInitials, resolveAssetUrl } from "../../../../../lib/formatters";
 import InfoField from "../../../../../components/common/InfoField";
 import Input from "../../../../../components/common/Input";
 import Button from "../../../../../components/common/Button";
-import TitlesEditor from "./TitlesEditor";
+import TitlesEditor from "../../../../../components/common/TitlesEditor";
 import type { MyProfileResponse, UserTitle } from "../../../../../types/user";
 
 interface EditForm {
@@ -33,10 +33,16 @@ export default function PersonalInfoCard() {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    async function fetchProfile() {
-      try { setProfile(await usersAPI.getMe()); } catch {}
-    }
-    fetchProfile();
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await usersAPI.getMe();
+        if (!cancelled) setProfile(data);
+      } catch {
+        // Profile fetch is best-effort — edit button won't show
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   if (!user) return null;

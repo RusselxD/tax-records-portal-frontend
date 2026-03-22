@@ -1,3 +1,4 @@
+import { uid } from "../../../../../../../lib/uid";
 import { Plus } from "lucide-react";
 import { Input, Button } from "../../../../../../../components/common";
 import type {
@@ -11,6 +12,7 @@ import PendingActionItemsList from "./components/PendingActionItemsList";
 
 function emptyMeeting(): OnboardingMeetingEntry {
   return {
+    _uid: uid(),
     titleOfMeeting: null,
     date: null,
     timeStarted: null,
@@ -22,7 +24,8 @@ function emptyMeeting(): OnboardingMeetingEntry {
 }
 
 function emptyActionItem(): PendingActionItem {
-  return { particulars: null, notes: null };
+  return {
+    _uid: uid(), particulars: null, notes: null };
 }
 
 interface OnboardingDetailsSectionProps {
@@ -121,7 +124,7 @@ export default function OnboardingDetailsSection({
         <div className="space-y-4">
           {data.meetings.map((meeting, index) => (
             <MeetingEntryForm
-              key={index}
+              key={meeting._uid ?? index}
               meeting={meeting}
               index={index}
               onUpdate={updateMeeting}

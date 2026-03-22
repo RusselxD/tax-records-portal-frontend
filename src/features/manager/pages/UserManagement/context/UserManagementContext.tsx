@@ -25,6 +25,7 @@ interface UserManagementContextType {
   setStatusFilter: (value: string) => void;
   setPositionFilter: (value: string) => void;
   addUser: (user: ManagedUser) => void;
+  updateUser: (user: ManagedUser) => void;
   refetch: () => void;
 }
 
@@ -60,6 +61,10 @@ export function UserManagementProvider({ children }: { children: ReactNode }) {
 
   const addUser = useCallback((user: ManagedUser) => {
     setAllUsers((prev) => [user, ...prev]);
+  }, []);
+
+  const updateUser = useCallback((user: ManagedUser) => {
+    setAllUsers((prev) => prev.map((u) => (u.id === user.id ? user : u)));
   }, []);
 
   const positions = useMemo(() => {
@@ -100,6 +105,7 @@ export function UserManagementProvider({ children }: { children: ReactNode }) {
         setStatusFilter,
         setPositionFilter,
         addUser,
+        updateUser,
         refetch: fetchUsers,
       }}
     >

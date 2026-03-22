@@ -1,3 +1,4 @@
+import { uid } from "../../../../../../lib/uid";
 import { Plus, Trash2 } from "lucide-react";
 import { Input, Button } from "../../../../../../components/common";
 import type { AccessCredentialDetails } from "../../../../../../types/client-info";
@@ -9,6 +10,7 @@ interface AccessCredentialsSectionProps {
 
 function emptyCredential(): AccessCredentialDetails {
   return {
+    _uid: uid(),
     platform: null,
     linkToPlatform: null,
     usernameOrEmail: null,
@@ -40,7 +42,7 @@ export default function AccessCredentialsSection({
     <div className="space-y-4">
       {data.map((entry, index) => (
         <div
-          key={index}
+          key={entry._uid ?? index}
           className="rounded-lg border border-gray-200 bg-gray-50/50 p-4"
         >
           <div className="flex items-center justify-between mb-3">

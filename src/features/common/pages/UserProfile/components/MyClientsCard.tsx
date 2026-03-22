@@ -15,7 +15,7 @@ export default function MyClientsCard() {
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
-  const prefix = getRolePrefix(user!.roleKey);
+  const prefix = getRolePrefix(user?.roleKey ?? "");
 
   useEffect(() => {
     const load = async () => {

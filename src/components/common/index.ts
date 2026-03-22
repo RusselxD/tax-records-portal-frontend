@@ -39,4 +39,6 @@ export type { ModalProps } from "./Modal";
 
 export { default as Pagination } from "./Pagination";
 
+export { default as TitlesEditor } from "./TitlesEditor";
+
 export { default as UserAvatar } from "./UserAvatar";

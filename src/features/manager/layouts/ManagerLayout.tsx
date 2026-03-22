@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -7,6 +7,7 @@ import {
   ClipboardList,
   UserCheck,
   Bell,
+  HelpCircle,
 } from "lucide-react";
 import MainLayout from "../../../components/layout/MainLayout";
 import type { NavItem } from "../../../types/navigation";
@@ -64,14 +65,35 @@ const pageTitles: Record<string, string> = {
   "/manager/client-profiles": "Client Profiles",
   "/manager/tasks": "Task Overview",
   "/manager/client-template": "Client Info Template",
+  "/manager/help": "Help & Guides",
 };
+
+const HelpLink = () => (
+  <NavLink
+    to="/manager/help"
+    className={({ isActive }) =>
+      `flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+        isActive
+          ? "bg-accent text-primary"
+          : "text-white/70 hover:bg-white/10 hover:text-white"
+      }`
+    }
+  >
+    <HelpCircle className="w-4 h-4" />
+    <span>Help & Guides</span>
+  </NavLink>
+);
 
 export default function ManagerLayout() {
   const location = useLocation();
   const pageTitle = pageTitles[location.pathname] || "";
 
   return (
-    <MainLayout navItems={managerNavItems} pageTitle={pageTitle}>
+    <MainLayout
+      navItems={managerNavItems}
+      pageTitle={pageTitle}
+      sidebarBottomAction={<HelpLink />}
+    >
       <Outlet />
     </MainLayout>
   );

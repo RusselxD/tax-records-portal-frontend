@@ -7,6 +7,8 @@ import { fileAPI } from "../../api/file";
 
 const PdfPreview = lazy(() => import("./previews/PdfPreview"));
 const DocPreview = lazy(() => import("./previews/DocPreview"));
+const SpreadsheetPreview = lazy(() => import("./previews/SpreadsheetPreview"));
+const ImagePreview = lazy(() => import("./previews/ImagePreview"));
 
 export interface FilePreviewOverlayProps {
   fileId: string;
@@ -14,14 +16,25 @@ export interface FilePreviewOverlayProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-type FileType = "pdf" | "word" | "excel" | "unsupported";
+type FileType = "pdf" | "word" | "excel" | "image" | "csv" | "unsupported";
 
 const EXTENSION_MAP: Record<string, FileType> = {
+  // Documents
   pdf: "pdf",
   doc: "word",
   docx: "word",
+  // Spreadsheets
   xls: "excel",
   xlsx: "excel",
+  csv: "csv",
+  // Images
+  jpg: "image",
+  jpeg: "image",
+  png: "image",
+  gif: "image",
+  webp: "image",
+  bmp: "image",
+  svg: "image",
 };
 
 function getFileType(fileName: string): FileType {
@@ -97,7 +110,6 @@ export default function FilePreviewOverlay({
     (e: React.MouseEvent) => {
       const target = mouseDownTarget.current as HTMLElement | null;
       if (!target) return;
-      // Only close if both mousedown and click landed outside content and header
       if (
         target === e.target &&
         !target.closest("[data-preview-content]") &&
@@ -132,7 +144,7 @@ export default function FilePreviewOverlay({
       return (
         <div className="flex items-center justify-center flex-1 p-4">
           <Alert variant="warning">
-            Preview is not supported for this file type.
+            Preview is not supported for this file type. Use the download button to view it.
           </Alert>
         </div>
       );
@@ -146,9 +158,26 @@ export default function FilePreviewOverlay({
       );
     }
 
+    if (fileType === "image") {
+      return (
+        <Suspense fallback={<LoadingFallback />}>
+          <ImagePreview fileUrl={fileUrl} fileName={fileName} />
+        </Suspense>
+      );
+    }
+
+    if (fileType === "excel" || fileType === "csv") {
+      return (
+        <Suspense fallback={<LoadingFallback />}>
+          <SpreadsheetPreview fileUrl={fileUrl} />
+        </Suspense>
+      );
+    }
+
+    // Word docs
     return (
       <Suspense fallback={<LoadingFallback />}>
-        <DocPreview fileUrl={fileUrl} fileType={fileType} />
+        <DocPreview fileUrl={fileUrl} />
       </Suspense>
     );
   };

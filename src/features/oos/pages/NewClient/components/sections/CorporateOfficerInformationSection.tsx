@@ -1,3 +1,4 @@
+import { uid } from "../../../../../../lib/uid";
 import { Plus, Trash2 } from "lucide-react";
 import { Input, Button } from "../../../../../../components/common";
 import type {
@@ -15,6 +16,7 @@ interface CorporateOfficerInformationSectionProps {
 
 function emptyOfficer(): CorporateOfficerDetails {
   return {
+    _uid: uid(),
     name: null,
     birthday: null,
     address: null,
@@ -49,7 +51,7 @@ function OfficersList({
     <div className="space-y-4">
       {officers.map((entry, index) => (
         <div
-          key={index}
+          key={entry._uid ?? index}
           className="rounded-lg border border-gray-200 bg-gray-50/50 p-4"
         >
           <div className="flex items-center justify-between mb-3">

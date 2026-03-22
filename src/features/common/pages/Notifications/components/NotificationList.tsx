@@ -51,7 +51,7 @@ function NotificationItem({
     if (!notification.isRead) {
       onRead(notification.id);
       decrementUnread();
-      notificationAPI.markNotificationAsRead(notification.id);
+      notificationAPI.markNotificationAsRead(notification.id).catch(() => {});
     }
     if (user) {
       const href = getNotificationHref(notification, user.roleKey);

@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { AuthGuard } from "./guards";
 import RoleRedirect from "./pages/RoleRedirect";
 import NotFound from "./pages/NotFound";
+import ErrorPage from "./pages/ErrorPage";
 import {
   authRoutes,
   managerRoutes,
@@ -13,10 +14,11 @@ import {
 
 export const router = createBrowserRouter([
   // Auth routes (public)
-  authRoutes,
+  { ...authRoutes, errorElement: <ErrorPage /> },
   // All other routes require authentication
   {
     element: <AuthGuard />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "/",

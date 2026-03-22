@@ -1,5 +1,5 @@
-import { Search } from "lucide-react";
 import Dropdown from "../../../../../components/common/Dropdown";
+import SearchInput from "../../../../../components/common/SearchInput";
 import { useClientProfiles } from "../context/ClientProfilesContext";
 
 const typeOptions = [
@@ -22,16 +22,11 @@ export default function ClientProfilesFilters() {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className="relative w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search by client or submitter..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-md border border-gray-300 bg-white pl-9 pr-4 py-2.5 text-sm text-primary placeholder-gray-400 transition-colors focus:outline-none focus:ring-1 focus:border-primary/40 focus:ring-primary/20"
-          />
-        </div>
+        <SearchInput
+          placeholder="Search by client or submitter..."
+          value={search}
+          onChange={setSearch}
+        />
         <Dropdown
           options={typeOptions}
           value={typeFilter}

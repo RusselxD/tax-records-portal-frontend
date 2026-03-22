@@ -174,7 +174,7 @@ export default function BirDetailsSubsection({
       {/* Additional Branches */}
       {branches.map((entry, index) => (
         <div
-          key={index}
+          key={entry._uid ?? index}
           className="rounded-lg border border-gray-200 bg-gray-50/50 p-4"
         >
           <div className="flex items-center justify-between mb-4">

@@ -48,7 +48,9 @@ export default function CreateNotice({ clientId }: CreateNoticeProps) {
     let cancelled = false;
     clientAPI.getNotices(clientId).then((data) => {
       if (!cancelled) setNotices(data);
-    }).catch(() => {}).finally(() => {
+    }).catch((err) => {
+      if (!cancelled) toastError(getErrorMessage(err, "Failed to load notices"));
+    }).finally(() => {
       if (!cancelled) setIsLoadingList(false);
     });
     return () => { cancelled = true; };

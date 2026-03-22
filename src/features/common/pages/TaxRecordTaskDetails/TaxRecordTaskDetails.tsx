@@ -18,7 +18,7 @@ import TaskActivityLogs from "./components/TaskActivityLogs";
 function TaxRecordTaskDetailsContent() {
   const { task, isLoading, error, notFound, refetch } = useTaxRecordTaskDetails();
   const { user } = useAuth();
-  const prefix = getRolePrefix(user!.roleKey);
+  const prefix = getRolePrefix(user?.roleKey ?? "");
 
   usePageTitle(task?.taskName ?? "Task Details");
 

@@ -1,3 +1,4 @@
+import { uid } from "../../../../../../lib/uid";
 import { Plus, Trash2 } from "lucide-react";
 import { Input, Button } from "../../../../../../components/common";
 import type { ProfessionalFeeEntry } from "../../../../../../types/client-info";
@@ -8,7 +9,7 @@ interface ProfessionalFeesSectionProps {
 }
 
 function emptyFee(): ProfessionalFeeEntry {
-  return { serviceName: null, fee: null };
+  return { _uid: uid(), serviceName: null, fee: null };
 }
 
 export default function ProfessionalFeesSection({
@@ -31,7 +32,7 @@ export default function ProfessionalFeesSection({
     <div className="space-y-4">
       {data.map((entry, index) => (
         <div
-          key={index}
+          key={entry._uid ?? index}
           className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50/50 p-4"
         >
           <div className="grid flex-1 grid-cols-2 gap-4">

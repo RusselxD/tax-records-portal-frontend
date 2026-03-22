@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { oosClientAPI } from "../../../../../api/client";
 import { fileAPI } from "../../../../../api/file";
 import { useToast } from "../../../../../contexts/ToastContext";
+import { isConflictError, getErrorMessage } from "../../../../../lib/api-error";
 import type {
   ClientInfoSections,
   InfoSectionKey,
@@ -75,18 +76,22 @@ export default function useNewClientActions({
         const id = await ensureClientId();
         await oosClientAPI.updateSection(id, sectionKey, sectionData);
         setSectionSaveStatus((prev) => ({ ...prev, [sectionKey]: "saved" }));
-        setTimeout(() => {
+        const resetTimer = setTimeout(() => {
           setSectionSaveStatus((prev) =>
             prev[sectionKey] === "saved"
               ? { ...prev, [sectionKey]: "idle" }
               : prev,
           );
         }, 3000);
-      } catch {
+        debounceTimers.current[`${sectionKey}_reset`] = resetTimer;
+      } catch (err) {
         setSectionSaveStatus((prev) => ({
           ...prev,
           [sectionKey]: "error",
         }));
+        if (isConflictError(err)) {
+          toastError("Conflict", getErrorMessage(err));
+        }
       }
     },
     [ensureClientId, sectionsRef, setSectionSaveStatus],

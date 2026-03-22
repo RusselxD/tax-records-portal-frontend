@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, ChevronDown, Menu } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
@@ -17,7 +17,7 @@ const NotificationBell = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    const prefix = getRolePrefix(user!.roleKey);
+    const prefix = getRolePrefix(user?.roleKey ?? "");
     navigate(`${prefix}/notifications`);
   };
 
@@ -59,7 +59,6 @@ interface UserMenuDropdownProps {
   subtitle: string;
   profileUrl?: string | null;
   actions: MenuAction[];
-  onClose: () => void;
   onLogout: () => void;
 }
 
@@ -68,11 +67,8 @@ const UserMenuDropdown = ({
   subtitle,
   profileUrl,
   actions,
-  onClose,
   onLogout,
 }: UserMenuDropdownProps) => (
-  <>
-    <div className="fixed inset-0 z-10" onClick={onClose} />
     <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-20">
       {/* Info header */}
       <div className="flex items-center gap-3 px-4 py-3.5 border-b border-gray-100">
@@ -105,19 +101,30 @@ const UserMenuDropdown = ({
         </button>
       </div>
     </div>
-  </>
 );
 
 export default function TopNav({ pageTitle, onMenuClick }: TopNavProps) {
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!showUserMenu) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showUserMenu]);
 
   const isClient = user?.roleKey === UserRole.CLIENT;
   const fullName = user?.name || "User";
   const subtitle = isClient ? "" : (user?.position || user?.role || "");
 
-  const prefix = getRolePrefix(user!.roleKey);
+  const prefix = getRolePrefix(user?.roleKey ?? "");
 
   const menuActions: MenuAction[] = isClient
     ? [
@@ -139,7 +146,7 @@ export default function TopNav({ pageTitle, onMenuClick }: TopNavProps) {
         <div className="flex items-center gap-4">
           {!isClient && <NotificationBell />}
 
-          <div className="relative">
+          <div className="relative" ref={userMenuRef}>
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
               className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -158,7 +165,7 @@ export default function TopNav({ pageTitle, onMenuClick }: TopNavProps) {
                 subtitle={subtitle}
                 profileUrl={user?.profileUrl}
                 actions={menuActions}
-                onClose={() => setShowUserMenu(false)}
+
                 onLogout={logout}
               />
             )}

@@ -2,6 +2,7 @@ import apiClient from "./axios-config";
 import type {
   ManagedUser,
   CreateUserRequest,
+  UpdateUserRequest,
   ActivateAccountResponse,
   SetPasswordRequest,
   AccountantListItemResponse,
@@ -10,6 +11,7 @@ import type {
   UpdateMyProfileRequest,
   UpdateMyProfileResponse,
   AssignedClientsResponse,
+  UserStatus,
 } from "../types/user";
 import type { LoginResponse } from "../types/auth";
 
@@ -19,7 +21,9 @@ export const usersAPI = {
     return res.data as MyProfileResponse;
   },
 
-  updateMe: async (data: UpdateMyProfileRequest): Promise<UpdateMyProfileResponse> => {
+  updateMe: async (
+    data: UpdateMyProfileRequest,
+  ): Promise<UpdateMyProfileResponse> => {
     const res = await apiClient.patch("/users/me", data);
     return res.data as UpdateMyProfileResponse;
   },
@@ -67,6 +71,21 @@ export const usersAPI = {
     return res.data as PositionListItem;
   },
 
+  updateUser: async (
+    userId: string,
+    data: UpdateUserRequest,
+  ): Promise<ManagedUser> => {
+    const res = await apiClient.patch(`/users/${userId}`, data);
+    return res.data as ManagedUser;
+  },
+
+  changeUserStatus: async (
+    userId: string,
+    status: UserStatus,
+  ): Promise<void> => {
+    await apiClient.patch(`/users/${userId}/status`, { status });
+  },
+
   resendActivation: async (
     userId: string,
     data?: { firstName?: string; lastName?: string; email?: string },
@@ -94,8 +113,13 @@ export const usersAPI = {
     await apiClient.post("/users/me/change-password", data);
   },
 
-  getMyClients: async (page = 0, size = 20): Promise<AssignedClientsResponse> => {
-    const res = await apiClient.get("/clients/assigned", { params: { page, size } });
+  getMyClients: async (
+    page = 0,
+    size = 20,
+  ): Promise<AssignedClientsResponse> => {
+    const res = await apiClient.get("/clients/assigned", {
+      params: { page, size },
+    });
     return res.data as AssignedClientsResponse;
   },
 };

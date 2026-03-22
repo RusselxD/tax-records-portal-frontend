@@ -12,6 +12,7 @@ import UserProfile from "../features/common/pages/UserProfile";
 import AccountantAnalytics from "../features/common/pages/AccountantAnalytics";
 import EditClientProfile from "../features/common/pages/EditClientProfile";
 import ProfileUpdateReview from "../features/common/pages/ProfileUpdateReview";
+import Help from "../features/common/pages/Help";
 
 export const csdRoutes: RouteObject = {
   element: <RoleGuard allowedRoles={[UserRole.CSD]} />,
@@ -63,6 +64,10 @@ export const csdRoutes: RouteObject = {
         {
           path: "profile",
           element: <UserProfile />,
+        },
+        {
+          path: "help",
+          element: <Help />,
         },
       ],
     },

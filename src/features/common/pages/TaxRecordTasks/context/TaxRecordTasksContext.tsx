@@ -2,21 +2,18 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect,
   useCallback,
   useMemo,
   type ReactNode,
 } from "react";
-import { getErrorMessage } from "../../../../../lib/api-error";
 import { taxRecordTaskAPI } from "../../../../../api/tax-record-task";
+import usePaginatedFetch from "../../../../../hooks/usePaginatedFetch";
 import type {
   TaxRecordTaskListItem,
   TaxRecordTaskFilters,
   Period,
   TaxRecordTaskStatus,
 } from "../../../../../types/tax-record-task";
-
-const PAGE_SIZE = 20;
 
 interface TaxRecordTasksContextType {
   tasks: TaxRecordTaskListItem[];
@@ -42,13 +39,6 @@ interface TaxRecordTasksContextType {
 const TaxRecordTasksContext = createContext<TaxRecordTasksContextType | null>(null);
 
 export function TaxRecordTasksProvider({ children }: { children: ReactNode }) {
-  const [tasks, setTasks] = useState<TaxRecordTaskListItem[]>([]);
-  const [isFetching, setIsFetching] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [page, setPageState] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
-
   const [search, setSearchState] = useState("");
   const [clientId, setClientId] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -59,8 +49,33 @@ export function TaxRecordTasksProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState("");
   const [accountantId, setAccountantId] = useState("");
 
+  const setSearch = useCallback((v: string) => setSearchState(v), []);
+  const setClientFilter = useCallback((v: string) => setClientId(v), []);
+  const setCategoryFilter = useCallback((v: string) => setCategoryId(v), []);
+  const setSubCategoryFilter = useCallback((v: string) => setSubCategoryId(v), []);
+  const setTaskNameFilter = useCallback((v: string) => setTaskNameId(v), []);
+  const setYearFilter = useCallback((v: string) => setYear(v), []);
+  const setPeriodFilter = useCallback((v: string) => setPeriod(v), []);
+  const setStatusFilter = useCallback((v: string) => setStatus(v), []);
+  const setAccountantFilter = useCallback((v: string) => setAccountantId(v), []);
+
+  const filterParams = useMemo(() => {
+    const f: Record<string, string | number> = {};
+    if (search) f.search = search;
+    if (clientId) f.clientId = clientId;
+    if (categoryId) f.categoryId = Number(categoryId);
+    if (subCategoryId) f.subCategoryId = Number(subCategoryId);
+    if (taskNameId) f.taskNameId = Number(taskNameId);
+    if (year) f.year = Number(year);
+    if (period) f.period = period;
+    if (status) f.status = status;
+    if (accountantId) f.accountantId = accountantId;
+    return f;
+  }, [search, clientId, categoryId, subCategoryId, taskNameId, year, period, status, accountantId]);
+
+  // Expose the typed filters object for the UI (filters display, etc.)
   const filters = useMemo<TaxRecordTaskFilters>(() => {
-    const f: TaxRecordTaskFilters = { page, size: PAGE_SIZE };
+    const f: TaxRecordTaskFilters = { page: 0, size: 20 };
     if (search) f.search = search;
     if (clientId) f.clientId = clientId;
     if (categoryId) f.categoryId = Number(categoryId);
@@ -71,50 +86,29 @@ export function TaxRecordTasksProvider({ children }: { children: ReactNode }) {
     if (status) f.status = status as TaxRecordTaskStatus;
     if (accountantId) f.accountantId = accountantId;
     return f;
-  }, [page, search, clientId, categoryId, subCategoryId, taskNameId, year, period, status, accountantId]);
+  }, [search, clientId, categoryId, subCategoryId, taskNameId, year, period, status, accountantId]);
 
-  const fetchTasks = useCallback(async () => {
-    setIsFetching(true);
-    setError(null);
-    try {
-      const data = await taxRecordTaskAPI.getTasks(filters);
-      setTasks(data.content);
-      setTotalPages(data.totalPages);
-      setTotalElements(data.totalElements);
-    } catch (err) {
-      setError(getErrorMessage(err, "Failed to fetch tasks. Try again."));
-    } finally {
-      setIsFetching(false);
-    }
-  }, [filters]);
+  const fetchFn = useCallback(
+    (p: { page: number; size: number } & Record<string, unknown>) =>
+      taxRecordTaskAPI.getTasks(p as TaxRecordTaskFilters),
+    [],
+  );
 
-  useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
-
-  const setSearch = useCallback((v: string) => { setSearchState(v); setPageState(0); }, []);
-  const setClientFilter = useCallback((v: string) => { setClientId(v); setPageState(0); }, []);
-  const setCategoryFilter = useCallback((v: string) => { setCategoryId(v); setPageState(0); }, []);
-  const setSubCategoryFilter = useCallback((v: string) => { setSubCategoryId(v); setPageState(0); }, []);
-  const setTaskNameFilter = useCallback((v: string) => { setTaskNameId(v); setPageState(0); }, []);
-  const setYearFilter = useCallback((v: string) => { setYear(v); setPageState(0); }, []);
-  const setPeriodFilter = useCallback((v: string) => { setPeriod(v); setPageState(0); }, []);
-  const setStatusFilter = useCallback((v: string) => { setStatus(v); setPageState(0); }, []);
-  const setAccountantFilter = useCallback((v: string) => { setAccountantId(v); setPageState(0); }, []);
-  const setPage = useCallback((p: number) => setPageState(p), []);
+  const { items: tasks, isFetching, error, page, totalPages, totalElements, setPage, refetch } =
+    usePaginatedFetch(fetchFn, filterParams, 20, "Failed to fetch tasks. Try again.");
 
   const value = useMemo(
     () => ({
       tasks, isFetching, error, page, totalPages, totalElements, filters,
       setSearch, setClientFilter, setCategoryFilter, setSubCategoryFilter,
       setTaskNameFilter, setYearFilter, setPeriodFilter, setStatusFilter,
-      setAccountantFilter, setPage, refetch: fetchTasks,
+      setAccountantFilter, setPage, refetch,
     }),
     [
       tasks, isFetching, error, page, totalPages, totalElements, filters,
       setSearch, setClientFilter, setCategoryFilter, setSubCategoryFilter,
       setTaskNameFilter, setYearFilter, setPeriodFilter, setStatusFilter,
-      setAccountantFilter, setPage, fetchTasks,
+      setAccountantFilter, setPage, refetch,
     ],
   );
 

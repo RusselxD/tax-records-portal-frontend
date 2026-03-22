@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 import {
   Users,
   ClipboardList,
@@ -9,6 +9,7 @@ import {
   TrendingUp,
   UserCheck,
 } from "lucide-react";
+import { StatCard, DotList, MetricPill } from "../../../../../components/analytics";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import type { SystemAnalyticsResponse } from "../../../../../types/analytics";
 import { systemAnalyticsAPI } from "../../../../../api/systemAnalytics";
@@ -19,73 +20,6 @@ function StatsSkeleton() {
     <div className="grid grid-cols-4 gap-4">
       {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="skeleton rounded-lg h-28" />
-      ))}
-    </div>
-  );
-}
-
-interface DotItem {
-  label: string;
-  value: number;
-  dot: string;
-}
-
-interface StatCardProps {
-  label: string;
-  valueDisplay: string;
-  subtitle?: ReactNode;
-  icon: ReactNode;
-  iconBg: string;
-  iconColor: string;
-  pill?: { label: string; bg: string; text: string };
-}
-
-function StatCard({
-  label,
-  valueDisplay,
-  subtitle,
-  icon,
-  iconBg,
-  iconColor,
-  pill,
-}: StatCardProps) {
-  return (
-    <div className="bg-white rounded-lg custom-shadow p-5">
-      <div className="flex items-start justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-          {label}
-        </p>
-        <div className={`p-2.5 rounded-full ${iconBg}`}>
-          <div className={iconColor}>{icon}</div>
-        </div>
-      </div>
-      <div className="flex items-baseline gap-2.5 mt-1">
-        <span className="text-3xl font-bold text-primary leading-tight">
-          {valueDisplay}
-        </span>
-        {pill && (
-          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${pill.bg} ${pill.text}`}>
-            {pill.label}
-          </span>
-        )}
-      </div>
-      {subtitle && (
-        <div className="mt-1 text-sm">{subtitle}</div>
-      )}
-    </div>
-  );
-}
-
-function DotList({ items }: { items: DotItem[] }) {
-  return (
-    <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-      {items.map(({ label, value, dot }) => (
-        <div key={label} className="flex items-center gap-1.5">
-          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dot}`} />
-          <span className="text-xs text-gray-400">
-            <span className="font-medium text-gray-600">{formatNum(value)}</span> {label}
-          </span>
-        </div>
       ))}
     </div>
   );
@@ -132,12 +66,13 @@ export default function MainMetrics() {
     ? `${parseFloat(metrics.avgTaskCompletionInDays.toFixed(1))} days`
     : "—";
 
-  const onTimeRate = `${Math.round(metrics.onTimeRate * 100)}%`;
-  const approvalRate = `${Math.round(metrics.firstAttemptApprovalRate * 100)}%`;
+  const onTimeRateVal = metrics.onTimeRate ?? 0;
+  const onTimeRate = metrics.onTimeRate != null ? `${Math.round(onTimeRateVal * 100)}%` : "—";
+  const approvalRateVal = metrics.firstAttemptApprovalRate ?? 0;
+  const approvalRate = metrics.firstAttemptApprovalRate != null ? `${Math.round(approvalRateVal * 100)}%` : "—";
 
   return (
     <div className="grid grid-cols-4 gap-4">
-      {/* Card 1 — Clients */}
       <StatCard
         label="Total Clients"
         valueDisplay={formatNum(metrics.totalClients)}
@@ -152,7 +87,6 @@ export default function MainMetrics() {
         iconColor="text-accent"
       />
 
-      {/* Card 2 — Tasks */}
       <StatCard
         label="Total Tasks"
         valueDisplay={formatNum(metrics.totalTasks)}
@@ -167,7 +101,6 @@ export default function MainMetrics() {
         iconColor="text-blue-600"
       />
 
-      {/* Card 3 — Overdue & Due */}
       <StatCard
         label="Overdue Tasks"
         valueDisplay={formatNum(metrics.totalOverdueTasks)}
@@ -180,7 +113,6 @@ export default function MainMetrics() {
         iconColor="text-status-rejected"
       />
 
-      {/* Card 4 — Profiles */}
       <StatCard
         label="Profiles Pending Review"
         valueDisplay={formatNum(metrics.profilesPendingReview)}
@@ -193,7 +125,6 @@ export default function MainMetrics() {
         iconColor="text-status-pending"
       />
 
-      {/* Card 5 — Monthly Activity */}
       <StatCard
         label="Completed This Month"
         valueDisplay={formatNum(metrics.tasksCompletedThisMonth)}
@@ -206,35 +137,36 @@ export default function MainMetrics() {
         iconColor="text-status-approved"
       />
 
-      {/* Card 6 — Completion Time */}
       <StatCard
         label="Avg Completion Time"
         valueDisplay={avgDays}
         subtitle={
-          <span className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
-            {onTimeRate} on time
-          </span>
+          <MetricPill
+            label={`${onTimeRate} on time`}
+            bg="bg-emerald-100"
+            text="text-emerald-700"
+          />
         }
         icon={<Timer className="w-5 h-5" />}
         iconBg="bg-blue-50"
         iconColor="text-blue-600"
       />
 
-      {/* Card 7 — Quality */}
       <StatCard
         label="First-Attempt Approval"
         valueDisplay={approvalRate}
         subtitle={
-          <span className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full bg-red-50 text-status-rejected">
-            {parseFloat(metrics.avgRejectionCyclesPerTask.toFixed(1))} avg rejections
-          </span>
+          <MetricPill
+            label={`${parseFloat((metrics.avgRejectionCyclesPerTask ?? 0).toFixed(1))} avg rejections`}
+            bg="bg-red-50"
+            text="text-status-rejected"
+          />
         }
         icon={<TrendingUp className="w-5 h-5" />}
         iconBg="bg-emerald-100/70"
         iconColor="text-status-approved"
       />
 
-      {/* Card 8 — Onboarding Pipeline */}
       <StatCard
         label="Activated This Month"
         valueDisplay={formatNum(metrics.clientsActivatedThisMonth)}

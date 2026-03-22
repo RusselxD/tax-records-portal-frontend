@@ -1,3 +1,4 @@
+import { uid } from "../../../../../../../../lib/uid";
 import { Plus, Trash2 } from "lucide-react";
 import { Input, Button } from "../../../../../../../../components/common";
 import type {
@@ -36,6 +37,7 @@ export default function ConsultationHoursSubsection({
         consultations: [
           ...data.consultationHours.consultations,
           {
+            _uid: uid(),
             date: null,
             timeStarted: null,
             timeEnded: null,
@@ -118,7 +120,7 @@ export default function ConsultationHoursSubsection({
 
         {data.consultationHours.consultations.map((entry, index) => (
           <div
-            key={index}
+            key={entry._uid ?? index}
             className="rounded-lg border border-gray-200 bg-gray-50/50 p-4"
           >
             <div className="flex items-center justify-between mb-3">

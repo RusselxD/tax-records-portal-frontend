@@ -7,7 +7,7 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
-import { getErrorMessage, isNotFoundError } from "../../../../../lib/api-error";
+import { getErrorMessage, isNotFoundError, isConflictError } from "../../../../../lib/api-error";
 import { clientAPI } from "../../../../../api/client";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { useAuth } from "../../../../../contexts/AuthContext";
@@ -38,7 +38,7 @@ export function ProfileUpdateReviewProvider({
   children: ReactNode;
 }) {
   const { user } = useAuth();
-  const { toastSuccess } = useToast();
+  const { toastSuccess, toastError } = useToast();
 
   const [review, setReview] = useState<ProfileUpdateReviewResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -79,24 +79,35 @@ export function ProfileUpdateReviewProvider({
 
   const clientId = review?.clientId ?? null;
 
+  const handleConflict = useCallback(
+    (err: unknown) => {
+      if (isConflictError(err)) {
+        toastError("Conflict", getErrorMessage(err));
+        refetch();
+      }
+      throw err;
+    },
+    [toastError, refetch],
+  );
+
   const approveUpdate = useCallback(
     async (comment: string) => {
-      await clientAPI.approveClientInfo(taskId, comment);
+      await clientAPI.approveClientInfo(taskId, comment).catch(handleConflict);
       toastSuccess("Approved", "The profile update has been approved.");
       setLogsVersion((v) => v + 1);
       refetch();
     },
-    [taskId, toastSuccess, refetch],
+    [taskId, toastSuccess, refetch, handleConflict],
   );
 
   const rejectUpdate = useCallback(
     async (comment: string) => {
-      await clientAPI.rejectClientInfo(taskId, comment);
+      await clientAPI.rejectClientInfo(taskId, comment).catch(handleConflict);
       toastSuccess("Rejected", "The profile update has been sent back for revision.");
       setLogsVersion((v) => v + 1);
       refetch();
     },
-    [taskId, toastSuccess, refetch],
+    [taskId, toastSuccess, refetch, handleConflict],
   );
 
   const value = useMemo(

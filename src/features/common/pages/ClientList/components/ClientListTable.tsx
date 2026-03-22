@@ -31,7 +31,7 @@ function ClientRow({
 }) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const prefix = getRolePrefix(user!.roleKey);
+  const prefix = getRolePrefix(user?.roleKey ?? "");
 
   return (
     <tr

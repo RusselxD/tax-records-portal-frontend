@@ -64,7 +64,7 @@ const Chart = ({ data }: { data: MonthlyThroughputItem[] }) => (
 const Skeleton = () => <div className="skeleton h-[280px] rounded-lg" />;
 
 
-export default function MonthlyThroughputChart() {
+export default function MonthlyThroughputChart({ userId }: { userId?: string }) {
   const [months, setMonths] = useState("6");
   const [data, setData] = useState<MonthlyThroughputItem[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -80,7 +80,9 @@ export default function MonthlyThroughputChart() {
     setLoading(true);
     setError(null);
     try {
-      const res = await accountantAnalyticsAPI.getMonthlyThroughput(+m);
+      const res = userId
+        ? await accountantAnalyticsAPI.getUserMonthlyThroughput(userId, +m)
+        : await accountantAnalyticsAPI.getMonthlyThroughput(+m);
       if (mountedRef.current) setData(res.data);
     } catch (err) {
       if (mountedRef.current)

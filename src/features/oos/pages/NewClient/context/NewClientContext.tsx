@@ -25,6 +25,7 @@ import {
   deriveGlobalStatus,
   type NewClientContextType,
 } from "./new-client-helpers";
+import { hydrateSectionUids } from "../../../../../lib/hydrate-sections";
 import useNewClientActions from "./useNewClientActions";
 
 export { SECTIONS } from "./new-client-helpers";
@@ -108,7 +109,8 @@ export function NewClientProvider({
       });
 
       try {
-        const data = await clientAPI.getClientInfoSection(editClientId, sectionKey);
+        const raw = await clientAPI.getClientInfoSection(editClientId, sectionKey);
+        const data = hydrateSectionUids(sectionKey, raw);
         setSections((prev) => ({ ...prev, [sectionKey]: data }));
         setSectionLoadStatus((prev) => ({ ...prev, [sectionKey]: "loaded" }));
       } catch {
@@ -143,13 +145,13 @@ export function NewClientProvider({
 
           setHeader(data);
           setSections({
-            mainDetails: data.mainDetails,
-            clientInformation: data.clientInformation,
-            corporateOfficerInformation: data.corporateOfficerInformation,
-            accessCredentials: data.accessCredentials,
-            scopeOfEngagement: data.scopeOfEngagement,
-            professionalFees: data.professionalFees,
-            onboardingDetails: data.onboardingDetails,
+            mainDetails: hydrateSectionUids("mainDetails", data.mainDetails),
+            clientInformation: hydrateSectionUids("clientInformation", data.clientInformation),
+            corporateOfficerInformation: hydrateSectionUids("corporateOfficerInformation", data.corporateOfficerInformation),
+            accessCredentials: hydrateSectionUids("accessCredentials", data.accessCredentials),
+            scopeOfEngagement: hydrateSectionUids("scopeOfEngagement", data.scopeOfEngagement),
+            professionalFees: hydrateSectionUids("professionalFees", data.professionalFees),
+            onboardingDetails: hydrateSectionUids("onboardingDetails", data.onboardingDetails),
           });
           setSectionLoadStatus({
             mainDetails: "loaded",
@@ -203,10 +205,13 @@ export function NewClientProvider({
     });
   }, []);
 
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
   const scrollToSection = useCallback(
     (sectionKey: InfoSectionKey) => {
       setExpandedSections((prev) => new Set([...prev, sectionKey]));
-      setTimeout(() => {
+      clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = setTimeout(() => {
         const element = sectionRefs[sectionKey]?.current;
         if (element) {
           const top =
@@ -218,6 +223,8 @@ export function NewClientProvider({
     [sectionRefs],
   );
 
+  useEffect(() => () => clearTimeout(scrollTimerRef.current), []);
+
   const updateHeaderAccountants = useCallback(
     (fields: Parameters<NewClientContextType["updateHeaderAccountants"]>[0]) => {
       setHeader((prev) => (prev ? { ...prev, ...fields } : prev));
@@ -225,33 +232,39 @@ export function NewClientProvider({
     [],
   );
 
+  const value = useMemo(() => ({
+    header,
+    sections,
+    isLoading,
+    fetchError,
+    clientId,
+    isEditMode,
+    sectionSaveStatus,
+    globalSaveStatus,
+    expandedSections,
+    sectionRefs,
+    sectionLoadStatus,
+    loadSection,
+    updateSection,
+    toggleSection,
+    scrollToSection,
+    submitForReview,
+    discardDraft,
+    retrySection,
+    uploadFile,
+    updateHeaderAccountants,
+    isSubmitting,
+    isDiscarding,
+  }), [
+    header, sections, isLoading, fetchError, clientId, isEditMode,
+    sectionSaveStatus, globalSaveStatus, expandedSections, sectionRefs,
+    sectionLoadStatus, loadSection, updateSection, toggleSection,
+    scrollToSection, submitForReview, discardDraft, retrySection,
+    uploadFile, updateHeaderAccountants, isSubmitting, isDiscarding,
+  ]);
+
   return (
-    <NewClientContext.Provider
-      value={{
-        header,
-        sections,
-        isLoading,
-        fetchError,
-        clientId,
-        isEditMode,
-        sectionSaveStatus,
-        globalSaveStatus,
-        expandedSections,
-        sectionRefs,
-        sectionLoadStatus,
-        loadSection,
-        updateSection,
-        toggleSection,
-        scrollToSection,
-        submitForReview,
-        discardDraft,
-        retrySection,
-        uploadFile,
-        updateHeaderAccountants,
-        isSubmitting,
-        isDiscarding,
-      }}
-    >
+    <NewClientContext.Provider value={value}>
       {children}
     </NewClientContext.Provider>
   );

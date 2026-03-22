@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
 import { clientAPI } from "../../api/client";
@@ -28,24 +28,27 @@ export default function ClientSummaryCard({
   const [client, setClient] = useState<ClientSummaryResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchClient = useCallback(async () => {
-    if (!clientId) return;
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await clientAPI.getClientSummary(clientId);
-      setClient(data);
-    } catch {
-      setError("Failed to load client details.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [clientId]);
+  const [version, setVersion] = useState(0);
 
   useEffect(() => {
-    fetchClient();
-  }, [fetchClient]);
+    if (!clientId) return;
+    let cancelled = false;
+    setIsLoading(true);
+    setError(null);
+
+    (async () => {
+      try {
+        const data = await clientAPI.getClientSummary(clientId);
+        if (!cancelled) setClient(data);
+      } catch {
+        if (!cancelled) setError("Failed to load client details.");
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [clientId, version]);
 
   if (!clientId || isLoading) return <ClientSummarySkeleton />;
 
@@ -54,7 +57,7 @@ export default function ClientSummaryCard({
       <div className="rounded-lg bg-white border border-gray-200 p-5 text-center">
         <p className="text-xs text-status-rejected mb-2">{error}</p>
         <button
-          onClick={fetchClient}
+          onClick={() => setVersion((v) => v + 1)}
           className="text-sm text-accent hover:text-accent-hover font-medium"
         >
           Try again

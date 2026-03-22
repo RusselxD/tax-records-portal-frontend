@@ -160,13 +160,13 @@ function ProfileUpdateReviewContent() {
           )}
 
           {/* Changed sections */}
-          {review.changes.length === 0 ? (
+          {review.sections.length === 0 ? (
             <div className="rounded-lg bg-white border border-gray-200 p-8 text-center" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }}>
               <p className="text-sm text-gray-400">No differences found.</p>
             </div>
           ) : (
-            review.changes.map((change) => (
-              <SectionDiffCard key={change.sectionKey} change={change} />
+            review.sections.map((section) => (
+              <SectionDiffCard key={section.sectionKey} section={section} />
             ))
           )}
 

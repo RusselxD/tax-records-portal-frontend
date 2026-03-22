@@ -68,20 +68,22 @@ const TableRow = ({
   </tr>
 );
 
-export default function ClientPortfolioTable() {
+export default function ClientPortfolioTable({ userId }: { userId?: string }) {
   const { user } = useAuth();
   const [result, setResult] = useState<ClientPortfolioResponse | null>(null);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const rolePrefix = getRolePrefix(user!.roleKey);
+  const rolePrefix = getRolePrefix(user?.roleKey ?? "");
 
   const fetchPage = useCallback(async (p: number) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await accountantAnalyticsAPI.getClientPortfolio(p, PAGE_SIZE);
+      const data = userId
+        ? await accountantAnalyticsAPI.getUserClientPortfolio(userId, p, PAGE_SIZE)
+        : await accountantAnalyticsAPI.getClientPortfolio(p, PAGE_SIZE);
       setResult(data);
     } catch (err) {
       setError(getErrorMessage(err, "Failed to load client portfolio."));

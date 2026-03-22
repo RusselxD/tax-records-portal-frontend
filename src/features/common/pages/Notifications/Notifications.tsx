@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { CheckCheck } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import { notificationAPI } from "../../../../api/notification";
@@ -22,7 +22,6 @@ export default function Notifications() {
   const [filter, setFilter] = useState<FilterTab>("all");
 
   const hasUnread = notifications.some((n) => !n.isRead);
-  const snapshotRef = useRef<NotificationListItemResponse[]>([]);
 
   const fetchInitial = useCallback(async (tab: FilterTab) => {
     setLoading(true);
@@ -62,31 +61,37 @@ export default function Notifications() {
 
   const handleDelete = useCallback(async (id: string) => {
     // Optimistic: remove immediately, revert on failure
-    const prev = notifications;
-    setNotifications((list) => list.filter((n) => n.id !== id));
+    let snapshot: NotificationListItemResponse[] = [];
+    setNotifications((prev) => {
+      snapshot = prev;
+      return prev.filter((n) => n.id !== id);
+    });
 
     try {
       await notificationAPI.deleteNotification(id);
       refetchUnreadCount();
     } catch {
-      setNotifications(prev);
+      setNotifications(snapshot);
       toastError("Failed to delete notification.");
     }
-  }, [notifications, refetchUnreadCount, toastError]);
+  }, [refetchUnreadCount, toastError]);
 
   const handleMarkAllRead = useCallback(async () => {
     // Optimistic: mark all read immediately, revert on failure
-    snapshotRef.current = notifications;
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    let snapshot: NotificationListItemResponse[] = [];
+    setNotifications((prev) => {
+      snapshot = prev;
+      return prev.map((n) => ({ ...n, isRead: true }));
+    });
 
     try {
       await notificationAPI.markAllAsRead();
       refetchUnreadCount();
     } catch {
-      setNotifications(snapshotRef.current);
+      setNotifications(snapshot);
       toastError("Failed to mark all as read.");
     }
-  }, [notifications, refetchUnreadCount, toastError]);
+  }, [refetchUnreadCount, toastError]);
 
   const handleFilterChange = (tab: FilterTab) => {
     if (tab === filter) return;

@@ -42,8 +42,8 @@ function LoginForm() {
       const user = await login({ email, password });
       const redirectTo = from || getDashboardUrl(user.roleKey);
       navigate(redirectTo, { replace: true });
-    } catch {
-      setError("Invalid email or password. Please try again.");
+    } catch (err) {
+      setError(getErrorMessage(err, "Invalid email or password. Please try again."));
     } finally {
       setIsSubmitting(false);
     }

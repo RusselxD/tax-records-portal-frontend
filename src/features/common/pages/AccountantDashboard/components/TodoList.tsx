@@ -58,7 +58,7 @@ export default function TodoList() {
   }, [page]);
 
   const handleRowClick = (id: string) => {
-    const prefix = getRolePrefix(user!.roleKey);
+    const prefix = getRolePrefix(user?.roleKey ?? "");
     navigate(`/${prefix}/tax-record-task/${id}`);
   };
 

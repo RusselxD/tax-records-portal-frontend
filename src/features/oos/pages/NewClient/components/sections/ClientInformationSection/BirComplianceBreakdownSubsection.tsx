@@ -1,3 +1,4 @@
+import { uid } from "../../../../../../../lib/uid";
 import { Plus, Trash2 } from "lucide-react";
 import { Input, Button } from "../../../../../../../components/common";
 import type {
@@ -12,6 +13,7 @@ interface BirComplianceBreakdownSubsectionProps {
 
 function emptyItem(): BirComplianceItem {
   return {
+    _uid: uid(),
     category: null,
     taxReturnName: null,
     deadline: null,
@@ -40,7 +42,7 @@ export default function BirComplianceBreakdownSubsection({
     <div className="space-y-4">
       {data.items.map((entry, index) => (
         <div
-          key={index}
+          key={entry._uid ?? index}
           className="rounded-lg border border-gray-200 bg-gray-50/50 p-4"
         >
           <div className="flex items-center justify-between mb-3">

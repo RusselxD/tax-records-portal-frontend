@@ -1,3 +1,4 @@
+import { uid } from "../../../../../../../../lib/uid";
 import { Plus } from "lucide-react";
 import { Button } from "../../../../../../../../components/common";
 import type { CityHallDetails } from "../../../../../../../../types/client-info";
@@ -5,6 +6,7 @@ import CityHallEntryForm from "./components/CityHallEntryForm";
 
 function emptyCityHall(): CityHallDetails {
   return {
+    _uid: uid(),
     businessPermitCity: null,
     businessPermitNumber: null,
     dateOfRegistration: null,
@@ -55,7 +57,7 @@ export default function CityHallDetailsSubsection({
     <div className="space-y-4">
       {data.map((entry, index) => (
         <CityHallEntryForm
-          key={index}
+          key={entry._uid ?? index}
           entry={entry}
           index={index}
           onUpdate={updateItem}

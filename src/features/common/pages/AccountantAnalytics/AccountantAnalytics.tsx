@@ -10,16 +10,23 @@ import TasksByCategoryChart from "./components/TasksByCategoryChart";
 import OnboardingPipelineWidget from "./components/OnboardingPipelineWidget";
 import ClientPortfolioTable from "./components/ClientPortfolioTable";
 
-function AccountantAnalyticsContent() {
+interface AccountantAnalyticsContentProps {
+  userId?: string;
+  roleKey?: string;
+}
+
+export function AccountantAnalyticsContent({
+  userId,
+  roleKey,
+}: AccountantAnalyticsContentProps) {
   const { user } = useAuth();
-  const isOos = user?.roleKey === UserRole.OOS;
+  const effectiveRoleKey = roleKey ?? user?.roleKey;
+  const isOos = effectiveRoleKey === UserRole.OOS;
 
   return (
     <div className="space-y-4">
-      {/* Row 1: KPI cards */}
       <TaskSummaryCards />
 
-      {/* Row 2: Tasks by Category (left) | On-Time Rate + Quality Metrics stacked (right) */}
       <div className="flex gap-4">
         <TasksByCategoryChart />
         <div className="flex flex-col gap-4 w-80 shrink-0">
@@ -28,9 +35,8 @@ function AccountantAnalyticsContent() {
         </div>
       </div>
 
-      {/* Row 3: Monthly Throughput + optional OOS Pipeline */}
-      <div className="flex gap-4 items-start">
-        <MonthlyThroughputChart />
+      <div className="flex gap-4 items-stretch">
+        <MonthlyThroughputChart userId={userId} />
         {isOos && (
           <div className="w-80 shrink-0">
             <OnboardingPipelineWidget />
@@ -38,8 +44,7 @@ function AccountantAnalyticsContent() {
         )}
       </div>
 
-      {/* Row 4: Client portfolio table */}
-      <ClientPortfolioTable />
+      <ClientPortfolioTable userId={userId} />
     </div>
   );
 }

@@ -31,7 +31,7 @@ interface ClientTaskItemProps {
 export default function ClientTaskItem({ task, showAssignees }: ClientTaskItemProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const prefix = getRolePrefix(user!.roleKey);
+  const prefix = getRolePrefix(user?.roleKey ?? "");
 
   return (
     <div

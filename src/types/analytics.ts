@@ -1,13 +1,43 @@
 // Accountant performance analytics
 export interface TaskSummaryResponse {
+  // Card 1 — Task Pipeline
   open: number;
   submitted: number;
   rejected: number;
   approvedForFiling: number;
   filed: number;
   completed: number;
+
+  // Card 2 — Deadlines
   overdue: number;
+  dueToday: number;
+  dueThisWeek: number;
+
+  // Card 3 — Productivity
   completedThisMonth: number;
+  submittedThisMonth: number;
+  newTasksThisMonth: number;
+
+  // Card 4 — Efficiency
+  onTimeRate: number; // 0.0–1.0
+  avgCompletionDays: number;
+
+  // Card 5 — Quality
+  firstAttemptApprovalRate: number; // 0.0–1.0
+  avgRejectionCycles: number;
+
+  // Card 6 — Responsiveness
+  avgDaysToFirstSubmit: number;
+  avgRejectionTurnaroundDays: number;
+
+  // Card 7 — Workload
+  activeTaskCount: number;
+  assignedClientCount: number;
+
+  // Card 8 — Trend
+  completedLastMonth: number;
+  completedThisMonthTrend: number;
+  percentChange: number | null;
 }
 
 export interface MonthlyThroughputItem {
@@ -46,8 +76,9 @@ export interface TasksByCategoryResponse {
 
 export interface OnboardingPipelineResponse {
   onboarding: number;
-  approved: number;
-  active: number;
+  activeClient: number;
+  offboarding: number;
+  inactiveClient: number;
   total: number;
 }
 
@@ -67,6 +98,18 @@ export interface ClientPortfolioResponse {
   size: number;
   totalElements: number;
   totalPages: number;
+}
+
+// Accountant overview (manager view)
+export interface AccountantOverviewItem {
+  id: string;
+  name: string;
+  position: string;
+  roleKey: string;
+  profileUrl: string;
+  activeTasks: number;
+  assignedClients: number;
+  overdueTasks: number;
 }
 
 // System analytics

@@ -1,3 +1,4 @@
+import { uid } from "../../../../../../../lib/uid";
 import { Plus, Trash2 } from "lucide-react";
 import { Input, Button, Dropdown } from "../../../../../../../components/common";
 import type {
@@ -60,7 +61,7 @@ export default function BirTaxComplianceSubsection({
         ? data.grossSales[data.grossSales.length - 1].year
         : new Date().getFullYear() - 1;
     update({
-      grossSales: [...data.grossSales, { year: lastYear + 1, amount: null }],
+      grossSales: [...data.grossSales, { _uid: uid(), year: lastYear + 1, amount: null }],
     });
   };
 
@@ -75,7 +76,7 @@ export default function BirTaxComplianceSubsection({
         <h4 className="text-sm font-medium text-primary mb-3">Gross Sales</h4>
         <div className="space-y-3">
           {data.grossSales.map((entry, index) => (
-            <div key={index} className="flex items-end gap-3">
+            <div key={entry._uid ?? index} className="flex items-end gap-3">
               <div className="grid flex-1 grid-cols-2 gap-4">
                 <Input
                   label="Year"

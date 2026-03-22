@@ -22,7 +22,7 @@ export default function PendingActionItemsList({
       </h3>
       <div className="space-y-3">
         {items.map((item, index) => (
-          <div key={index} className="flex items-end gap-3">
+          <div key={item._uid ?? index} className="flex items-end gap-3">
             <div className="grid flex-1 grid-cols-2 gap-4">
               <Input
                 label="Particulars"
