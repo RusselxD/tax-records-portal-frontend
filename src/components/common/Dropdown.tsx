@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown } from "lucide-react";
 
 export interface DropdownOption {
@@ -17,7 +18,37 @@ export interface DropdownProps {
   fullWidth?: boolean;
   size?: "sm" | "md";
   className?: string;
+  portal?: boolean;
+  /** Renders trigger as a plain column header (no border/bg). Use with placeholder as the column name. */
+  headerStyle?: boolean;
 }
+
+const HeaderTrigger = ({
+  label,
+  isOpen,
+  isActive,
+  onClick,
+}: {
+  label: string;
+  isOpen: boolean;
+  isActive: boolean;
+  onClick: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`flex w-full items-center justify-start gap-1 text-left text-xs font-semibold uppercase tracking-wider transition-colors group ${
+      isActive ? "text-accent" : "text-gray-500 hover:text-gray-700"
+    }`}
+  >
+    <span>{label}</span>
+    <ChevronDown
+      className={`w-3 h-3 transition-transform duration-200 ${isOpen ? "rotate-180" : ""} ${
+        isActive ? "text-accent" : "text-gray-400 group-hover:text-gray-600"
+      }`}
+    />
+  </button>
+);
 
 const FilterTrigger = ({
   label,
@@ -91,17 +122,24 @@ export default function Dropdown({
   fullWidth = false,
   size = "md",
   className,
+  portal = false,
+  headerStyle = false,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuHeight, setMenuHeight] = useState(0);
+  const [portalStyle, setPortalStyle] = useState<React.CSSProperties>({});
 
-  const isFormMode =
-    label !== undefined || placeholder !== undefined || fullWidth;
+  const isFormMode = !headerStyle && (label !== undefined || placeholder !== undefined || fullWidth);
   const selectedOption = options.find((o) => o.value === value);
-  const displayLabel = selectedOption?.label ?? placeholder ?? value;
+
+  const displayLabel = headerStyle
+    ? (value && selectedOption ? selectedOption.label : (placeholder ?? ""))
+    : (selectedOption?.label ?? placeholder ?? value);
+
   const isPlaceholder = !selectedOption && !!placeholder;
+  const isActive = headerStyle && !!value;
 
   useEffect(() => {
     if (isOpen && menuRef.current) {
@@ -111,12 +149,13 @@ export default function Dropdown({
     }
   }, [isOpen]);
 
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
+      const target = e.target as Node;
+      const insideContainer = containerRef.current?.contains(target);
+      const insideMenu = portal && menuRef.current?.contains(target);
+      if (!insideContainer && !insideMenu) {
         setIsOpen(false);
       }
     };
@@ -125,7 +164,7 @@ export default function Dropdown({
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
+  }, [isOpen, portal]);
 
   const handleSelect = (newValue: string) => {
     onChange(newValue);
@@ -133,18 +172,66 @@ export default function Dropdown({
   };
 
   const handleToggle = () => {
-    if (!disabled) setIsOpen(!isOpen);
+    if (!disabled) {
+      if (!isOpen && portal && containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setPortalStyle({
+          position: "fixed",
+          top: rect.bottom + 4,
+          left: rect.left,
+          width: headerStyle ? 180 : Math.max(rect.width, 140),
+          zIndex: 9999,
+        });
+      }
+      setIsOpen(!isOpen);
+    }
   };
 
+  const menuEl = (
+    <div
+      ref={menuRef}
+      className={`${portal ? "" : "absolute left-0 top-full mt-1 w-full"} min-w-[140px] overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg font-normal ${portal ? "" : "z-20"} transition-all duration-200 ${className ?? ""}`}
+      style={{
+        ...(portal ? portalStyle : {}),
+        maxHeight: isOpen ? Math.min(menuHeight, 200) : 0,
+        opacity: isOpen ? 1 : 0,
+        pointerEvents: isOpen ? "auto" : "none",
+      }}
+    >
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          onClick={() => handleSelect(option.value)}
+          className={`w-full text-left px-3 py-2 text-sm transition-colors truncate ${
+            option.value === value
+              ? "bg-accent/10 text-accent font-medium"
+              : "text-gray-700 hover:bg-gray-50"
+          }`}
+          title={option.label}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
-    <div className={isFormMode ? "w-full" : ""}>
+    <div className={isFormMode || headerStyle ? "w-full" : ""}>
       {label && (
         <label className="mb-1.5 block text-sm font-medium text-primary">
           {label}
         </label>
       )}
       <div className="relative" ref={containerRef}>
-        {isFormMode ? (
+        {headerStyle ? (
+          <HeaderTrigger
+            label={displayLabel}
+            isOpen={isOpen}
+            isActive={isActive}
+            onClick={handleToggle}
+          />
+        ) : isFormMode ? (
           <FormTrigger
             label={displayLabel}
             isOpen={isOpen}
@@ -161,30 +248,7 @@ export default function Dropdown({
             size={size}
           />
         )}
-        <div
-          ref={menuRef}
-          className={`absolute left-0 mt-1 w-full min-w-[140px] overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg z-20 transition-all duration-200 ${className ?? ""}`}
-          style={{
-            maxHeight: isOpen ? Math.min(menuHeight, 200) : 0,
-            opacity: isOpen ? 1 : 0,
-            pointerEvents: isOpen ? "auto" : "none",
-          }}
-        >
-          {options.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => handleSelect(option.value)}
-              className={`w-full text-left px-3 py-2 text-sm transition-colors ${
-                option.value === value
-                  ? "bg-accent/10 text-accent font-medium"
-                  : "text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
+        {portal ? createPortal(menuEl, document.body) : menuEl}
       </div>
       {error && <p className="mt-1 text-sm text-status-rejected">{error}</p>}
     </div>

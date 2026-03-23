@@ -213,6 +213,11 @@ export interface ReviewerQueueItemResponse {
   submittedAt: string;
 }
 
+export interface TaxTaskNameResponse {
+  id: number;
+  name: string;
+}
+
 export interface ReviewerDecidedItemResponse {
   id: string;
   clientName: string;

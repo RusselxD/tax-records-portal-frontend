@@ -38,10 +38,14 @@ function ActionButtons({
   clientId,
   isHandedOff,
   hasActiveTask,
+  activeTaskId,
+  lastTaskId,
 }: {
   clientId: string;
   isHandedOff: boolean;
   hasActiveTask: boolean;
+  activeTaskId: string | null;
+  lastTaskId: string | null;
 }) {
   const navigate = useNavigate();
 
@@ -63,9 +67,12 @@ function ActionButtons({
   return (
     <div className="flex items-center gap-2">
       <button
-        onClick={() =>
-          navigate(`/oos/client-preview/${clientId}`, { state: reviewState })
-        }
+        onClick={() => {
+          const taskId = activeTaskId ?? lastTaskId;
+          taskId
+            ? navigate(`/oos/client-preview/${taskId}`, { state: reviewState })
+            : navigate(`/oos/client-details/${clientId}`, { state: reviewState });
+        }}
         className="p-1 text-gray-400 hover:text-accent transition-colors"
       >
         <Eye className="w-4 h-4" />
@@ -108,7 +115,7 @@ const ClientRow = ({
       {formatDate(client.updatedAt)}
     </td>
     <td className="px-4 py-4 whitespace-nowrap">
-      <ActionButtons clientId={client.id} isHandedOff={client.isHandedOff} hasActiveTask={client.hasActiveTask} />
+      <ActionButtons clientId={client.id} isHandedOff={client.handedOff} hasActiveTask={client.hasActiveTask} activeTaskId={client.activeTaskId} lastTaskId={client.lastTaskId} />
     </td>
   </tr>
 );

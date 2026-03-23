@@ -4,8 +4,6 @@ import { Mail } from "lucide-react";
 import { Input, Button, Alert } from "../../../../../components/common";
 import { clientAPI } from "../../../../../api/client";
 import { useToast } from "../../../../../contexts/ToastContext";
-import { useInfoReview } from "../context/ClientOnboardingPreviewContext";
-
 interface FormErrors {
   firstName?: string;
   lastName?: string;
@@ -28,13 +26,12 @@ const validate = (
   return errors;
 };
 
-export default function ActivateAccountCard() {
-  const { clientId, header, refetch } = useInfoReview();
+export default function ActivateAccountCard({ clientId, pocEmail, onSuccess }: { clientId: string; pocEmail: string | null; onSuccess: () => void }) {
   const { toastSuccess } = useToast();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState(header?.pocEmail ?? "");
+  const [email, setEmail] = useState(pocEmail ?? "");
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,9 +55,9 @@ export default function ActivateAccountCard() {
         "Activation Email Sent",
         "The client will receive an email to set up their account.",
       );
-      refetch();
+      onSuccess();
     } catch (err) {
-      if (isConflictError(err)) refetch();
+      if (isConflictError(err)) onSuccess();
       setSubmitError(getErrorMessage(err, "Failed to send activation email. Please try again."));
     } finally {
       setIsSubmitting(false);

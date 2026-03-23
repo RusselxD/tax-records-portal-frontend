@@ -13,6 +13,7 @@ import type {
   TaxRecordTaskTodoListPageResponse,
   ReviewerQueueItemResponse,
   ReviewerDecidedItemResponse,
+  TaxTaskNameResponse,
 } from "../types/tax-record-task";
 import apiClient from "./axios-config";
 
@@ -199,5 +200,10 @@ export const taxRecordTaskAPI = {
 
   recallTask: async (id: string): Promise<void> => {
     await apiClient.post(`/tax-record-tasks/${id}/recall`);
+  },
+
+  getTaskNames: async (): Promise<TaxTaskNameResponse[]> => {
+    const res = await apiClient.get("/tax-task-names");
+    return res.data;
   },
 };

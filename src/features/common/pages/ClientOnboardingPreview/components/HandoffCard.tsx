@@ -7,12 +7,9 @@ import { clientAPI } from "../../../../../api/client";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { getRolePrefix } from "../../../../../constants";
-import { useInfoReview } from "../context/ClientOnboardingPreviewContext";
-
-export default function HandoffCard() {
+export default function HandoffCard({ clientId, onSuccess }: { clientId: string; onSuccess: () => void }) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { clientId, refetch } = useInfoReview();
   const { toastSuccess } = useToast();
   const prefix = getRolePrefix(user?.roleKey ?? "");
 
@@ -30,7 +27,7 @@ export default function HandoffCard() {
       );
       navigate(`${prefix}/client-onboarding`);
     } catch (err) {
-      if (isConflictError(err)) refetch();
+      if (isConflictError(err)) onSuccess();
       setSubmitError(getErrorMessage(err, "Failed to hand off client. Please try again."));
     } finally {
       setIsSubmitting(false);

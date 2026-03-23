@@ -13,6 +13,8 @@ import {
   useClientDetails,
 } from "./context/ClientDetailsContext";
 import ClientAccountCard from "../ClientOnboardingPreview/components/ClientAccountCard";
+import ActivateAccountCard from "../ClientOnboardingPreview/components/ActivateAccountCard";
+import HandoffCard from "../ClientOnboardingPreview/components/HandoffCard";
 import ChangeClientStatusModal from "../ClientOnboardingPreview/components/ChangeClientStatusModal";
 import ClientTasks from "./components/ClientTasks";
 import CreateNotice from "./components/CreateNotice";
@@ -56,6 +58,7 @@ function ClientDetailsContent() {
     header?.assignedCsdOosAccountants?.some((a) => a.id === user?.id) ?? false;
   const canEditProfile = !isOnboarding && !isSnapshot && isAssignedAccountant && !hasPendingUpdate;
 
+  const canManageOnboarding = !isSnapshot && hasPermission(user?.permissions, Permission.CLIENT_INFO_CREATE);
   const canReview = hasPermission(user?.permissions, Permission.CLIENT_INFO_REVIEW);
   const canManageStatus = !isSnapshot && hasPermission(user?.permissions, Permission.CLIENT_MANAGE);
   const canPostNotice = !isSnapshot && !isOnboarding && hasPermission(user?.permissions, Permission.REMINDER_CREATE);
@@ -114,7 +117,15 @@ function ClientDetailsContent() {
         banner={banner}
         sidebar={sidebar}
       >
+        {isAssignedAccountant && (header?.isProfileApproved ?? false) && !clientAccount && (
+          <ActivateAccountCard clientId={clientId} pocEmail={header?.pocEmail ?? null} onSuccess={refetch} />
+        )}
+
         {clientAccount && <ClientAccountCard clientAccount={clientAccount} />}
+
+        {canManageOnboarding && (header?.isProfileApproved ?? false) && (
+          <HandoffCard clientId={clientId} onSuccess={refetch} />
+        )}
 
         {header && (
           <ClientInfoSections

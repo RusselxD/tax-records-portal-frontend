@@ -96,15 +96,15 @@ function InfoReviewContent() {
       )}
 
       {canManageOnboarding && (header?.isProfileApproved ?? false) && !hasAccount && (
-        <ActivateAccountCard />
+        <ActivateAccountCard clientId={clientId} pocEmail={header?.pocEmail ?? null} onSuccess={refetch} />
       )}
 
       {clientAccount && (
         <ClientAccountCard clientAccount={clientAccount} />
       )}
 
-      {canManageOnboarding && (header?.isProfileApproved ?? false) && hasAccount && (
-        <HandoffCard />
+      {canManageOnboarding && (header?.isProfileApproved ?? false) && (
+        <HandoffCard clientId={clientId} onSuccess={refetch} />
       )}
     </ClientInfoPageShell>
 

@@ -23,8 +23,10 @@ export interface ClientOnboardingListItemResponse {
   name: string;
   email: string;
   status: ClientStatus;
-  isHandedOff: boolean;
+  handedOff: boolean;
   hasActiveTask: boolean;
+  activeTaskId: string | null;
+  lastTaskId: string | null;
   createdAt: string;
   updatedAt: string;
 }
