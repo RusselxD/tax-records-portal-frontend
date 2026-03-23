@@ -15,4 +15,8 @@ export const authAPI = {
     const res = await apiClient.post("/auth/reset-password", { token, newPassword });
     return res.data as LoginResponse;
   },
+
+  logout: async (refreshToken: string): Promise<void> => {
+    await apiClient.post("/auth/logout", { refreshToken });
+  },
 };

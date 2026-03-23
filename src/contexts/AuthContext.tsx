@@ -176,6 +176,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const logout = useCallback(() => {
+    const refreshToken = tokenStorage.getRefreshToken();
+    if (refreshToken) authAPI.logout(refreshToken).catch(() => {});
     tokenStorage.clearTokens();
     setUser(null);
   }, []);
