@@ -61,6 +61,7 @@ function snapshotToHeader(snapshot: ArchiveSnapshotResponse): ClientInfoHeaderRe
     taxpayerClassification: snapshot.taxpayerClassification,
     clientStatus: CLIENT_STATUS.ACTIVE_CLIENT,
     isProfileApproved: true,
+    handedOff: true,
     hasActiveTask: false,
     activeTaskId: null,
     activeTaskType: null,

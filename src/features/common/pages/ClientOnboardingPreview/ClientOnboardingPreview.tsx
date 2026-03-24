@@ -103,7 +103,7 @@ function InfoReviewContent() {
         <ClientAccountCard clientAccount={clientAccount} />
       )}
 
-      {canManageOnboarding && (header?.isProfileApproved ?? false) && (
+      {canManageOnboarding && (header?.isProfileApproved ?? false) && !(header?.handedOff) && (
         <HandoffCard clientId={clientId} onSuccess={refetch} />
       )}
     </ClientInfoPageShell>

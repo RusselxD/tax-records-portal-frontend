@@ -329,6 +329,7 @@ export interface ClientInfoHeaderResponse {
   taxpayerClassification: string | null;
   clientStatus: import("./client").ClientStatus;
   isProfileApproved: boolean;
+  handedOff: boolean;
   hasActiveTask: boolean;
   activeTaskId: string | null;
   activeTaskType: ProfileReviewType | null;
