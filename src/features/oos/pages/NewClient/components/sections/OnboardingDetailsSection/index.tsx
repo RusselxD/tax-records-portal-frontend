@@ -1,31 +1,14 @@
 import { uid } from "../../../../../../../lib/uid";
-import { Plus } from "lucide-react";
-import { Input, Button } from "../../../../../../../components/common";
+import { Input, CollapsibleSubsection } from "../../../../../../../components/common";
 import type {
   OnboardingDetails,
-  OnboardingMeetingEntry,
   PendingActionItem,
 } from "../../../../../../../types/client-info";
 import DateFieldInput from "../DateFieldInput";
-import MeetingEntryForm from "./components/MeetingEntryForm";
 import PendingActionItemsList from "./components/PendingActionItemsList";
 
-function emptyMeeting(): OnboardingMeetingEntry {
-  return {
-    _uid: uid(),
-    titleOfMeeting: null,
-    date: null,
-    timeStarted: null,
-    timeEnded: null,
-    agenda: null,
-    linkToMeetingRecording: null,
-    minutes: { type: "doc", content: [] },
-  };
-}
-
 function emptyActionItem(): PendingActionItem {
-  return {
-    _uid: uid(), particulars: null, notes: null };
+  return { _uid: uid(), particulars: null, notes: null };
 }
 
 interface OnboardingDetailsSectionProps {
@@ -38,22 +21,6 @@ export default function OnboardingDetailsSection({
   onChange,
 }: OnboardingDetailsSectionProps) {
   const update = (fields: Partial<OnboardingDetails>) => onChange(fields);
-
-  const updateMeeting = (
-    index: number,
-    fields: Partial<OnboardingMeetingEntry>,
-  ) => {
-    const updated = data.meetings.map((item, i) =>
-      i === index ? { ...item, ...fields } : item,
-    );
-    update({ meetings: updated });
-  };
-
-  const addMeeting = () =>
-    update({ meetings: [...data.meetings, emptyMeeting()] });
-
-  const removeMeeting = (index: number) =>
-    update({ meetings: data.meetings.filter((_, i) => i !== index) });
 
   const updateAction = (index: number, fields: Partial<PendingActionItem>) => {
     const updated = data.pendingActionItems.map((item, i) =>
@@ -69,18 +36,12 @@ export default function OnboardingDetailsSection({
 
   const removeAction = (index: number) =>
     update({
-      pendingActionItems: data.pendingActionItems.filter(
-        (_, i) => i !== index,
-      ),
+      pendingActionItems: data.pendingActionItems.filter((_, i) => i !== index),
     });
 
   return (
-    <div className="space-y-8">
-      {/* Group Chat Info */}
-      <div>
-        <h3 className="text-sm font-semibold text-primary mb-3">
-          Group Chat Details
-        </h3>
+    <div className="space-y-3">
+      <CollapsibleSubsection title="Group Chat Details">
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <Input
@@ -116,34 +77,16 @@ export default function OnboardingDetailsSection({
             />
           </div>
         </div>
-      </div>
+      </CollapsibleSubsection>
 
-      {/* Meetings */}
-      <div>
-        <h3 className="text-sm font-semibold text-primary mb-3">Meetings</h3>
-        <div className="space-y-4">
-          {data.meetings.map((meeting, index) => (
-            <MeetingEntryForm
-              key={meeting._uid ?? index}
-              meeting={meeting}
-              index={index}
-              onUpdate={updateMeeting}
-              onRemove={removeMeeting}
-            />
-          ))}
-          <Button variant="secondary" onClick={addMeeting}>
-            <Plus className="h-4 w-4 mr-1.5" />
-            Add Meeting
-          </Button>
-        </div>
-      </div>
-
-      <PendingActionItemsList
+      <CollapsibleSubsection title="Pending Action Items">
+        <PendingActionItemsList
         items={data.pendingActionItems}
-        onUpdate={updateAction}
-        onAdd={addAction}
-        onRemove={removeAction}
-      />
+          onUpdate={updateAction}
+          onAdd={addAction}
+          onRemove={removeAction}
+        />
+      </CollapsibleSubsection>
     </div>
   );
 }

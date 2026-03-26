@@ -1,8 +1,6 @@
 import type { ScopeOfEngagementDetails, RegisteredBookEntry } from "../../../../../../../types/client-info";
 import { BOOK_OF_ACCOUNTS_LABELS } from "../../../enum-labels";
 import { TextDisplay, EnumDisplay, FileDisplay, RichTextPreview } from "../../../field-displays";
-import ConsultationHoursPreview from "./ConsultationHoursPreview";
-import SubsectionHeading from "../../SubsectionHeading";
 
 function bookHasData(book: RegisteredBookEntry): boolean {
   return !!(book.bookName || book.notes);
@@ -24,15 +22,13 @@ export function hasClientEngagementsData(data: ScopeOfEngagementDetails): boolea
     hasRichText(data.taxCompliance) ||
     data.bookOfAccounts ||
     data.bookkeepingPermitNo ||
-    data.looseleafCertificateAndBirTemplate ||
+    data.looseleafCertificateAndBirTemplate?.length > 0 ||
     data.registeredBooks.some(bookHasData) ||
     hasRichText(data.bookkeepingProcess) ||
     hasRichText(data.sssPhilhealthHdmfEngagement) ||
     hasRichText(data.paymentAssistance) ||
-    data.consultationHours.freeHoursPerMonth !== null ||
-    data.consultationHours.ratePerHourAfterFree !== null ||
-    data.consultationHours.totalBillableAmount !== null ||
-    data.consultationHours.consultations.length > 0
+    data.consultationFreeAllowance ||
+    data.consultationExcessRate
   );
 }
 
@@ -40,12 +36,6 @@ export default function ClientEngagementsPreview({ data }: { data: ScopeOfEngage
   if (!hasClientEngagementsData(data)) return null;
 
   const hasBooks = data.registeredBooks.some(bookHasData);
-  const hasConsultation = !!(
-    data.consultationHours.freeHoursPerMonth !== null ||
-    data.consultationHours.ratePerHourAfterFree !== null ||
-    data.consultationHours.totalBillableAmount !== null ||
-    data.consultationHours.consultations.length > 0
-  );
 
   const hasMiddleFields =
     hasRichText(data.bookkeepingProcess) ||
@@ -110,11 +100,11 @@ export default function ClientEngagementsPreview({ data }: { data: ScopeOfEngage
         </div>
       )}
 
-      {hasConsultation && (
-        <>
-          <SubsectionHeading label="Consultation Hours" />
-          <ConsultationHoursPreview data={data.consultationHours} />
-        </>
+      {(data.consultationFreeAllowance || data.consultationExcessRate) && (
+        <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+          <TextDisplay label="Consultation Free Allowance" value={data.consultationFreeAllowance} />
+          <TextDisplay label="Consultation Excess Rate" value={data.consultationExcessRate} />
+        </div>
       )}
     </div>
   );

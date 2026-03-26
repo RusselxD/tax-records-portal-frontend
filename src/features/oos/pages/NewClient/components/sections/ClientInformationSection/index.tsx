@@ -1,5 +1,5 @@
 import { uid } from "../../../../../../../lib/uid";
-import { Input, Dropdown } from "../../../../../../../components/common";
+import { Input, Dropdown, CollapsibleSubsection } from "../../../../../../../components/common";
 import type {
   ClientInformation,
   OrganizationType,
@@ -24,14 +24,6 @@ const ORG_TYPE_OPTIONS = [
 interface ClientInformationSectionProps {
   data: ClientInformation;
   onChange: (data: ClientInformation) => void;
-}
-
-function SubsectionHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <h3 className="text-sm font-semibold text-primary border-b border-gray-200 pb-2">
-      {children}
-    </h3>
-  );
 }
 
 export default function ClientInformationSection({
@@ -78,11 +70,9 @@ export default function ClientInformationSection({
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header fields */}
-      <div>
-        <SubsectionHeading>General Information</SubsectionHeading>
-        <div className="mt-4 space-y-4">
+    <div className="space-y-3">
+      <CollapsibleSubsection title="General Information">
+        <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <Input
               label="Registered Name"
@@ -120,110 +110,74 @@ export default function ClientInformationSection({
             />
           </div>
         </div>
-      </div>
+      </CollapsibleSubsection>
 
-      {/* A. BIR Details */}
-      <div>
-        <SubsectionHeading>A. BIR Branch Details</SubsectionHeading>
-        <div className="mt-4">
-          <BirDetailsSubsection
-            mainBranch={data.birMainBranch}
-            branches={data.birBranches}
-            onMainBranchChange={(birMainBranch) => update({ birMainBranch })}
-            onBranchesChange={(birBranches) =>
-              update({ birBranches, numberOfBranches: birBranches.length })
-            }
-          />
-        </div>
-      </div>
+      <CollapsibleSubsection title="BIR Branch Details" defaultOpen={false}>
+        <BirDetailsSubsection
+          mainBranch={data.birMainBranch}
+          branches={data.birBranches}
+          onMainBranchChange={(birMainBranch) => update({ birMainBranch })}
+          onBranchesChange={(birBranches) =>
+            update({ birBranches, numberOfBranches: birBranches.length })
+          }
+        />
+      </CollapsibleSubsection>
 
-      {/* B. BIR Tax Compliance */}
-      <div>
-        <SubsectionHeading>B. BIR Tax Compliance</SubsectionHeading>
-        <div className="mt-4">
-          <BirTaxComplianceSubsection
-            data={data.birTaxCompliance}
-            onChange={(birTaxCompliance) => update({ birTaxCompliance })}
-          />
-        </div>
-      </div>
+      <CollapsibleSubsection title="BIR Tax Compliance" defaultOpen={false}>
+        <BirTaxComplianceSubsection
+          data={data.birTaxCompliance}
+          onChange={(birTaxCompliance) => update({ birTaxCompliance })}
+        />
+      </CollapsibleSubsection>
 
-      {/* C. BIR Compliance Breakdown */}
-      <div>
-        <SubsectionHeading>C. BIR Compliance Breakdown</SubsectionHeading>
-        <div className="mt-4">
-          <BirComplianceBreakdownSubsection
-            data={data.birComplianceBreakdown}
-            onChange={(birComplianceBreakdown) => update({ birComplianceBreakdown })}
-          />
-        </div>
-      </div>
+      <CollapsibleSubsection title="BIR Compliance Breakdown" defaultOpen={false}>
+        <BirComplianceBreakdownSubsection
+          data={data.birComplianceBreakdown}
+          onChange={(birComplianceBreakdown) => update({ birComplianceBreakdown })}
+        />
+      </CollapsibleSubsection>
 
-      {/* D. DTI Details */}
-      <div>
-        <SubsectionHeading>D. DTI Details</SubsectionHeading>
-        <div className="mt-4">
-          <DtiDetailsSubsection
-            data={data.dtiDetails}
-            onChange={(dtiDetails) => update({ dtiDetails })}
-          />
-        </div>
-      </div>
+      <CollapsibleSubsection title="DTI Details" defaultOpen={false}>
+        <DtiDetailsSubsection
+          data={data.dtiDetails}
+          onChange={(dtiDetails) => update({ dtiDetails })}
+        />
+      </CollapsibleSubsection>
 
-      {/* E. SEC Details */}
-      <div>
-        <SubsectionHeading>E. SEC Details</SubsectionHeading>
-        <div className="mt-4">
-          <SecDetailsSubsection
-            data={data.secDetails}
-            onChange={(secDetails) => update({ secDetails })}
-          />
-        </div>
-      </div>
+      <CollapsibleSubsection title="SEC Details" defaultOpen={false}>
+        <SecDetailsSubsection
+          data={data.secDetails}
+          onChange={(secDetails) => update({ secDetails })}
+        />
+      </CollapsibleSubsection>
 
-      {/* F. SSS Details */}
-      <div>
-        <SubsectionHeading>F. SSS Details</SubsectionHeading>
-        <div className="mt-4">
-          <GovernmentAgencySubsection
-            data={data.sssDetails}
-            onChange={(sssDetails) => update({ sssDetails })}
-          />
-        </div>
-      </div>
+      <CollapsibleSubsection title="SSS Details" defaultOpen={false}>
+        <GovernmentAgencySubsection
+          data={data.sssDetails}
+          onChange={(sssDetails) => update({ sssDetails })}
+        />
+      </CollapsibleSubsection>
 
-      {/* G. PhilHealth Details */}
-      <div>
-        <SubsectionHeading>G. PhilHealth Details</SubsectionHeading>
-        <div className="mt-4">
-          <GovernmentAgencySubsection
-            data={data.philhealthDetails}
-            onChange={(philhealthDetails) => update({ philhealthDetails })}
-          />
-        </div>
-      </div>
+      <CollapsibleSubsection title="PhilHealth Details" defaultOpen={false}>
+        <GovernmentAgencySubsection
+          data={data.philhealthDetails}
+          onChange={(philhealthDetails) => update({ philhealthDetails })}
+        />
+      </CollapsibleSubsection>
 
-      {/* H. HDMF / Pag-IBIG Details */}
-      <div>
-        <SubsectionHeading>H. HDMF / Pag-IBIG Details</SubsectionHeading>
-        <div className="mt-4">
-          <GovernmentAgencySubsection
-            data={data.hdmfDetails}
-            onChange={(hdmfDetails) => update({ hdmfDetails })}
-          />
-        </div>
-      </div>
+      <CollapsibleSubsection title="HDMF / Pag-IBIG Details" defaultOpen={false}>
+        <GovernmentAgencySubsection
+          data={data.hdmfDetails}
+          onChange={(hdmfDetails) => update({ hdmfDetails })}
+        />
+      </CollapsibleSubsection>
 
-      {/* I. City Hall Details */}
-      <div>
-        <SubsectionHeading>I. City Hall Details</SubsectionHeading>
-        <div className="mt-4">
-          <CityHallDetailsSubsection
-            data={data.cityHallDetails}
-            onChange={(cityHallDetails) => update({ cityHallDetails })}
-          />
-        </div>
-      </div>
+      <CollapsibleSubsection title="City Hall Details" defaultOpen={false}>
+        <CityHallDetailsSubsection
+          data={data.cityHallDetails}
+          onChange={(cityHallDetails) => update({ cityHallDetails })}
+        />
+      </CollapsibleSubsection>
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { getDashboardUrl } from "../constants";
 import { authAPI } from "../api/auth";
-import { getErrorMessage } from "../lib/api-error";
+import { getErrorMessage, isRateLimitedError } from "../lib/api-error";
 import { Alert, Button, Card, Input } from "../components/common";
 
 const MIN_PASSWORD_LENGTH = 8;
@@ -51,7 +51,11 @@ export default function ResetPassword() {
       const user = loginWithTokens(response);
       navigate(getDashboardUrl(user.roleKey), { replace: true });
     } catch (err) {
-      setSubmitError(getErrorMessage(err, "Invalid or expired reset link."));
+      if (isRateLimitedError(err)) {
+        setSubmitError("Too many attempts. Please wait a moment and try again.");
+      } else {
+        setSubmitError(getErrorMessage(err, "Invalid or expired reset link."));
+      }
     } finally {
       setIsSubmitting(false);
     }

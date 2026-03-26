@@ -163,17 +163,17 @@ export const qtdSections: HelpSection[] = [
         </P>
         <BulletList
           items={[
-            "A. BIR Branch Details — per-branch details with file uploads (Certificate of Registration, forms, receipts, etc.).",
-            "B. BIR Tax Compliance — gross sales, withholding agents, income tax regime.",
-            "C. BIR Compliance Breakdown — 29-item checklist across 8 categories.",
-            "D. DTI Details — registration and BMBE compliance.",
-            "E. SEC Details — incorporation info and file uploads.",
-            "F–H. SSS, PhilHealth, HDMF — government agency registration details.",
-            "I. City Hall Details — per-city permits and file uploads.",
+            "BIR Branch Details — per-branch details with file uploads (Certificate of Registration, forms, receipts, etc.).",
+            "BIR Tax Compliance — gross sales, withholding agents, income tax regime.",
+            "BIR Compliance Breakdown — 29-item checklist across 8 categories.",
+            "DTI Details — registration and BMBE compliance.",
+            "SEC Details — incorporation info and file uploads.",
+            "SSS, PhilHealth, HDMF — government agency registration details.",
+            "City Hall Details — per-city permits and file uploads.",
           ]}
         />
 
-        <Heading>3. Corporate Officers & Point of Contact</Heading>
+        <Heading>3. Owner's or Corporate Officer's Information</Heading>
         <P>
           List of officers with personal details, plus the designated point of
           contact for the firm.
@@ -284,7 +284,7 @@ export const qtdSections: HelpSection[] = [
         </P>
         <BulletList
           items={[
-            "Review the accountant's working files and output file.",
+            "Review the accountant's working files and output file / tax return.",
             "Read any comments from the accountant.",
             "Approve — moves the task to \"Approved for Filing\" so the accountant can proceed with BIR filing.",
             "Reject — sends the task back to the accountant with your feedback for revision.",

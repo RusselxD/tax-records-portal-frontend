@@ -6,6 +6,7 @@ import ClientDashboard from "../features/client/pages/ClientDashboard";
 import Profile from "../features/client/pages/Profile";
 import TaxRecords from "../features/client/pages/TaxRecords";
 import Invoice from "../features/client/pages/Invoice";
+import InvoiceDetail from "../features/common/pages/InvoiceDetail";
 import UserProfile from "../features/common/pages/UserProfile";
 
 export const clientRoutes: RouteObject = {
@@ -34,6 +35,10 @@ export const clientRoutes: RouteObject = {
         {
           path: "invoice",
           element: <Invoice />,
+        },
+        {
+          path: "invoice/:id",
+          element: <InvoiceDetail />,
         },
         {
           path: "account-settings",

@@ -17,6 +17,7 @@ import {
 
 interface RichTextEditorProps {
   label: string;
+  description?: React.ReactNode;
   value: RichTextContent;
   onChange: (value: RichTextContent) => void;
   placeholder?: string;
@@ -26,6 +27,7 @@ const EMPTY_DOC: RichTextContent = { type: "doc", content: [] };
 
 export default function RichTextEditor({
   label,
+  description,
   value,
   onChange,
   placeholder = "Start typing...",
@@ -89,12 +91,13 @@ export default function RichTextEditor({
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm max-w-none px-3 py-2.5 min-h-[80px] focus:outline-none text-primary",
+          "prose prose-sm max-w-none px-3 py-2.5 min-h-[120px] focus:outline-none text-primary text-[13px] leading-relaxed",
       },
     },
   });
 
   const images = useMemo(() => (value ? extractImages(value) : []), [value]);
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
   if (!editor) return null;
 
@@ -141,6 +144,9 @@ export default function RichTextEditor({
       <label className="block text-sm font-medium text-gray-700 mb-1">
         {label}
       </label>
+      {description && (
+        <div className="text-xs text-gray-500 leading-relaxed mb-2">{description}</div>
+      )}
       <div className="rounded-md border border-gray-300 focus-within:border-primary/40 focus-within:ring-1 focus-within:ring-primary/20 transition-colors">
         <EditorToolbar
           editor={editor}
@@ -160,7 +166,8 @@ export default function RichTextEditor({
               <img
                 src={img.src}
                 alt={img.alt}
-                className="block max-w-[200px] max-h-[150px] object-contain"
+                className="block max-w-[200px] max-h-[150px] object-contain cursor-pointer"
+                onClick={() => setLightboxSrc(img.src)}
               />
               <button
                 type="button"
@@ -172,6 +179,27 @@ export default function RichTextEditor({
               </button>
             </div>
           ))}
+        </div>
+      )}
+
+      {lightboxSrc && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+          onClick={() => setLightboxSrc(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setLightboxSrc(null)}
+            className="absolute top-4 right-4 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <img
+            src={lightboxSrc}
+            alt="Preview"
+            className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
       )}
 

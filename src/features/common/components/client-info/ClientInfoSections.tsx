@@ -72,7 +72,7 @@ export default function ClientInfoSections({
       </SectionCard>
 
       <SectionCard
-        title="Corporate Officers & Point of Contact"
+        title="Owner's or Corporate Officer's Information"
         defaultOpen={false}
         status={corporateOfficer.status}
         onOpen={() => fetchSection("corporateOfficerInformation")}

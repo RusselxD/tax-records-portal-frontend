@@ -1,6 +1,6 @@
 import { uid } from "../../../../../../lib/uid";
 import { Plus, Trash2 } from "lucide-react";
-import { Input, Button } from "../../../../../../components/common";
+import { Input, Button, CollapsibleSubsection } from "../../../../../../components/common";
 import type {
   CorporateOfficerInformation,
   CorporateOfficerDetails,
@@ -200,30 +200,20 @@ export default function CorporateOfficerInformationSection({
   onChange,
 }: CorporateOfficerInformationSectionProps) {
   return (
-    <div className="space-y-8">
-      <div>
-        <h3 className="text-sm font-semibold text-primary border-b border-gray-200 pb-2">
-          Corporate Officers
-        </h3>
-        <div className="mt-4">
-          <OfficersList
-            officers={data.officers}
-            onChange={(officers) => onChange({ ...data, officers })}
-          />
-        </div>
-      </div>
+    <div className="space-y-3">
+      <CollapsibleSubsection title="Owner's or Corporate Officer's">
+        <OfficersList
+          officers={data.officers}
+          onChange={(officers) => onChange({ ...data, officers })}
+        />
+      </CollapsibleSubsection>
 
-      <div>
-        <h3 className="text-sm font-semibold text-primary border-b border-gray-200 pb-2">
-          Point of Contact Details
-        </h3>
-        <div className="mt-4">
-          <PointOfContactForm
-            data={data.pointOfContact}
-            onChange={(pointOfContact) => onChange({ ...data, pointOfContact })}
-          />
-        </div>
-      </div>
+      <CollapsibleSubsection title="Point of Contact Details">
+        <PointOfContactForm
+          data={data.pointOfContact}
+          onChange={(pointOfContact) => onChange({ ...data, pointOfContact })}
+        />
+      </CollapsibleSubsection>
     </div>
   );
 }

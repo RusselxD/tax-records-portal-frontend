@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { getDashboardUrl } from "../constants";
 import { authAPI } from "../api/auth";
-import { getErrorMessage } from "../lib/api-error";
+import { getErrorMessage, isRateLimitedError } from "../lib/api-error";
 import { Alert, Button, Card, Input } from "../components/common";
 
 interface LocationState {
@@ -43,7 +43,11 @@ function LoginForm() {
       const redirectTo = from || getDashboardUrl(user.roleKey);
       navigate(redirectTo, { replace: true });
     } catch (err) {
-      setError(getErrorMessage(err, "Invalid email or password. Please try again."));
+      if (isRateLimitedError(err)) {
+        setError("Too many login attempts. Please wait a moment and try again.");
+      } else {
+        setError(getErrorMessage(err, "Invalid email or password. Please try again."));
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -138,7 +142,11 @@ function ForgotPasswordForm({
       await authAPI.forgotPassword(email.trim());
       setSent(true);
     } catch (err) {
-      setError(getErrorMessage(err, "Something went wrong. Please try again."));
+      if (isRateLimitedError(err)) {
+        setError("Too many requests. Please wait a moment and try again.");
+      } else {
+        setError(getErrorMessage(err, "Something went wrong. Please try again."));
+      }
     } finally {
       setIsSubmitting(false);
     }

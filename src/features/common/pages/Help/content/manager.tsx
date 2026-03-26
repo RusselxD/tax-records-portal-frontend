@@ -497,7 +497,7 @@ export const managerSections: HelpSection[] = [
         </P>
         <BulletList
           items={[
-            "Review the accountant's working files and output file.",
+            "Review the accountant's working files and output file / tax return.",
             "Approve the task — moves it to \"Approved for Filing\".",
             "Reject the task — sends it back to the accountant with your feedback.",
           ]}

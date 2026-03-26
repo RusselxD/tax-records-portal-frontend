@@ -29,7 +29,7 @@ interface ClientDetailsContextType {
   clientName: string;
   status: ClientStatusType | null;
   snapshotDate: string | null;
-  clientAccount: ClientAccountResponse | null;
+  clientAccounts: ClientAccountResponse[];
   isLoading: boolean;
   error: string | null;
   notFound: boolean;
@@ -86,7 +86,7 @@ export function ClientDetailsProvider({
 }) {
   const [header, setHeader] = useState<ClientInfoHeaderResponse | null>(null);
   const [statusOverride, setStatusOverride] = useState<ClientStatusType | null>(null);
-  const [clientAccount, setClientAccount] = useState<ClientAccountResponse | null>(null);
+  const [clientAccounts, setClientAccounts] = useState<ClientAccountResponse[]>([]);
   const [snapshotDate, setSnapshotDate] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -116,13 +116,13 @@ export function ClientDetailsProvider({
           setSnapshotSections(snapshotToSections(snapshot));
           setSnapshotDate(snapshot.submittedAt);
         } else {
-          const [data, account] = await Promise.all([
+          const [data, accounts] = await Promise.all([
             clientAPI.getClientInfoHeader(clientId),
-            clientAPI.getClientAccount(clientId).catch(() => null),
+            clientAPI.getClientAccounts(clientId).catch(() => []),
           ]);
           if (cancelled) return;
           setHeader(data);
-          setClientAccount(account);
+          setClientAccounts(accounts);
         }
       } catch (err) {
         if (cancelled) return;
@@ -182,7 +182,7 @@ export function ClientDetailsProvider({
       header,
       clientName,
       status,
-      clientAccount,
+      clientAccounts,
       snapshotDate,
       isLoading,
       error,
@@ -192,7 +192,7 @@ export function ClientDetailsProvider({
       getSection,
       fetchSection,
     }),
-    [clientId, mode, header, clientName, status, clientAccount, snapshotDate, isLoading, error, notFound, refetchData, setStatus, getSection, fetchSection],
+    [clientId, mode, header, clientName, status, clientAccounts, snapshotDate, isLoading, error, notFound, refetchData, setStatus, getSection, fetchSection],
   );
 
   return (

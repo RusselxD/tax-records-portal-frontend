@@ -33,7 +33,7 @@ export const roleDashboardMap: Record<UserRoleType, string> = {
   [UserRole.OOS]: "/oos/dashboard",
   [UserRole.QTD]: "/qtd/dashboard",
   [UserRole.CSD]: "/csd/dashboard",
-  [UserRole.BILLING]: "/internal-billing/dashboard",
+  [UserRole.BILLING]: "/internal-billing/clients",
   [UserRole.CLIENT]: "/client/dashboard",
 };
 

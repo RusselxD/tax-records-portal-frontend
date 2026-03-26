@@ -16,9 +16,6 @@ export default function RequiredDeliverablesSubsection({
 }: RequiredDeliverablesSubsectionProps) {
   return (
     <div>
-      <h3 className="text-sm font-semibold text-primary mb-3">
-        C. Required Deliverable & Report
-      </h3>
       <div className="space-y-4">
         <RichTextEditor
           label="Standard Deliverable"

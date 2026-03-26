@@ -9,6 +9,7 @@ import {
   csdRoutes,
   oosRoutes,
   qtdRoutes,
+  billingRoutes,
   clientRoutes,
 } from "./router/index";
 
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
       csdRoutes,
       oosRoutes,
       qtdRoutes,
+      billingRoutes,
       clientRoutes,
     ],
   },

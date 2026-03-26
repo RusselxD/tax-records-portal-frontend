@@ -83,11 +83,15 @@ export default function Profile() {
 
   return (
     <div className="pb-12">
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold text-primary">
           {header.clientDisplayName || "My Profile"}
         </h1>
-        {header.clientStatus && <ClientStatusBadge status={header.clientStatus} />}
+        {header.clientStatus && (
+          <div className="mt-2">
+            <ClientStatusBadge status={header.clientStatus} size="lg" />
+          </div>
+        )}
       </div>
 
       <div className="space-y-3">
@@ -137,7 +141,7 @@ export default function Profile() {
         </SectionCard>
 
         <SectionCard
-          title="Corporate Officers & Point of Contact"
+          title="Owner's or Corporate Officer's Information"
           defaultOpen={false}
           status={corporateOfficer.status}
           onOpen={() => fetchSection("corporateOfficerInformation")}

@@ -43,6 +43,11 @@ export function deriveClientDisplayName(
 export const formatNum = (n: number | null | undefined) =>
   n != null ? n.toLocaleString() : "—";
 
+export function formatCurrency(amount: number | null | undefined): string {
+  if (amount == null) return "—";
+  return `₱${amount.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
 export function getInitials(name: string): string {
   const parts = name.trim().split(" ");
   if (parts.length >= 2) {

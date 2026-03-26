@@ -31,7 +31,7 @@ export default function TaskFiles() {
 
       <div className="border-t border-gray-100 pt-5">
         <SingleFileSlot
-          label="Output File"
+          label="Output File / Tax Return"
           file={files?.outputFile ?? null}
           canEdit={canEdit}
           onUpload={uploadOutputFile}

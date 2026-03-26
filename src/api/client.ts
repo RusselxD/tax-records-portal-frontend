@@ -102,9 +102,9 @@ export const clientAPI = {
     await apiClient.post(`/client-info/tasks/${taskId}/reject`, { comment });
   },
 
-  getClientAccount: async (
+  getClientAccounts: async (
     clientId: string,
-  ): Promise<ClientAccountResponse | null> => {
+  ): Promise<ClientAccountResponse[]> => {
     const res = await apiClient.get(`/users/client/${clientId}`);
     return res.data;
   },
@@ -216,10 +216,8 @@ export const clientAPI = {
     return res.data;
   },
 
-  downloadEngagementLetter: async (): Promise<Blob> => {
-    const res = await apiClient.get("/clients/me/engagement-letter", {
-      responseType: "blob",
-    });
+  getEngagementLetterIds: async (): Promise<string[]> => {
+    const res = await apiClient.get("/clients/me/engagement-letters");
     return res.data;
   },
 

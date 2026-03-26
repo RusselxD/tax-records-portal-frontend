@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { usersAPI } from "../../../../../api/users";
 import { useToast } from "../../../../../contexts/ToastContext";
-import { getErrorMessage } from "../../../../../lib/api-error";
+import { getErrorMessage, isRateLimitedError } from "../../../../../lib/api-error";
 
 import Input from "../../../../../components/common/Input";
 import Button from "../../../../../components/common/Button";
@@ -58,7 +58,11 @@ export default function ChangePasswordCard() {
       setForm(EMPTY_FORM);
       setErrors({});
     } catch (err) {
-      setSubmitError(getErrorMessage(err));
+      if (isRateLimitedError(err)) {
+        setSubmitError("Too many attempts. Please wait a moment and try again.");
+      } else {
+        setSubmitError(getErrorMessage(err));
+      }
     } finally {
       setIsSubmitting(false);
     }

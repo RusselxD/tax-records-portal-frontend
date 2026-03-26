@@ -243,29 +243,10 @@ export interface AccessCredentialDetails {
 }
 
 // Section 5: Scope of Engagement
-export interface ConsultationEntry {
-  _uid?: string;
-  date: DateField | null;
-  timeStarted: string | null;
-  timeEnded: string | null;
-  topicsAndDocumentation: RichTextContent;
-  numberOfHours: number | null;
-  platform: string | null;
-  amount: number | null;
-  vat: number | null;
-}
-
-export interface ConsultationHoursDetails {
-  freeHoursPerMonth: number | null;
-  ratePerHourAfterFree: number | null;
-  consultations: ConsultationEntry[];
-  totalBillableAmount: number | null;
-}
-
 export interface ScopeOfEngagementDetails {
   // Header
   dateOfEngagementLetter: DateField | null;
-  engagementLetter: FileReference | null;
+  engagementLetters: FileReference[];
 
   // A. Documents & Information Gathering
   salesInvoicesAndDocuments: RichTextContent;
@@ -279,12 +260,13 @@ export interface ScopeOfEngagementDetails {
   taxCompliance: RichTextContent;
   bookOfAccounts: BookOfAccountsType | null;
   bookkeepingPermitNo: string | null;
-  looseleafCertificateAndBirTemplate: FileReference | null;
+  looseleafCertificateAndBirTemplate: FileReference[];
   registeredBooks: RegisteredBookEntry[];
   bookkeepingProcess: RichTextContent;
   sssPhilhealthHdmfEngagement: RichTextContent;
   paymentAssistance: RichTextContent;
-  consultationHours: ConsultationHoursDetails;
+  consultationFreeAllowance: string | null;
+  consultationExcessRate: string | null;
 
   // C. Required Deliverable & Report
   standardDeliverable: RichTextContent;
@@ -299,23 +281,11 @@ export interface ProfessionalFeeEntry {
 }
 
 // Section 7: Onboarding Details
-export interface OnboardingMeetingEntry {
-  _uid?: string;
-  titleOfMeeting: string | null;
-  date: DateField | null;
-  timeStarted: string | null;
-  timeEnded: string | null;
-  agenda: string | null;
-  linkToMeetingRecording: LinkReference | null;
-  minutes: RichTextContent;
-}
-
 export interface OnboardingDetails {
   nameOfGroupChat: string | null;
   platformUsed: string | null;
   gcCreatedBy: string | null;
   gcCreatedDate: DateField | null;
-  meetings: OnboardingMeetingEntry[];
   pendingActionItems: PendingActionItem[];
 }
 
@@ -377,7 +347,7 @@ export interface InfoSectionMeta {
 export const SECTIONS: InfoSectionMeta[] = [
   { key: "mainDetails", label: "Main Details" },
   { key: "clientInformation", label: "Client Information" },
-  { key: "corporateOfficerInformation", label: "Corporate Officers & Point of Contact" },
+  { key: "corporateOfficerInformation", label: "Owner's or Corporate Officer's Information" },
   { key: "accessCredentials", label: "Access & Credentials" },
   { key: "scopeOfEngagement", label: "Scope of Engagement" },
   { key: "professionalFees", label: "Professional Fees" },

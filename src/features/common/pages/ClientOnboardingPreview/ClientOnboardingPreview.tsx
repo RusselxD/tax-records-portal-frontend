@@ -13,7 +13,7 @@ import {
 import StatusBanner from "./components/StatusBanner";
 import ReviewActions from "./components/ReviewActions";
 import ActivateAccountCard from "./components/ActivateAccountCard";
-import ClientAccountCard from "./components/ClientAccountCard";
+import ClientAccountsSection from "../ClientDetails/components/ClientAccountsSection";
 import HandoffCard from "./components/HandoffCard";
 import ChangeClientStatusModal from "./components/ChangeClientStatusModal";
 
@@ -34,8 +34,7 @@ function InfoReviewContent() {
     status,
     hasActiveTask,
     lastReviewStatus,
-    hasAccount,
-    clientAccount,
+    clientAccounts,
     isLoading,
     error,
     notFound,
@@ -81,6 +80,18 @@ function InfoReviewContent() {
       banner={<StatusBanner status={status || undefined} isReviewer={isReviewer} hasActiveTask={hasActiveTask} lastReviewStatus={lastReviewStatus} clientId={clientId} />}
       sidebar={<ActivityLogs taskId={taskId} refetchSignal={logsVersion} />}
     >
+      {canManageOnboarding && (header?.isProfileApproved ?? false) && clientAccounts.length === 0 && (
+        <ActivateAccountCard clientId={clientId} pocEmail={header?.pocEmail ?? null} onSuccess={refetch} />
+      )}
+
+      {clientAccounts.length > 0 && (
+        <ClientAccountsSection clientId={clientId} accounts={clientAccounts} onRefresh={refetch} />
+      )}
+
+      {canManageOnboarding && (header?.isProfileApproved ?? false) && !(header?.handedOff) && (
+        <HandoffCard clientId={clientId} onSuccess={refetch} />
+      )}
+
       {header && (
         <ClientInfoSections
           getSection={getSection}
@@ -93,18 +104,6 @@ function InfoReviewContent() {
 
       {isReviewer && hasActiveTask && status === CLIENT_STATUS.ONBOARDING && (
         <ReviewActions />
-      )}
-
-      {canManageOnboarding && (header?.isProfileApproved ?? false) && !hasAccount && (
-        <ActivateAccountCard clientId={clientId} pocEmail={header?.pocEmail ?? null} onSuccess={refetch} />
-      )}
-
-      {clientAccount && (
-        <ClientAccountCard clientAccount={clientAccount} />
-      )}
-
-      {canManageOnboarding && (header?.isProfileApproved ?? false) && !(header?.handedOff) && (
-        <HandoffCard clientId={clientId} onSuccess={refetch} />
       )}
     </ClientInfoPageShell>
 

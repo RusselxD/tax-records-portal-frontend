@@ -124,19 +124,19 @@ export const oosSections: HelpSection[] = [
         </P>
         <BulletList
           items={[
-            "A. BIR Branch Details — details per branch including TIN, RDO, address, and 9 file uploads each (Certificate of Registration, Form 1901, ATP, etc.).",
-            "B. BIR Tax Compliance — gross sales list, top withholding agents, income tax regime.",
-            "C. BIR Compliance Breakdown — 29 pre-seeded checklist items across 8 categories, plus a free-text field for additional items.",
-            "D. DTI Details — business registration, BMBE compliance, and related file uploads.",
-            "E. SEC Details — incorporation information and 10 file uploads.",
-            "F. SSS Details — government agency registration (employer number, portal credentials, file uploads).",
-            "G. PhilHealth Details — same format as SSS.",
-            "H. HDMF / Pag-IBIG Details — same format as SSS.",
-            "I. City Hall Details — details per city including permits, expiration dates, and 11 file uploads each.",
+            "BIR Branch Details — details per branch including TIN, RDO, address, and 9 file uploads each (Certificate of Registration, Form 1901, ATP, etc.).",
+            "BIR Tax Compliance — gross sales list, top withholding agents, income tax regime.",
+            "BIR Compliance Breakdown — 29 pre-seeded checklist items across 8 categories, plus a free-text field for additional items.",
+            "DTI Details — business registration, BMBE compliance, and related file uploads.",
+            "SEC Details — incorporation information and 10 file uploads.",
+            "SSS Details — government agency registration (employer number, portal credentials, file uploads).",
+            "PhilHealth Details — same format as SSS.",
+            "HDMF / Pag-IBIG Details — same format as SSS.",
+            "City Hall Details — details per city including permits, expiration dates, and 11 file uploads each.",
           ]}
         />
 
-        <Heading>3. Corporate Officers & Point of Contact</Heading>
+        <Heading>3. Owner's or Corporate Officer's Information</Heading>
         <P>
           A list of corporate officers (name, birthday, address, position, ID
           scan with signature) and point of contact details (name, email,
@@ -169,8 +169,7 @@ export const oosSections: HelpSection[] = [
         <Heading>7. Onboarding Info, Documents & Notes</Heading>
         <P>
           Internal coordination details: group chat information (name,
-          platform, who created it), a list of onboarding meetings, and
-          pending action items to track.
+          platform, who created it) and pending action items to track.
         </P>
         <Heading>Working with the Form</Heading>
         <BulletList
@@ -398,7 +397,7 @@ export const oosSections: HelpSection[] = [
               status: "Open",
               color: "bg-blue-50 text-blue-700",
               description:
-                "The task is assigned to you. Upload your working files and the output file, then submit for review.",
+                "The task is assigned to you. Upload your working files and the output file / tax return, then submit for review.",
             },
             {
               status: "Submitted",
@@ -437,7 +436,7 @@ export const oosSections: HelpSection[] = [
           items={[
             "Open the task from your Task List.",
             "Upload your working files (spreadsheets, supporting documents, etc.).",
-            "Upload the output file — this is the main deliverable.",
+            "Upload the output file / tax return — this is the main deliverable.",
             "Click Submit for Review to send it to a reviewer.",
           ]}
         />

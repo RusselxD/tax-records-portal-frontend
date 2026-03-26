@@ -40,6 +40,7 @@ export const Permission = {
   // Client dashboard
   CLIENT_NOTICE_MANAGE: "client_notice.manage",
   BILLING_MANAGE: "billing.manage",
+  BILLING_VIEW_OWN: "billing.view.own",
   DOCUMENT_UPLOAD: "document.upload",
   REMINDER_CREATE: "reminder.create",
 

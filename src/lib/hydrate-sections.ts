@@ -38,16 +38,11 @@ export function hydrateSectionUids<K extends InfoSectionKey>(
     case "scopeOfEngagement": {
       const soe = { ...(data as ClientInfoSections["scopeOfEngagement"]) };
       soe.registeredBooks = hydrateUids(soe.registeredBooks);
-      soe.consultationHours = {
-        ...soe.consultationHours,
-        consultations: hydrateUids(soe.consultationHours.consultations),
-      };
       return soe as ClientInfoSections[K];
     }
 
     case "onboardingDetails": {
       const od = { ...(data as ClientInfoSections["onboardingDetails"]) };
-      od.meetings = hydrateUids(od.meetings);
       od.pendingActionItems = hydrateUids(od.pendingActionItems);
       return od as ClientInfoSections[K];
     }

@@ -1,7 +1,7 @@
 import type { ClientInformation } from "../../../../../../types/client-info";
+import { CollapsibleSubsection } from "../../../../../../components/common";
 import { ORGANIZATION_TYPE_LABELS } from "../../enum-labels";
 import { TextDisplay, EnumDisplay } from "../../field-displays";
-import SubsectionHeading from "../SubsectionHeading";
 import BirBranchPreview, { branchHasData } from "./components/BirBranchPreview";
 import BirTaxCompliancePreview, { hasBirTaxComplianceData } from "./components/BirTaxCompliancePreview";
 import BirComplianceBreakdownPreview, { hasBirComplianceBreakdownData } from "./components/BirComplianceBreakdownPreview";
@@ -37,116 +37,79 @@ export default function ClientInformationPreview({ data }: { data: ClientInforma
   if (!hasAnyData) return null;
 
   return (
-    <div className="space-y-6">
-      {/* Header fields */}
+    <div className="space-y-3">
       {hasHeader && (
-        <div className="grid grid-cols-2 gap-x-8 gap-y-5">
-          <TextDisplay label="Registered Name" value={data.registeredName} />
-          <TextDisplay label="Trade Name" value={data.tradeName} />
-          <TextDisplay label="Number of Branches" value={data.numberOfBranches} />
-          <EnumDisplay
-            label="Organization Type"
-            value={data.organizationType}
-            labels={ORGANIZATION_TYPE_LABELS}
-          />
-        </div>
+        <CollapsibleSubsection title="General Information">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+            <TextDisplay label="Registered Name" value={data.registeredName} />
+            <TextDisplay label="Trade Name" value={data.tradeName} />
+            <TextDisplay label="Number of Branches" value={data.numberOfBranches} />
+            <EnumDisplay
+              label="Organization Type"
+              value={data.organizationType}
+              labels={ORGANIZATION_TYPE_LABELS}
+            />
+          </div>
+        </CollapsibleSubsection>
       )}
 
-      {/* A. BIR Branch Details */}
       {(hasMainBranch || hasBranches) && (
-        <div>
-          <SubsectionHeading label="A. BIR Branch Details" />
-          <div className="mt-4 pl-5 space-y-3">
+        <CollapsibleSubsection title="BIR Branch Details" defaultOpen={false}>
+          <div className="space-y-3">
             <BirBranchPreview data={data.birMainBranch} label="Main Branch" />
             {data.birBranches.map((branch, i) => (
-              <BirBranchPreview
-                key={i}
-                data={branch}
-                label={`Branch #${i + 1}`}
-              />
+              <BirBranchPreview key={i} data={branch} label={`Branch #${i + 1}`} />
             ))}
           </div>
-        </div>
+        </CollapsibleSubsection>
       )}
 
-      {/* B. BIR Tax Compliance */}
       {hasTaxCompliance && (
-        <div>
-          <SubsectionHeading label="B. BIR Tax Compliance" />
-          <div className="mt-4 pl-5">
-            <BirTaxCompliancePreview data={data.birTaxCompliance} />
-          </div>
-        </div>
+        <CollapsibleSubsection title="BIR Tax Compliance" defaultOpen={false}>
+          <BirTaxCompliancePreview data={data.birTaxCompliance} />
+        </CollapsibleSubsection>
       )}
 
-      {/* C. BIR Compliance Breakdown */}
       {hasComplianceBreakdown && (
-        <div>
-          <SubsectionHeading label="C. BIR Compliance Breakdown" />
-          <div className="mt-4 pl-5">
-            <BirComplianceBreakdownPreview data={data.birComplianceBreakdown} />
-          </div>
-        </div>
+        <CollapsibleSubsection title="BIR Compliance Breakdown" defaultOpen={false}>
+          <BirComplianceBreakdownPreview data={data.birComplianceBreakdown} />
+        </CollapsibleSubsection>
       )}
 
-      {/* D. DTI Details */}
       {hasDti && (
-        <div>
-          <SubsectionHeading label="D. DTI Details" />
-          <div className="mt-4 pl-5">
-            <DtiDetailsPreview data={data.dtiDetails} />
-          </div>
-        </div>
+        <CollapsibleSubsection title="DTI Details" defaultOpen={false}>
+          <DtiDetailsPreview data={data.dtiDetails} />
+        </CollapsibleSubsection>
       )}
 
-      {/* E. SEC Details */}
       {hasSec && (
-        <div>
-          <SubsectionHeading label="E. SEC Details" />
-          <div className="mt-4 pl-5">
-            <SecDetailsPreview data={data.secDetails} />
-          </div>
-        </div>
+        <CollapsibleSubsection title="SEC Details" defaultOpen={false}>
+          <SecDetailsPreview data={data.secDetails} />
+        </CollapsibleSubsection>
       )}
 
-      {/* F. SSS Details */}
       {hasSss && (
-        <div>
-          <SubsectionHeading label="F. SSS Details" />
-          <div className="mt-4 pl-5">
-            <GovernmentAgencyPreview data={data.sssDetails} />
-          </div>
-        </div>
+        <CollapsibleSubsection title="SSS Details" defaultOpen={false}>
+          <GovernmentAgencyPreview data={data.sssDetails} />
+        </CollapsibleSubsection>
       )}
 
-      {/* G. PhilHealth Details */}
       {hasPhilhealth && (
-        <div>
-          <SubsectionHeading label="G. PhilHealth Details" />
-          <div className="mt-4 pl-5">
-            <GovernmentAgencyPreview data={data.philhealthDetails} />
-          </div>
-        </div>
+        <CollapsibleSubsection title="PhilHealth Details" defaultOpen={false}>
+          <GovernmentAgencyPreview data={data.philhealthDetails} />
+        </CollapsibleSubsection>
       )}
 
-      {/* H. HDMF / Pag-IBIG Details */}
       {hasHdmf && (
-        <div>
-          <SubsectionHeading label="H. HDMF / Pag-IBIG Details" />
-          <div className="mt-4 pl-5">
-            <GovernmentAgencyPreview data={data.hdmfDetails} />
-          </div>
-        </div>
+        <CollapsibleSubsection title="HDMF / Pag-IBIG Details" defaultOpen={false}>
+          <GovernmentAgencyPreview data={data.hdmfDetails} />
+        </CollapsibleSubsection>
       )}
 
-      {/* I. City Hall Details */}
       {hasCityHall && (
-        <div>
-          <SubsectionHeading label="I. City Hall Details" />
-          <div className="mt-4 pl-5">
-            <CityHallDetailsPreview data={data.cityHallDetails} />
-          </div>
-        </div>
+        <CollapsibleSubsection title="City Hall Details" defaultOpen={false}>
+          <CityHallDetailsPreview data={data.cityHallDetails} />
+        </CollapsibleSubsection>
       )}
     </div>
   );

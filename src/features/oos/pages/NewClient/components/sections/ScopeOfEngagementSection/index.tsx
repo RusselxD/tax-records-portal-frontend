@@ -1,6 +1,7 @@
 import type { ScopeOfEngagementDetails } from "../../../../../../../types/client-info";
+import { MultiFileDropZone, CollapsibleSubsection } from "../../../../../../../components/common";
+import { useNewClient } from "../../../context/NewClientContext";
 import DateFieldInput from "../DateFieldInput";
-import FileUploadInput from "../FileUploadInput";
 import DocumentsGatheringSubsection from "./components/DocumentsGatheringSubsection";
 import ClientEngagementsSubsection from "./components/ClientEngagementsSubsection";
 import RequiredDeliverablesSubsection from "./components/RequiredDeliverablesSubsection";
@@ -14,33 +15,39 @@ export default function ScopeOfEngagementSection({
   data,
   onChange,
 }: ScopeOfEngagementSectionProps) {
+  const { uploadFile } = useNewClient();
   const update = (fields: Partial<ScopeOfEngagementDetails>) =>
     onChange(fields);
 
   return (
-    <div className="space-y-8">
-      {/* Engagement Letter */}
-      <div>
-        <h3 className="text-sm font-semibold text-primary mb-3">
-          Engagement Letter
-        </h3>
+    <div className="space-y-3">
+      <CollapsibleSubsection title="Engagement Letter">
         <DateFieldInput
           label="Date of Engagement Letter"
           value={data.dateOfEngagementLetter}
           onChange={(v) => update({ dateOfEngagementLetter: v })}
         />
         <div className="mt-3">
-          <FileUploadInput
-            label="Engagement Letter"
-            value={data.engagementLetter}
-            onChange={(v) => update({ engagementLetter: v })}
+          <MultiFileDropZone
+            label="Engagement Letters"
+            value={data.engagementLetters}
+            onChange={(v) => update({ engagementLetters: v })}
+            uploadFile={uploadFile}
           />
         </div>
-      </div>
+      </CollapsibleSubsection>
 
-      <DocumentsGatheringSubsection data={data} onUpdate={update} />
-      <ClientEngagementsSubsection data={data} onUpdate={update} />
-      <RequiredDeliverablesSubsection data={data} onUpdate={update} />
+      <CollapsibleSubsection title="Documents & Information Gathering" defaultOpen={false}>
+        <DocumentsGatheringSubsection data={data} onUpdate={update} />
+      </CollapsibleSubsection>
+
+      <CollapsibleSubsection title="Client Engagements" defaultOpen={false}>
+        <ClientEngagementsSubsection data={data} onUpdate={update} />
+      </CollapsibleSubsection>
+
+      <CollapsibleSubsection title="Required Deliverable & Report" defaultOpen={false}>
+        <RequiredDeliverablesSubsection data={data} onUpdate={update} />
+      </CollapsibleSubsection>
     </div>
   );
 }

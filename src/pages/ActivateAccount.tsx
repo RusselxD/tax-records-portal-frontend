@@ -1,6 +1,6 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getErrorMessage } from "../lib/api-error";
+import { getErrorMessage, isRateLimitedError } from "../lib/api-error";
 import { usersAPI } from "../api/users";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../contexts/ToastContext";
@@ -107,7 +107,11 @@ export default function ActivateAccount() {
       toastSuccess("Account Activated", "Your password has been set successfully.");
       navigate(getDashboardUrl(user.roleKey), { replace: true });
     } catch (err) {
-      setSubmitError(getErrorMessage(err, "Failed to set password. Please try again."));
+      if (isRateLimitedError(err)) {
+        setSubmitError("Too many attempts. Please wait a moment and try again.");
+      } else {
+        setSubmitError(getErrorMessage(err, "Failed to set password. Please try again."));
+      }
     } finally {
       setIsSubmitting(false);
     }

@@ -121,6 +121,7 @@ export default function TopNav({ pageTitle, onMenuClick }: TopNavProps) {
   }, [showUserMenu]);
 
   const isClient = user?.roleKey === UserRole.CLIENT;
+  const isBilling = user?.roleKey === UserRole.BILLING;
   const fullName = user?.name || "User";
   const subtitle = isClient ? "" : (user?.position || user?.role || "");
 
@@ -144,7 +145,7 @@ export default function TopNav({ pageTitle, onMenuClick }: TopNavProps) {
         </div>
 
         <div className="flex items-center gap-4">
-          {!isClient && <NotificationBell />}
+          {!isClient && !isBilling && <NotificationBell />}
 
           <div className="relative" ref={userMenuRef}>
             <button

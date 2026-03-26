@@ -7,10 +7,6 @@ import { usersAPI } from "../../../../../api/users";
 import { useToast } from "../../../../../contexts/ToastContext";
 import type { ClientAccountResponse } from "../../../../../types/client";
 
-interface ClientAccountCardProps {
-  clientAccount: ClientAccountResponse;
-}
-
 interface ResendResult {
   firstName: string;
   lastName: string;
@@ -99,7 +95,21 @@ function ResendForm({
   );
 }
 
-export default function ClientAccountCard({ clientAccount }: ClientAccountCardProps) {
+/** Standalone card — used when rendering a single account (e.g. from ActivateAccountCard flow) */
+export default function ClientAccountCard({ clientAccount }: { clientAccount: ClientAccountResponse }) {
+  return (
+    <div className="rounded-lg bg-white custom-shadow">
+      <div className="flex items-center gap-2.5 px-6 py-4 border-b border-gray-200">
+        <UserCircle className="h-5 w-5 text-accent" />
+        <h2 className="text-base font-bold text-primary">Client Account</h2>
+      </div>
+      <AccountRow clientAccount={clientAccount} />
+    </div>
+  );
+}
+
+/** Row without card wrapper — used inside ClientAccountsSection */
+export function AccountRow({ clientAccount }: { clientAccount: ClientAccountResponse }) {
   const [displayData, setDisplayData] = useState({
     firstName: clientAccount.firstName,
     lastName: clientAccount.lastName,
@@ -111,13 +121,8 @@ export default function ClientAccountCard({ clientAccount }: ClientAccountCardPr
   const [resent, setResent] = useState(false);
 
   return (
-    <div className="rounded-lg bg-white custom-shadow">
-      <div className="flex items-center gap-2.5 px-6 py-4 border-b border-gray-200">
-        <UserCircle className="h-5 w-5 text-accent" />
-        <h2 className="text-base font-bold text-primary">Client Account</h2>
-      </div>
-
-      <div className="flex items-center gap-4 px-6 py-5">
+    <>
+      <div className="flex items-center gap-4 px-6 py-4">
         {profileUrl ? (
           <img
             src={resolveAssetUrl(profileUrl) ?? profileUrl}
@@ -170,6 +175,6 @@ export default function ClientAccountCard({ clientAccount }: ClientAccountCardPr
           }}
         />
       )}
-    </div>
+    </>
   );
 }

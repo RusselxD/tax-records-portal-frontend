@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { getErrorMessage, isConflictError } from "../../../../../lib/api-error";
+import { getErrorMessage } from "../../../../../lib/api-error";
 import { Mail } from "lucide-react";
 import { Input, Button, Alert } from "../../../../../components/common";
 import { clientAPI } from "../../../../../api/client";
@@ -57,7 +57,6 @@ export default function ActivateAccountCard({ clientId, pocEmail, onSuccess }: {
       );
       onSuccess();
     } catch (err) {
-      if (isConflictError(err)) onSuccess();
       setSubmitError(getErrorMessage(err, "Failed to send activation email. Please try again."));
     } finally {
       setIsSubmitting(false);

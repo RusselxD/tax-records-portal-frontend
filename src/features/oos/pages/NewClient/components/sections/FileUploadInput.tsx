@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
-import { Upload, X, Loader2, Eye } from "lucide-react";
+import { Upload, Loader2 } from "lucide-react";
+import FileRow from "../../../../../../components/common/FileRow";
 import FilePreviewOverlay from "../../../../../../components/common/FilePreviewOverlay";
 import type { FileReference } from "../../../../../../types/client-info";
 import { useNewClient } from "../../context/NewClientContext";
@@ -25,7 +26,6 @@ export default function FileUploadInput({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Reset input so same file can be re-selected
     if (inputRef.current) inputRef.current.value = "";
 
     setIsUploading(true);
@@ -41,7 +41,8 @@ export default function FileUploadInput({
     }
   };
 
-  const handleRemove = () => {
+  const handleRemove = (e: React.MouseEvent) => {
+    e.stopPropagation();
     onChange(null);
     setError(null);
   };
@@ -53,35 +54,11 @@ export default function FileUploadInput({
       </label>
 
       {value ? (
-        <div className="flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 px-3 py-2">
-          <span className="flex-1 truncate text-sm text-primary" title={value.name}>
-            {value.name}
-          </span>
-          <button
-            type="button"
-            onClick={() => setPreviewOpen(true)}
-            className="shrink-0 rounded p-1 text-gray-400 hover:text-accent transition-colors"
-            title="Preview"
-          >
-            <Eye className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={handleRemove}
-            className="shrink-0 rounded p-1 text-gray-400 hover:text-status-rejected transition-colors"
-            title="Remove"
-          >
-            <X className="h-4 w-4" />
-          </button>
-
-          {previewOpen && (
-            <FilePreviewOverlay
-              fileId={value.id}
-              fileName={value.name}
-              setModalOpen={setPreviewOpen}
-            />
-          )}
-        </div>
+        <FileRow
+          name={value.name}
+          onClick={() => setPreviewOpen(true)}
+          onRemove={handleRemove}
+        />
       ) : (
         <button
           type="button"
@@ -112,6 +89,14 @@ export default function FileUploadInput({
 
       {error && (
         <p className="mt-1 text-xs text-status-rejected">{error}</p>
+      )}
+
+      {previewOpen && value && (
+        <FilePreviewOverlay
+          fileId={value.id}
+          fileName={value.name}
+          setModalOpen={setPreviewOpen}
+        />
       )}
     </div>
   );

@@ -106,7 +106,7 @@ export const csdSections: HelpSection[] = [
               status: "Open",
               color: "bg-blue-50 text-blue-700",
               description:
-                "The task is assigned to you. Upload your working files and the output file, then submit for review.",
+                "The task is assigned to you. Upload your working files and the output file / tax return, then submit for review.",
             },
             {
               status: "Submitted",
@@ -145,7 +145,7 @@ export const csdSections: HelpSection[] = [
           items={[
             "Open the task from your Task List.",
             "Upload your working files (spreadsheets, supporting documents, etc.).",
-            "Upload the output file — this is the main deliverable.",
+            "Upload the output file / tax return — this is the main deliverable.",
             "Click Submit for Review to send it to a reviewer.",
           ]}
         />

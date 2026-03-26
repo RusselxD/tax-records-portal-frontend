@@ -21,12 +21,27 @@ const statusDotColors: Record<ClientStatus, string> = {
   INACTIVE_CLIENT: "bg-gray-400",
 };
 
-export default function ClientStatusBadge({ status }: { status: ClientStatus }) {
+const sizeClasses = {
+  sm: "px-3 py-1.5 text-xs gap-1.5",
+  lg: "px-4 py-2 text-sm gap-2",
+};
+
+const dotSizes = {
+  sm: "h-1.5 w-1.5",
+  lg: "h-2 w-2",
+};
+
+interface ClientStatusBadgeProps {
+  status: ClientStatus;
+  size?: "sm" | "lg";
+}
+
+export default function ClientStatusBadge({ status, size = "sm" }: ClientStatusBadgeProps) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium flex-shrink-0 whitespace-nowrap ${statusStyles[status]}`}
+      className={`inline-flex items-center rounded-full font-medium flex-shrink-0 whitespace-nowrap ${sizeClasses[size]} ${statusStyles[status]}`}
     >
-      <span className={`h-1.5 w-1.5 rounded-full ${statusDotColors[status]}`} />
+      <span className={`rounded-full ${dotSizes[size]} ${statusDotColors[status]}`} />
       {statusLabels[status]}
     </span>
   );

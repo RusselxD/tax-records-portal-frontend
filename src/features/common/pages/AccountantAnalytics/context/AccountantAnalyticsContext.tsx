@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -104,10 +105,13 @@ export function AccountantAnalyticsProvider({
       : accountantAnalyticsAPI.getOnboardingPipeline,
   );
 
+  const value = useMemo(
+    () => ({ taskSummary, onTimeRate, qualityMetrics, byCategory, pipeline }),
+    [taskSummary, onTimeRate, qualityMetrics, byCategory, pipeline],
+  );
+
   return (
-    <AccountantAnalyticsContext.Provider
-      value={{ taskSummary, onTimeRate, qualityMetrics, byCategory, pipeline }}
-    >
+    <AccountantAnalyticsContext.Provider value={value}>
       {children}
     </AccountantAnalyticsContext.Provider>
   );

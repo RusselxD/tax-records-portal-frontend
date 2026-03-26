@@ -1,38 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getErrorMessage, isConflictError } from "../../../../../lib/api-error";
-import { ArrowRightLeft, Loader2 } from "lucide-react";
-import { Button, Alert } from "../../../../../components/common";
+import { ArrowRightLeft } from "lucide-react";
+import { Button, Alert, ConfirmActionModal } from "../../../../../components/common";
 import { clientAPI } from "../../../../../api/client";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { getRolePrefix } from "../../../../../constants";
+
 export default function HandoffCard({ clientId, onSuccess }: { clientId: string; onSuccess: () => void }) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toastSuccess } = useToast();
   const prefix = getRolePrefix(user?.roleKey ?? "");
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-
-  const handleSubmit = async () => {
-    setSubmitError(null);
-    setIsSubmitting(true);
-    try {
-      await clientAPI.handoffClient(clientId);
-      toastSuccess(
-        "Client Handed Off",
-        "The client has been successfully handed off.",
-      );
-      navigate(`${prefix}/client-onboarding`);
-    } catch (err) {
-      if (isConflictError(err)) onSuccess();
-      setSubmitError(getErrorMessage(err, "Failed to hand off client. Please try again."));
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className="rounded-lg border-2 border-accent/30 bg-accent/5 px-6 py-5">
@@ -56,17 +39,35 @@ export default function HandoffCard({ clientId, onSuccess }: { clientId: string;
       )}
 
       <div className="flex justify-end">
-        <Button onClick={handleSubmit} disabled={isSubmitting}>
-          {isSubmitting ? (
-            <>
-              <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
-              Handing Off...
-            </>
-          ) : (
-            "Hand Off Client"
-          )}
+        <Button onClick={() => setShowConfirm(true)}>
+          Hand Off Client
         </Button>
       </div>
+
+      {showConfirm && (
+        <ConfirmActionModal
+          setModalOpen={setShowConfirm}
+          onConfirm={async () => {
+            setSubmitError(null);
+            try {
+              await clientAPI.handoffClient(clientId);
+              toastSuccess(
+                "Client Handed Off",
+                "The client has been successfully handed off.",
+              );
+              navigate(`${prefix}/client-onboarding`);
+            } catch (err) {
+              if (isConflictError(err)) onSuccess();
+              setSubmitError(getErrorMessage(err, "Failed to hand off client. Please try again."));
+              throw err;
+            }
+          }}
+          title="Hand Off Client"
+          description="This will create an archive snapshot, assign accountants, and transition the client to active status. This action cannot be undone."
+          confirmLabel="Hand Off Client"
+          loadingLabel="Handing Off..."
+        />
+      )}
     </div>
   );
 }

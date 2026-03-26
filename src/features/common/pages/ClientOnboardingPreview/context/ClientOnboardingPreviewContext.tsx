@@ -34,8 +34,8 @@ interface ClientInfoReviewContextType {
   setStatus: (status: ClientStatusType) => void;
   setHasActiveTask: (value: boolean) => void;
   setLastReviewStatus: (status: ProfileReviewStatus) => void;
-  hasAccount: boolean;
-  clientAccount: ClientAccountResponse | null;
+  hasAccounts: boolean;
+  clientAccounts: ClientAccountResponse[];
   isLoading: boolean;
   error: string | null;
   notFound: boolean;
@@ -64,8 +64,8 @@ export function ClientInfoReviewProvider({
   const [statusOverride, setStatusOverride] = useState<ClientStatusType | null>(null);
   const [activeTaskOverride, setActiveTaskOverride] = useState<boolean | null>(null);
   const [reviewStatusOverride, setReviewStatusOverride] = useState<ProfileReviewStatus | null>(null);
-  const [clientAccount, setClientAccount] =
-    useState<ClientAccountResponse | null>(null);
+  const [clientAccounts, setClientAccounts] =
+    useState<ClientAccountResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
@@ -97,12 +97,9 @@ export function ClientInfoReviewProvider({
         setHeader(taskData);
 
         if (canManageOnboarding) {
-          const accountInfo = await clientAPI.getClientAccount(taskData.clientId).catch((err) => {
-            console.error("Failed to fetch client account:", err);
-            return null;
-          });
+          const accounts = await clientAPI.getClientAccounts(taskData.clientId).catch(() => []);
           if (cancelled) return;
-          setClientAccount(accountInfo);
+          setClientAccounts(accounts);
         }
       } catch (err) {
         if (cancelled) return;
@@ -124,7 +121,7 @@ export function ClientInfoReviewProvider({
   const status = statusOverride ?? header?.clientStatus ?? null;
   const hasActiveTask = activeTaskOverride ?? header?.hasActiveTask ?? false;
   const lastReviewStatus = reviewStatusOverride ?? header?.lastReviewStatus ?? null;
-  const hasAccount = clientAccount !== null;
+  const hasAccounts = clientAccounts.length > 0;
 
   const setStatus = useCallback((newStatus: ClientStatusType) => {
     setStatusOverride(newStatus);
@@ -154,8 +151,8 @@ export function ClientInfoReviewProvider({
       setStatus,
       setHasActiveTask,
       setLastReviewStatus,
-      hasAccount,
-      clientAccount,
+      hasAccounts,
+      clientAccounts,
       isLoading,
       error,
       notFound,
@@ -176,8 +173,8 @@ export function ClientInfoReviewProvider({
       setStatus,
       setHasActiveTask,
       setLastReviewStatus,
-      hasAccount,
-      clientAccount,
+      hasAccounts,
+      clientAccounts,
       isLoading,
       error,
       notFound,

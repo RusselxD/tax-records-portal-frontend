@@ -34,7 +34,9 @@ export default function Modal({
             </button>
           </div>
 
-          {children}
+          <div className="mt-4">
+            {children}
+          </div>
 
           {actions && (
             <div className="flex justify-end gap-3 mt-4">{actions}</div>

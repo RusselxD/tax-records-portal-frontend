@@ -3,8 +3,8 @@ import type {
   CorporateOfficerDetails,
   PointOfContactDetails,
 } from "../../../../../types/client-info";
+import { CollapsibleSubsection } from "../../../../../components/common";
 import { TextDisplay, DateFieldDisplay, FileDisplay } from "../field-displays";
-import SubsectionHeading from "./SubsectionHeading";
 
 function officerHasData(officer: CorporateOfficerDetails): boolean {
   return !!(
@@ -70,26 +70,22 @@ export default function CorporateOfficerPreview({ data }: { data: CorporateOffic
   if (!hasOfficers && !hasContact) return null;
 
   return (
-    <div className="space-y-6">
-        {hasOfficers && (
-          <div>
-            <SubsectionHeading label="Corporate Officers" />
-            <div className="mt-4 space-y-3">
-              {data.officers.map((officer, i) => (
-                <OfficerCard key={i} officer={officer} index={i} />
-              ))}
-            </div>
+    <div className="space-y-3">
+      {hasOfficers && (
+        <CollapsibleSubsection title="Owner's or Corporate Officer's">
+          <div className="space-y-3">
+            {data.officers.map((officer, i) => (
+              <OfficerCard key={i} officer={officer} index={i} />
+            ))}
           </div>
-        )}
+        </CollapsibleSubsection>
+      )}
 
-        {hasContact && (
-          <div>
-            <SubsectionHeading label="Point of Contact Details" />
-            <div className="mt-4">
-              <PointOfContactCard data={data.pointOfContact} />
-            </div>
-          </div>
-        )}
+      {hasContact && (
+        <CollapsibleSubsection title="Point of Contact Details">
+          <PointOfContactCard data={data.pointOfContact} />
+        </CollapsibleSubsection>
+      )}
     </div>
   );
 }

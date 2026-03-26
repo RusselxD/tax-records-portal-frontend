@@ -25,6 +25,8 @@ export type { FilePreviewOverlayProps } from "./FilePreviewOverlay";
 export { default as Dropdown } from "./Dropdown";
 export type { DropdownProps, DropdownOption } from "./Dropdown";
 
+export { default as MultiFileDropZone } from "./MultiFileDropZone";
+
 export { default as MultiSelect } from "./MultiSelect";
 export type { MultiSelectProps, MultiSelectOption } from "./MultiSelect";
 
@@ -40,5 +42,15 @@ export type { ModalProps } from "./Modal";
 export { default as Pagination } from "./Pagination";
 
 export { default as TitlesEditor } from "./TitlesEditor";
+
+export { default as ClientStatusBadge } from "./ClientStatusBadge";
+
+export { default as CollapsibleSubsection } from "./CollapsibleSubsection";
+
+export { default as ClientSummaryCard } from "./ClientSummaryCard";
+
+export { default as JumpToSectionDropdown } from "./JumpToSectionDropdown";
+
+export { default as SearchInput } from "./SearchInput";
 
 export { default as UserAvatar } from "./UserAvatar";
