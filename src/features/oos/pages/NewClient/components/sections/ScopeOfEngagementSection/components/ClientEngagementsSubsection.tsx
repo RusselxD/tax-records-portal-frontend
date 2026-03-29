@@ -100,6 +100,7 @@ export default function ClientEngagementsSubsection({
               })
             }
             placeholder="Select type"
+            portal
           />
           <Input
             label="Bookkeeping Permit No."
@@ -181,7 +182,7 @@ export default function ClientEngagementsSubsection({
         />
 
         {/* Ad Hoc Tasks & Tax Consultations */}
-        <div className="rounded-lg border border-accent/20 bg-accent/5 p-5">
+        <div className="rounded-lg border border-gray-200 bg-white p-5">
           <h4 className="text-sm font-semibold text-primary mb-4">
             Ad Hoc Tasks & Tax Consultations
           </h4>
@@ -207,7 +208,7 @@ export default function ClientEngagementsSubsection({
               placeholder="e.g. Five Hundred Pesos (₱500.00) per hour, computed proportionately"
               className="w-full rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm text-primary font-medium placeholder:text-gray-400 placeholder:font-normal focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             />
-            <div className="border-t border-accent/15 pt-3 mt-1">
+            <div className="border-t border-gray-200 pt-3 mt-1">
               <p className="text-xs text-gray-500 leading-relaxed">
                 Such consultations include responding to queries via electronic messaging platforms,
                 as well as consultations conducted through in-person or online meetings and other

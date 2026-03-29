@@ -107,6 +107,7 @@ export default function ClientInformationSection({
                 })
               }
               placeholder="Select type"
+              portal
             />
           </div>
         </div>

@@ -182,11 +182,11 @@ export function NewClientProvider({
       if (!prev.mainDetails) return prev;
       const md = { ...prev.mainDetails };
       let changed = false;
-      if (header.accountants.csdOos?.length && !md.csdOosAccountantIds?.length) {
+      if (header.accountants?.csdOos?.length && !md.csdOosAccountantIds?.length) {
         md.csdOosAccountantIds = header.accountants.csdOos.map((a) => a.id);
         changed = true;
       }
-      if (header.accountants.qtd?.length && !md.qtdAccountantId) {
+      if (header.accountants?.qtd?.length && !md.qtdAccountantId) {
         md.qtdAccountantId = header.accountants.qtd[0]?.id ?? null;
         changed = true;
       }
@@ -233,8 +233,8 @@ export function NewClientProvider({
         return {
           ...prev,
           accountants: {
-            csdOos: fields.csdOos ?? prev.accountants.csdOos,
-            qtd: fields.qtd ?? prev.accountants.qtd,
+            csdOos: fields.csdOos ?? prev.accountants?.csdOos ?? [],
+            qtd: fields.qtd ?? prev.accountants?.qtd ?? [],
           },
         };
       });

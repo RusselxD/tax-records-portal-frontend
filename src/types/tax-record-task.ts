@@ -154,7 +154,7 @@ export interface TaxRecordTaskDetailResponse {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
-  actions: TaskActions;
+  actions?: TaskActions;
 }
 
 export interface WorkingFileItem {

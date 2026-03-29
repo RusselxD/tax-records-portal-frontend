@@ -141,6 +141,7 @@ export default function BirTaxComplianceSubsection({
             update({ topWithholding: v === "" ? null : v === "true" })
           }
           placeholder="Select"
+          portal
         />
         <DateFieldInput
           label="Date Classified as Top Withholding"

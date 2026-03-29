@@ -201,42 +201,46 @@ export default function Dropdown({
         pointerEvents: isOpen ? "auto" : "none",
       }}
     >
-      {options.map((option) => (
-        <div
-          key={option.value}
-          className={`flex items-center group ${
-            option.value === value
-              ? "bg-accent/10"
-              : "hover:bg-gray-50"
-          }`}
-        >
-          <button
-            type="button"
-            onClick={() => handleSelect(option.value)}
-            className={`flex-1 min-w-0 text-left px-3 py-2 text-sm transition-colors truncate ${
+      {options.length === 0 ? (
+        <div className="px-3 py-2.5 text-sm text-gray-400">No options available</div>
+      ) : (
+        options.map((option) => (
+          <div
+            key={option.value}
+            className={`flex items-center group ${
               option.value === value
-                ? "text-accent font-medium"
-                : "text-gray-700"
+                ? "bg-accent/10"
+                : "hover:bg-gray-50"
             }`}
-            title={option.label}
           >
-            {option.label}
-          </button>
-          {onDeleteOption && (
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteOption(option.value);
-              }}
-              className="px-2 py-2 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all shrink-0"
-              title={`Delete ${option.label}`}
+              onClick={() => handleSelect(option.value)}
+              className={`flex-1 min-w-0 text-left px-3 py-2 text-sm transition-colors truncate ${
+                option.value === value
+                  ? "text-accent font-medium"
+                  : "text-gray-700"
+              }`}
+              title={option.label}
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              {option.label}
             </button>
-          )}
-        </div>
-      ))}
+            {onDeleteOption && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteOption(option.value);
+                }}
+                className="px-2 py-2 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all shrink-0"
+                title={`Delete ${option.label}`}
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        ))
+      )}
     </div>
   );
 
