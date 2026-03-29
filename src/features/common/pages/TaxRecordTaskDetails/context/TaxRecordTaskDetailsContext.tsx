@@ -138,7 +138,7 @@ export function TaxRecordTaskDetailsProvider({
         if (isNotFoundError(err)) {
           setNotFound(true);
         } else {
-          setError("Failed to load task details.");
+          setError(getErrorMessage(err, "Failed to load task details."));
         }
       } finally {
         if (!cancelled) setIsLoading(false);

@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { Upload, Loader2 } from "lucide-react";
 import FileRow from "../../../../../../components/common/FileRow";
 import FilePreviewOverlay from "../../../../../../components/common/FilePreviewOverlay";
+import { getErrorMessage } from "../../../../../../lib/api-error";
 import type { FileReference } from "../../../../../../types/client-info";
 import { useNewClient } from "../../context/NewClientContext";
 
@@ -34,8 +35,8 @@ export default function FileUploadInput({
     try {
       const ref = await uploadFile(file);
       onChange(ref);
-    } catch {
-      setError("Upload failed");
+    } catch (err) {
+      setError(getErrorMessage(err, "Upload failed"));
     } finally {
       setIsUploading(false);
     }

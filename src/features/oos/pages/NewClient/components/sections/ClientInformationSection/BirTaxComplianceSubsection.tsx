@@ -1,6 +1,6 @@
 import { uid } from "../../../../../../../lib/uid";
 import { Plus, Trash2 } from "lucide-react";
-import { Input, Button, Dropdown } from "../../../../../../../components/common";
+import { Input, Button, Dropdown, CurrencyInput } from "../../../../../../../components/common";
 import type {
   BirTaxComplianceDetails,
   GrossSalesEntry,
@@ -88,18 +88,12 @@ export default function BirTaxComplianceSubsection({
                     })
                   }
                 />
-                <Input
+                <CurrencyInput
                   label="Amount"
-                  type="number"
-                  value={entry.amount ?? ""}
-                  onChange={(e) =>
-                    updateGrossSales(index, {
-                      amount: e.target.value
-                        ? parseFloat(e.target.value)
-                        : null,
-                    })
+                  value={entry.amount}
+                  onChange={(amount) =>
+                    updateGrossSales(index, { amount })
                   }
-                  placeholder="₱0.00"
                 />
               </div>
               <button

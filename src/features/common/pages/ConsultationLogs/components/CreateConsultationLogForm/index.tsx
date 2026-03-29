@@ -62,8 +62,8 @@ export default function CreateConsultationLogForm({ onCancel, onSuccess }: Creat
         const ref = await fileAPI.upload(clientId, file);
         setAttachments((prev) => [...prev, ref]);
       }
-    } catch {
-      toastError("File upload failed");
+    } catch (err) {
+      toastError(getErrorMessage(err, "File upload failed"));
     } finally {
       setIsUploading(false);
     }

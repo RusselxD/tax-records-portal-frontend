@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { accountantAnalyticsAPI } from "../../../../../api/accountantAnalytics";
 import { getErrorMessage } from "../../../../../lib/api-error";
@@ -30,19 +30,19 @@ const EmptyRow = () => (
 
 const TableRow = ({
   item,
-  clientPath,
+  onClick,
 }: {
   item: ClientPortfolioItem;
-  clientPath: string;
+  onClick: () => void;
 }) => (
-  <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+  <tr
+    onClick={onClick}
+    className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
+  >
     <td className="py-3 px-4">
-      <Link
-        to={clientPath}
-        className="text-sm font-medium text-primary hover:underline"
-      >
+      <span className="text-sm font-medium text-primary">
         {item.clientName}
-      </Link>
+      </span>
     </td>
     <td className="py-3 px-4">
       <ClientStatusBadge status={item.status as ClientStatus} />
@@ -75,6 +75,7 @@ export default function ClientPortfolioTable({ userId }: { userId?: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const navigate = useNavigate();
   const rolePrefix = getRolePrefix(user?.roleKey ?? "");
 
   const fetchPage = useCallback(async (p: number) => {
@@ -147,7 +148,7 @@ export default function ClientPortfolioTable({ userId }: { userId?: string }) {
                 <TableRow
                   key={item.clientId}
                   item={item}
-                  clientPath={`/${rolePrefix}/client-details/${item.clientId}`}
+                  onClick={() => navigate(`/${rolePrefix}/client-details/${item.clientId}`)}
                 />
               ))}
           </tbody>

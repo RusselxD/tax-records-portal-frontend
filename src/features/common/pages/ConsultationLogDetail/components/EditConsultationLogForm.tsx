@@ -49,8 +49,8 @@ export default function EditConsultationLogForm({ log, onCancel, onSuccess }: Ed
         const ref = await fileAPI.upload(log.clientId, file);
         setAttachments((prev) => [...prev, ref]);
       }
-    } catch {
-      toastError("File upload failed");
+    } catch (err) {
+      toastError(getErrorMessage(err, "File upload failed"));
     } finally {
       setIsUploading(false);
     }

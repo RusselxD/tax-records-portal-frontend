@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { ClipboardList, Loader2 } from "lucide-react";
 import { SidebarCard } from "../../../components/client-info";
 import { taxRecordTaskAPI } from "../../../../../api/tax-record-task";
+import { getErrorMessage } from "../../../../../lib/api-error";
 import { useClientDetails } from "../context/ClientDetailsContext";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { Permission, hasPermission } from "../../../../../constants";
@@ -54,8 +55,8 @@ export default function ClientTasks() {
       setTasks(data.tasks);
       setNextCursor(data.nextCursor);
       setHasMore(data.hasMore);
-    } catch {
-      setError("Failed to load tasks.");
+    } catch (err) {
+      setError(getErrorMessage(err, "Failed to load tasks."));
     } finally {
       setIsLoading(false);
     }
@@ -69,8 +70,8 @@ export default function ClientTasks() {
       setTasks((prev) => [...prev, ...data.tasks]);
       setNextCursor(data.nextCursor);
       setHasMore(data.hasMore);
-    } catch {
-      setError("Failed to load more tasks.");
+    } catch (err) {
+      setError(getErrorMessage(err, "Failed to load more tasks."));
     } finally {
       setIsLoadingMore(false);
     }

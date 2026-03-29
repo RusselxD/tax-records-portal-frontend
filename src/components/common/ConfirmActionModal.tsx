@@ -1,6 +1,7 @@
 import { useState, useEffect, type Dispatch, type SetStateAction, type ReactNode } from "react";
 import Modal from "./Modal";
 import Button from "./Button";
+import { getErrorMessage } from "../../lib/api-error";
 
 export interface ConfirmActionModalProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -47,8 +48,7 @@ export default function ConfirmActionModal({
         onError(err);
         setModalOpen(false);
       } else {
-        const message =
-          err instanceof Error ? err.message : "Something went wrong. Please try again.";
+        const message = getErrorMessage(err, "Something went wrong. Please try again.");
         setError(message);
       }
     } finally {

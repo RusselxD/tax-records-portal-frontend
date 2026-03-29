@@ -4,6 +4,7 @@ import usePageTitle from "../../../../hooks/usePageTitle";
 import { notificationAPI } from "../../../../api/notification";
 import { useNotifications } from "../../../../contexts/NotificationsContext";
 import { useToast } from "../../../../contexts/ToastContext";
+import { getErrorMessage } from "../../../../lib/api-error";
 import NotificationList from "./components/NotificationList";
 import type { NotificationListItemResponse } from "../../../../types/notification";
 
@@ -70,9 +71,9 @@ export default function Notifications() {
     try {
       await notificationAPI.deleteNotification(id);
       refetchUnreadCount();
-    } catch {
+    } catch (err) {
       setNotifications(snapshot);
-      toastError("Failed to delete notification.");
+      toastError(getErrorMessage(err, "Failed to delete notification."));
     }
   }, [refetchUnreadCount, toastError]);
 
@@ -87,9 +88,9 @@ export default function Notifications() {
     try {
       await notificationAPI.markAllAsRead();
       refetchUnreadCount();
-    } catch {
+    } catch (err) {
       setNotifications(snapshot);
-      toastError("Failed to mark all as read.");
+      toastError(getErrorMessage(err, "Failed to mark all as read."));
     }
   }, [refetchUnreadCount, toastError]);
 

@@ -17,9 +17,6 @@ export default function PendingActionItemsList({
 }: PendingActionItemsListProps) {
   return (
     <div>
-      <h3 className="text-sm font-semibold text-primary mb-3">
-        Pending Action Items
-      </h3>
       <div className="space-y-3">
         {items.map((item, index) => (
           <div key={item._uid ?? index} className="flex items-end gap-3">

@@ -49,6 +49,15 @@ function TableSkeleton() {
   );
 }
 
+type AccentColor = "navy" | "amber" | "emerald" | "sky";
+
+const accentStyles: Record<AccentColor, { border: string; badge: string; badgeText: string; iconBg: string }> = {
+  navy:    { border: "border-l-primary",     badge: "bg-primary/10",      badgeText: "text-primary",       iconBg: "bg-primary/10 text-primary" },
+  amber:   { border: "border-l-amber-400",   badge: "bg-amber-50",        badgeText: "text-amber-600",     iconBg: "bg-amber-50 text-amber-600" },
+  emerald: { border: "border-l-emerald-400", badge: "bg-emerald-50",      badgeText: "text-emerald-600",   iconBg: "bg-emerald-50 text-emerald-600" },
+  sky:     { border: "border-l-sky-400",     badge: "bg-sky-50",          badgeText: "text-sky-600",       iconBg: "bg-sky-50 text-sky-600" },
+};
+
 interface TaskListProps {
   title: string;
   icon: React.ReactNode;
@@ -56,6 +65,7 @@ interface TaskListProps {
   showStatus?: boolean;
   emptyMessage?: string;
   defaultOpen?: boolean;
+  accent?: AccentColor;
 }
 
 export default function TaskList({
@@ -65,6 +75,7 @@ export default function TaskList({
   showStatus = false,
   emptyMessage = "No tasks here right now.",
   defaultOpen = false,
+  accent = "navy",
 }: TaskListProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -109,16 +120,26 @@ export default function TaskList({
   const startItem = totalElements === 0 ? 0 : page * PAGE_SIZE + 1;
   const endItem = Math.min((page + 1) * PAGE_SIZE, totalElements);
 
+  const styles = accentStyles[accent];
+
   return (
-    <div>
+    <div className={`bg-white rounded-lg custom-shadow border border-gray-200 border-l-[3px] ${styles.border} overflow-hidden`}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex custom-shadow items-center text-sm gap-2 font-medium bg-white border border-gray-200 px-4 py-3 transition-colors hover:bg-gray-50 rounded-lg"
+        className="w-full flex items-center text-sm gap-3 font-medium px-4 py-3.5 transition-colors hover:bg-gray-50"
       >
-        {icon}
-        <span>{title}</span>
-        <span className="text-gray-400">{`(${totalElements})`}</span>
+        <span className={`flex items-center justify-center w-8 h-8 rounded-lg shrink-0 ${styles.iconBg}`}>
+          {icon}
+        </span>
+        <span className="text-primary">{title}</span>
+        {totalElements > 0 ? (
+          <span className={`inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full text-xs font-semibold ${styles.badge} ${styles.badgeText}`}>
+            {totalElements}
+          </span>
+        ) : (
+          <span className="text-xs text-gray-400">(0)</span>
+        )}
         <ChevronDown
           className={`w-4 h-4 text-gray-400 ml-auto transition-transform ${open ? "rotate-180" : ""}`}
         />
@@ -127,11 +148,11 @@ export default function TaskList({
       {open && (
         <>
           {isLoading ? (
-            <div className="mt-2">
+            <div className="px-4 pb-4">
               <TableSkeleton />
             </div>
           ) : error ? (
-            <div className="mt-2 bg-white rounded-lg border border-gray-200 p-8 text-center">
+            <div className="p-8 text-center border-t border-gray-100">
               <p className="text-sm text-red-500">{error}</p>
               <button
                 onClick={() => setPage(0)}
@@ -141,7 +162,7 @@ export default function TaskList({
               </button>
             </div>
           ) : (
-            <div className="mt-2 bg-white rounded-lg custom-shadow border border-gray-200 overflow-hidden">
+            <div>
               <table className="w-full table-fixed">
                 <thead>
                   <tr className="border-b border-gray-200">

@@ -129,8 +129,8 @@ export default function CreateInvoice() {
         const ref = await uploadFile(file);
         setAttachments((prev) => [...prev, ref]);
       }
-    } catch {
-      setError("File upload failed");
+    } catch (err) {
+      setError(getErrorMessage(err, "File upload failed"));
     } finally {
       setIsUploading(false);
     }

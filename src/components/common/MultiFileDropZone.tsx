@@ -3,6 +3,7 @@ import { Upload, Loader2 } from "lucide-react";
 import FileRow from "./FileRow";
 import FilePreviewOverlay from "./FilePreviewOverlay";
 import { useToast } from "../../contexts/ToastContext";
+import { getErrorMessage } from "../../lib/api-error";
 import { validateDocumentFile } from "../../lib/file-validation";
 import type { FileReference } from "../../types/client-info";
 
@@ -45,8 +46,8 @@ export default function MultiFileDropZone({
         valueRef.current = updated;
         onChange(updated);
       }
-    } catch {
-      setError("Some files failed to upload");
+    } catch (err) {
+      setError(getErrorMessage(err, "Some files failed to upload"));
     } finally {
       setIsUploading(false);
     }

@@ -166,11 +166,32 @@ export default function FilePreviewOverlay({
     }
 
     if (fileType === "unsupported") {
+      const ext = fileName.split(".").pop()?.toLowerCase() ?? "";
       return (
-        <div className="flex items-center justify-center flex-1 p-4">
-          <Alert variant="warning">
-            Preview is not supported for this file type. Use the download button to view it.
-          </Alert>
+        <div className="flex flex-col items-center justify-center flex-1 gap-4 text-center px-6">
+          <div className="w-20 h-24 rounded-lg bg-white/10 border border-white/20 flex flex-col items-center justify-center">
+            <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+            </svg>
+            {ext && (
+              <span className="text-[10px] font-bold uppercase text-gray-400 mt-0.5">.{ext}</span>
+            )}
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-300">No preview available</p>
+            <p className="text-xs text-gray-500 mt-1 max-w-xs">
+              This file type can't be previewed in the browser. Download it to view on your device.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleDownload}
+            disabled={!fileUrl}
+            className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-medium text-gray-200 transition-colors disabled:opacity-30"
+          >
+            <Download className="w-4 h-4" />
+            Download File
+          </button>
         </div>
       );
     }

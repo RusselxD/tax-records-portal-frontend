@@ -137,10 +137,10 @@ export default function useNewClientActions({
           "The client has been submitted for review.",
         );
         navigate("/oos/client-onboarding");
-      } catch {
+      } catch (err) {
         toastError(
           "Submission failed",
-          "Something went wrong. Please try again.",
+          getErrorMessage(err, "Something went wrong. Please try again."),
         );
       } finally {
         setIsSubmitting(false);
@@ -161,10 +161,10 @@ export default function useNewClientActions({
             : "The draft has been discarded.",
         );
         navigate("/oos/client-onboarding");
-      } catch {
+      } catch (err) {
         toastError(
           isEditMode ? "Failed to delete client" : "Failed to discard draft",
-          "Something went wrong. Please try again.",
+          getErrorMessage(err, "Something went wrong. Please try again."),
         );
       } finally {
         setIsDiscarding(false);

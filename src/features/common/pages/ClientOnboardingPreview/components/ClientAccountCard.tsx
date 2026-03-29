@@ -56,8 +56,8 @@ function ResendForm({
           ? { firstName: firstName.trim(), lastName: lastName.trim(), email: email.trim() }
           : undefined,
       );
-    } catch {
-      toastError("Failed to resend activation email. Please try again.");
+    } catch (err) {
+      toastError(getErrorMessage(err, "Failed to resend activation email. Please try again."));
     } finally {
       setIsSubmitting(false);
     }
