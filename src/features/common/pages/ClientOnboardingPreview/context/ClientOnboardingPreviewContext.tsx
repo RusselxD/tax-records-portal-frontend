@@ -117,10 +117,10 @@ export function ClientInfoReviewProvider({
     return () => { cancelled = true; };
   }, [taskId, canManageOnboarding, resetSections, version]);
 
-  const clientName = header?.clientDisplayName ?? "";
-  const status = statusOverride ?? header?.clientStatus ?? null;
-  const hasActiveTask = activeTaskOverride ?? header?.hasActiveTask ?? false;
-  const lastReviewStatus = reviewStatusOverride ?? header?.lastReviewStatus ?? null;
+  const clientName = header?.displayName ?? "";
+  const status = statusOverride ?? header?.status ?? null;
+  const hasActiveTask = activeTaskOverride ?? header?.taskReview.hasActiveTask ?? false;
+  const lastReviewStatus = reviewStatusOverride ?? header?.taskReview.lastReviewStatus ?? null;
   const hasAccounts = clientAccounts.length > 0;
 
   const setStatus = useCallback((newStatus: ClientStatusType) => {

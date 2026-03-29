@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Loader2, AlertTriangle, Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import { invoiceAPI } from "../../../../api/invoice";
+import { clientAPI } from "../../../../api/client";
 import { getErrorMessage } from "../../../../lib/api-error";
-import { Pagination, Button } from "../../../../components/common";
+import { Pagination, Button, SearchInput } from "../../../../components/common";
 import type { PageResponse, InvoiceListItemResponse } from "../../../../types/invoice";
+import type { LookupResponse } from "../../../../types/tax-record-task";
 import BillingsTable from "./components/BillingsTable";
 
 const PAGE_SIZE = 20;
@@ -13,39 +15,62 @@ const PAGE_SIZE = 20;
 export default function Billings() {
   usePageTitle("Billings");
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const clientId = searchParams.get("clientId") || undefined;
+  const [searchParams] = useSearchParams();
+  const prefilledClientId = searchParams.get("clientId") || "";
 
   const [page, setPage] = useState(0);
+  const [search, setSearch] = useState("");
+  const [clientId, setClientId] = useState(prefilledClientId);
+  const [status, setStatus] = useState("");
   const [data, setData] = useState<PageResponse<InvoiceListItemResponse> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [clients, setClients] = useState<LookupResponse[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchClients = async () => {
+      try {
+        const data = await clientAPI.getActiveClients();
+        if (!cancelled) setClients(data);
+      } catch {
+        console.warn("Failed to load client filter options");
+      }
+    };
+    fetchClients();
+    return () => { cancelled = true; };
+  }, []);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await invoiceAPI.getInvoices({ clientId, page, size: PAGE_SIZE });
+      const params: Record<string, string | number> = { page, size: PAGE_SIZE };
+      if (clientId) params.clientId = clientId;
+      if (status) params.status = status;
+      if (search) params.search = search;
+      const res = await invoiceAPI.getInvoices(params);
       setData(res);
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
-  }, [clientId, page]);
+  }, [clientId, status, search, page]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  const clearFilter = () => {
-    setSearchParams({});
-    setPage(0);
-  };
+  const handleSearchChange = (v: string) => { setSearch(v); setPage(0); };
+  const handleClientChange = (v: string) => { setClientId(v); setPage(0); };
+  const handleStatusChange = (v: string) => { setStatus(v); setPage(0); };
 
-  const clientName = clientId && data?.content.length
-    ? data.content[0].clientName
-    : null;
+  const clientOptions = [
+    { label: "All Clients", value: "" },
+    ...clients.map((c) => ({ label: c.displayName, value: c.id })),
+  ];
 
   const createUrl = clientId
     ? `/internal-billing/billings/new?clientId=${clientId}`
@@ -56,43 +81,29 @@ export default function Billings() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          {clientName && (
-            <div className="flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1.5 text-sm font-medium text-primary">
-              {clientName}
-              <button onClick={clearFilter} className="ml-1 text-gray-400 hover:text-gray-600 transition-colors">
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          )}
-        </div>
-        <Button onClick={() => navigate(createUrl)}>
+        <SearchInput
+          placeholder="Search by invoice number or client..."
+          value={search}
+          onChange={handleSearchChange}
+        />
+        <Button onClick={() => navigate(createUrl)} className="shrink-0">
           <Plus className="h-4 w-4 mr-1.5" />
           Create Invoice
         </Button>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        {isLoading && !data ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
-          </div>
-        ) : error ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <AlertTriangle className="h-5 w-5 text-gray-400 mb-2" />
-            <p className="text-sm text-gray-500 mb-2">{error}</p>
-            <Button variant="secondary" onClick={fetchData}>Retry</Button>
-          </div>
-        ) : invoices.length === 0 ? (
-          <div className="px-4 py-16 text-center text-sm text-gray-400">
-            No invoices found.
-          </div>
-        ) : (
-          <BillingsTable
-            invoices={invoices}
-            onRefresh={fetchData}
-          />
-        )}
+      <div className="bg-white border border-gray-200 rounded-lg">
+        <BillingsTable
+          invoices={invoices}
+          isLoading={isLoading && !data}
+          error={error}
+          onRefresh={fetchData}
+          clientOptions={clientOptions}
+          clientFilter={clientId}
+          onClientFilterChange={handleClientChange}
+          statusFilter={status}
+          onStatusFilterChange={handleStatusChange}
+        />
 
         {data && (
           <Pagination

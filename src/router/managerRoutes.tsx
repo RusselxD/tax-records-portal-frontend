@@ -16,6 +16,9 @@ import UserProfile from "../features/common/pages/UserProfile";
 import EditClientProfile from "../features/common/pages/EditClientProfile";
 import ProfileUpdateReview from "../features/common/pages/ProfileUpdateReview";
 import Notifications from "../features/common/pages/Notifications";
+import InvoiceDetail from "../features/common/pages/InvoiceDetail";
+import ConsultationLogs from "../features/common/pages/ConsultationLogs";
+import ConsultationLogDetail from "../features/common/pages/ConsultationLogDetail";
 import Help from "../features/common/pages/Help";
 
 export const managerRoutes: RouteObject = {
@@ -76,6 +79,18 @@ export const managerRoutes: RouteObject = {
         {
           path: "tax-record-task/:id",
           element: <TaxRecordTaskDetails />,
+        },
+        {
+          path: "billings/:id",
+          element: <InvoiceDetail />,
+        },
+        {
+          path: "consultation-logs",
+          element: <ConsultationLogs />,
+        },
+        {
+          path: "consultation-logs/:id",
+          element: <ConsultationLogDetail />,
         },
         {
           path: "notifications",

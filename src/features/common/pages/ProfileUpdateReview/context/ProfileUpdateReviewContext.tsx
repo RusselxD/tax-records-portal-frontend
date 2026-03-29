@@ -13,6 +13,7 @@ import { useToast } from "../../../../../contexts/ToastContext";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { Permission, hasPermission } from "../../../../../constants";
 import type { ProfileUpdateReviewResponse } from "../../../../../types/client-profile";
+import type { RichTextContent } from "../../../../../types/client-info";
 
 interface ProfileUpdateReviewContextType {
   taskId: string;
@@ -24,8 +25,8 @@ interface ProfileUpdateReviewContextType {
   isReviewer: boolean;
   refetch: () => void;
   logsVersion: number;
-  approveUpdate: (comment: string) => Promise<void>;
-  rejectUpdate: (comment: string) => Promise<void>;
+  approveUpdate: (comment: RichTextContent | null) => Promise<void>;
+  rejectUpdate: (comment: RichTextContent | null) => Promise<void>;
 }
 
 const ProfileUpdateReviewContext = createContext<ProfileUpdateReviewContextType | null>(null);
@@ -91,7 +92,7 @@ export function ProfileUpdateReviewProvider({
   );
 
   const approveUpdate = useCallback(
-    async (comment: string) => {
+    async (comment: RichTextContent | null) => {
       await clientAPI.approveClientInfo(taskId, comment).catch(handleConflict);
       toastSuccess("Approved", "The profile update has been approved.");
       setLogsVersion((v) => v + 1);
@@ -101,7 +102,7 @@ export function ProfileUpdateReviewProvider({
   );
 
   const rejectUpdate = useCallback(
-    async (comment: string) => {
+    async (comment: RichTextContent | null) => {
       await clientAPI.rejectClientInfo(taskId, comment).catch(handleConflict);
       toastSuccess("Rejected", "The profile update has been sent back for revision.");
       setLogsVersion((v) => v + 1);

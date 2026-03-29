@@ -6,7 +6,9 @@ import {
   ClipboardList,
   UserCheck,
   UserX,
+  UserMinus,
   ArrowRightLeft,
+  MessageSquareText,
   Bell,
   Loader2,
 } from "lucide-react";
@@ -30,6 +32,10 @@ const typeConfig: Record<
   PROFILE_APPROVED: { icon: UserCheck, color: "text-emerald-600", bg: "bg-emerald-100" },
   PROFILE_REJECTED: { icon: UserX, color: "text-red-500", bg: "bg-red-100" },
   CLIENT_HANDOFF: { icon: ArrowRightLeft, color: "text-amber-600", bg: "bg-amber-100" },
+  OFFBOARDING_ASSIGNED: { icon: UserMinus, color: "text-amber-600", bg: "bg-amber-100" },
+  CONSULTATION_SUBMITTED: { icon: MessageSquareText, color: "text-blue-600", bg: "bg-blue-100" },
+  CONSULTATION_APPROVED: { icon: MessageSquareText, color: "text-emerald-600", bg: "bg-emerald-100" },
+  CONSULTATION_REJECTED: { icon: MessageSquareText, color: "text-red-500", bg: "bg-red-100" },
 };
 
 function NotificationItem({
@@ -51,7 +57,7 @@ function NotificationItem({
     if (!notification.isRead) {
       onRead(notification.id);
       decrementUnread();
-      notificationAPI.markNotificationAsRead(notification.id).catch(() => {});
+      notificationAPI.markNotificationAsRead(notification.id).catch(() => { console.warn("Failed to mark notification as read"); });
     }
     if (user) {
       const href = getNotificationHref(notification, user.roleKey);
@@ -127,7 +133,7 @@ export default function NotificationList({
     if (!hasMore || loadingMore) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) onLoadMore();
+        if (entries[0]?.isIntersecting) onLoadMore();
       },
       { threshold: 0.1 },
     );

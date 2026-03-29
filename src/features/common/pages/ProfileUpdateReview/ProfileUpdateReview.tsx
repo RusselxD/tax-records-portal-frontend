@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronRight, AlertTriangle, Clock, Pencil, CheckCircle2 } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
-import { Button } from "../../../../components/common";
+import { Button, CommentPreview } from "../../../../components/common";
 import NotFound from "../../../../pages/NotFound";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { getRolePrefix } from "../../../../constants/roles";
@@ -92,19 +92,16 @@ function ProfileUpdateReviewContent() {
   return (
     <div className="max-w-[1440px] mx-auto pb-12">
       {/* Breadcrumb */}
-      <div className="mb-6">
-        <div className="flex items-center gap-1.5 text-sm text-gray-400 mb-2">
-          <button onClick={() => navigate(`/${prefix}/clients`)} className="hover:text-accent transition-colors">
-            Client List
-          </button>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <button onClick={() => navigate(`/${prefix}/client-details/${clientId}`)} className="hover:text-accent transition-colors">
-            {review.clientName}
-          </button>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <span className="text-gray-600">Profile Update Review</span>
-        </div>
-        <h1 className="text-2xl font-bold text-primary">Profile Update Review</h1>
+      <div className="flex items-center gap-1.5 text-sm text-gray-400 mb-5">
+        <button onClick={() => navigate(`/${prefix}/clients`)} className="hover:text-accent transition-colors">
+          Client List
+        </button>
+        <ChevronRight className="h-3.5 w-3.5" />
+        <button onClick={() => navigate(`/${prefix}/client-details/${clientId}`)} className="hover:text-accent transition-colors">
+          {review.clientName}
+        </button>
+        <ChevronRight className="h-3.5 w-3.5" />
+        <span className="text-gray-600">Profile Update Review</span>
       </div>
 
       <div className="flex gap-2 items-start">
@@ -119,9 +116,9 @@ function ProfileUpdateReviewContent() {
               <span>{formatDate(review.submittedAt)}</span>
             </div>
             {review.comment && (
-              <p className="text-sm text-gray-600 mt-2 pl-5.5">
-                "{review.comment}"
-              </p>
+              <div className="mt-2 pl-5.5">
+                <CommentPreview content={review.comment} className="text-xs" />
+              </div>
             )}
           </div>
 
@@ -145,7 +142,7 @@ function ProfileUpdateReviewContent() {
           )}
 
           {/* Rejection banner */}
-          {review.status === PROFILE_REVIEW_STATUS.REJECTED && (
+          {review.status === PROFILE_REVIEW_STATUS.REJECTED && !isReviewer && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-5">
               <p className="text-sm font-medium text-red-700 mb-1">This profile update was rejected.</p>
               <p className="text-sm text-red-600 mb-4">Check the activity logs for details. You can revise and resubmit.</p>

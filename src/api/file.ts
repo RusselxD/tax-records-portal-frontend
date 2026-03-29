@@ -23,4 +23,17 @@ export const fileAPI = {
   delete: async (fileId: string): Promise<void> => {
     await apiClient.delete(`/files/${fileId}`);
   },
+
+  uploadImage: async (file: File): Promise<{ id: string; url: string }> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await apiClient.post("/files/images", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return res.data;
+  },
+
+  deleteImage: async (imageId: string): Promise<void> => {
+    await apiClient.delete(`/files/images/${imageId}`);
+  },
 };

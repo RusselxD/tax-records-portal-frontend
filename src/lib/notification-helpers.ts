@@ -21,9 +21,8 @@ export function getNotificationHref(
   switch (notification.referenceType) {
     case "CLIENT":
     case "CLIENT_INFO": {
-      // Handoff means the client is now active — go to details, not preview
       const route =
-        notification.type === "CLIENT_HANDOFF"
+        notification.type === "CLIENT_HANDOFF" || notification.type === "OFFBOARDING_ASSIGNED"
           ? "client-details"
           : ROLES_WITH_ONBOARDING_PREVIEW.has(role)
             ? "client-preview"
@@ -36,6 +35,8 @@ export function getNotificationHref(
       return `${basePath}/task-details/${notification.referenceId}`;
     case "TAX_RECORD_TASK":
       return `${basePath}/tax-record-task/${notification.referenceId}`;
+    case "CONSULTATION_LOG":
+      return `${basePath}/consultation-logs/${notification.referenceId}`;
     default:
       return null;
   }

@@ -40,10 +40,12 @@ export default function SectionCard({
 
   return (
     <div className="rounded-lg bg-white border border-gray-200">
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={handleToggle}
-        className="w-full flex items-center justify-between px-6 py-4 text-left border-b border-gray-200 hover:bg-gray-50 transition-colors"
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleToggle(); } }}
+        className="w-full flex items-center justify-between px-6 py-4 text-left border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
       >
         <h2 className="font-bold text-primary">{title}</h2>
         <div className="flex items-center gap-3">
@@ -58,7 +60,7 @@ export default function SectionCard({
             }`}
           />
         </div>
-      </button>
+      </div>
       {isOpen && (
         <div className="px-6 py-5">
           {isLoading && (

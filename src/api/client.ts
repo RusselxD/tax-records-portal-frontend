@@ -1,8 +1,10 @@
 import type {
   ClientOnboardingListItemResponse,
+  ClientOffboardingListItemResponse,
   CreateClientResponse,
   ClientPageResponse,
-  ClientInfoLogsItemResponse,
+  ClientInfoTaskLogResponse,
+  LogCommentResponse,
   ClientAccountResponse,
   ActivateClientAccountPayload,
   ArchiveSnapshotResponse,
@@ -10,7 +12,11 @@ import type {
   ClientStatus,
   CreateClientNoticeRequest,
   ClientNoticeResponse,
+  OffboardClientRequest,
+  EndOfEngagementLetterTemplateSummary,
+  EndOfEngagementLetterTemplate,
 } from "../types/client";
+import type { RichTextContent } from "../types/client-info";
 import type {
   ClientInfoResponse,
   ClientInfoHeaderResponse,
@@ -21,13 +27,22 @@ import type {
 import type { ProfileReviewPageResponse, ProfileReviewFilters, ProfileUpdateReviewResponse } from "../types/client-profile";
 import type { LookupResponse } from "../types/tax-record-task";
 import apiClient from "./axios-config";
+import { buildParams } from "./api-utils";
 
 // For OOS Accountants
 export const oosClientAPI = {
-  getMyOnboardingClients: async (): Promise<
-    ClientOnboardingListItemResponse[]
+  getMyOnboardingClients: async (
+    filters?: { search?: string },
+  ): Promise<ClientOnboardingListItemResponse[]> => {
+    const params = filters ? buildParams(filters) : undefined;
+    const res = await apiClient.get("/clients/onboarding", { params });
+    return res.data;
+  },
+
+  getMyOffboardingClients: async (): Promise<
+    ClientOffboardingListItemResponse[]
   > => {
-    const res = await apiClient.get("/clients/onboarding");
+    const res = await apiClient.get("/clients/offboarding");
     return res.data;
   },
 
@@ -51,7 +66,7 @@ export const oosClientAPI = {
 
   submitForReview: async (
     clientId: string,
-    comment?: string,
+    comment?: RichTextContent | null,
   ): Promise<void> => {
     await apiClient.post(
       `/client-info/tasks/${clientId}/submit`,
@@ -83,21 +98,29 @@ export const clientAPI = {
 
   getClientInfoLogs: async (
     taskId: string,
-  ): Promise<ClientInfoLogsItemResponse[]> => {
+  ): Promise<ClientInfoTaskLogResponse[]> => {
     const res = await apiClient.get(`/client-info/tasks/${taskId}/logs`);
+    return res.data;
+  },
+
+  getClientInfoLogComment: async (
+    taskId: string,
+    logId: string,
+  ): Promise<LogCommentResponse> => {
+    const res = await apiClient.get(`/client-info/tasks/${taskId}/logs/${logId}/comment`);
     return res.data;
   },
 
   approveClientInfo: async (
     taskId: string,
-    comment: string,
+    comment: RichTextContent | null,
   ): Promise<void> => {
     await apiClient.post(`/client-info/tasks/${taskId}/approve`, { comment });
   },
 
   rejectClientInfo: async (
     taskId: string,
-    comment: string,
+    comment: RichTextContent | null,
   ): Promise<void> => {
     await apiClient.post(`/client-info/tasks/${taskId}/reject`, { comment });
   },
@@ -130,10 +153,7 @@ export const clientAPI = {
   getClients: async (
     params: { page?: number; size?: number; search?: string } = {},
   ): Promise<ClientPageResponse> => {
-    const query: Record<string, string | number> = {};
-    if (params.page != null) query.page = params.page;
-    if (params.size != null) query.size = params.size;
-    if (params.search) query.search = params.search;
+    const query = buildParams(params);
     const res = await apiClient.get("/clients", { params: query });
     return res.data;
   },
@@ -151,19 +171,14 @@ export const clientAPI = {
   },
 
   getProfileReviews: async (filters: ProfileReviewFilters = {}): Promise<ProfileReviewPageResponse> => {
-    const params: Record<string, string | number> = {};
-    if (filters.page != null) params.page = filters.page;
-    if (filters.size != null) params.size = filters.size;
-    if (filters.search) params.search = filters.search;
-    if (filters.type) params.type = filters.type;
-    if (filters.status) params.status = filters.status;
+    const params = buildParams(filters);
     const res = await apiClient.get("/client-info/tasks/reviews", { params });
     return res.data;
   },
 
   submitProfileUpdate: async (
     clientId: string,
-    payload: ClientInfoSections & { comment?: string | null },
+    payload: ClientInfoSections & { comment?: RichTextContent | null },
   ): Promise<void> => {
     await apiClient.post(`/client-info/tasks/${clientId}/submit-update`, payload);
   },
@@ -211,12 +226,75 @@ export const clientAPI = {
     await apiClient.patch(`/clients/${clientId}/status`, { status });
   },
 
+  // ── Reassign accountants ──
+
+  reassignAccountants: async (
+    clientId: string,
+    payload: { csdOosAccountantIds: string[]; qtdAccountantId: string | null },
+  ): Promise<void> => {
+    await apiClient.put(`/clients/${clientId}/assigned-accountants`, payload);
+  },
+
+  // ── Offboarding ──
+
+  offboardClient: async (
+    clientId: string,
+    payload: OffboardClientRequest,
+  ): Promise<void> => {
+    await apiClient.post(`/clients/${clientId}/offboard`, payload);
+  },
+
+  toggleTaxRecordsProtection: async (
+    clientId: string,
+    protectTaxRecords: boolean,
+  ): Promise<void> => {
+    await apiClient.patch(`/clients/${clientId}/tax-records-protection`, { protectTaxRecords });
+  },
+
+  sendEndOfEngagementLetter: async (
+    clientId: string,
+    templateId: string,
+  ): Promise<void> => {
+    await apiClient.post(`/clients/${clientId}/send-end-of-engagement-letter`, { templateId });
+  },
+
+  // ── Engagement Letter Templates ──
+
+  getEndOfEngagementLetterTemplates: async (): Promise<EndOfEngagementLetterTemplateSummary[]> => {
+    const res = await apiClient.get("/end-of-engagement-letter-templates");
+    return res.data;
+  },
+
+  getEndOfEngagementLetterTemplate: async (id: string): Promise<EndOfEngagementLetterTemplate> => {
+    const res = await apiClient.get(`/end-of-engagement-letter-templates/${id}`);
+    return res.data;
+  },
+
+  createEndOfEngagementLetterTemplate: async (
+    payload: { name: string; body: RichTextContent },
+  ): Promise<EndOfEngagementLetterTemplate> => {
+    const res = await apiClient.post("/end-of-engagement-letter-templates", payload);
+    return res.data;
+  },
+
+  updateEndOfEngagementLetterTemplate: async (
+    id: string,
+    payload: { name: string; body: RichTextContent },
+  ): Promise<EndOfEngagementLetterTemplate> => {
+    const res = await apiClient.put(`/end-of-engagement-letter-templates/${id}`, payload);
+    return res.data;
+  },
+
+  deleteEndOfEngagementLetterTemplate: async (id: string): Promise<void> => {
+    await apiClient.delete(`/end-of-engagement-letter-templates/${id}`);
+  },
+
   checkEngagementLetter: async (): Promise<{ exists: boolean }> => {
     const res = await apiClient.get("/clients/me/engagement-letter-exists");
     return res.data;
   },
 
-  getEngagementLetterIds: async (): Promise<string[]> => {
+  getEngagementLetters: async (): Promise<{ id: string; name: string }[]> => {
     const res = await apiClient.get("/clients/me/engagement-letters");
     return res.data;
   },

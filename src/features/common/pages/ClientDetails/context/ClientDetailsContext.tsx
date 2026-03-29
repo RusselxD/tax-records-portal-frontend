@@ -57,18 +57,29 @@ function snapshotToSections(snapshot: ArchiveSnapshotResponse): Record<InfoSecti
 
 function snapshotToHeader(snapshot: ArchiveSnapshotResponse): ClientInfoHeaderResponse {
   return {
-    clientDisplayName: snapshot.clientDisplayName,
+    displayName: snapshot.clientDisplayName,
     taxpayerClassification: snapshot.taxpayerClassification,
-    clientStatus: CLIENT_STATUS.ACTIVE_CLIENT,
+    status: CLIENT_STATUS.ACTIVE_CLIENT,
+    pocEmail: null,
     isProfileApproved: true,
     handedOff: true,
-    hasActiveTask: false,
-    activeTaskId: null,
-    activeTaskType: null,
-    lastReviewStatus: null,
-    assignedCsdOosAccountants: snapshot.assignedCsdOosAccountants,
-    assignedQtdAccountants: snapshot.assignedQtdAccountants,
-    pocEmail: null,
+    accountants: {
+      csdOos: snapshot.assignedCsdOosAccountants,
+      qtd: snapshot.assignedQtdAccountants,
+    },
+    taskReview: {
+      hasActiveTask: false,
+      activeTaskId: null,
+      activeTaskType: null,
+      lastReviewStatus: null,
+    },
+    offboarding: {
+      accountantName: null,
+      endOfEngagementDate: null,
+      deactivationDate: null,
+      taxRecordsProtected: false,
+      endOfEngagementLetterSent: false,
+    },
   };
 }
 
@@ -147,8 +158,8 @@ export function ClientDetailsProvider({
     return () => { cancelled = true; };
   }, [clientId, mode, version]);
 
-  const clientName = header?.clientDisplayName ?? "";
-  const status = statusOverride ?? header?.clientStatus ?? null;
+  const clientName = header?.displayName ?? "";
+  const status = statusOverride ?? header?.status ?? null;
 
   const setStatus = useCallback((newStatus: ClientStatusType) => {
     setStatusOverride(newStatus);

@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import {
   Send,
   Check,
@@ -11,6 +12,8 @@ import {
 import { formatDateTime } from "../../../../../lib/formatters";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { useTaxRecordTaskDetails } from "../context/TaxRecordTaskDetailsContext";
+import { taxRecordTaskAPI } from "../../../../../api/tax-record-task";
+import CommentPopover from "../../../../../components/common/CommentPopover";
 import type {
   TaxRecordTaskLogAction,
   TaxRecordTaskLogResponse,
@@ -20,69 +23,38 @@ const actionConfig: Record<
   TaxRecordTaskLogAction,
   { label: string; icon: typeof Send; color: string; bg: string }
 > = {
-  CREATED: {
-    label: "Created",
-    icon: Plus,
-    color: "text-blue-600",
-    bg: "bg-blue-100",
-  },
-  SUBMITTED: {
-    label: "Submitted",
-    icon: Send,
-    color: "text-blue-600",
-    bg: "bg-blue-100",
-  },
-  RECALLED: {
-    label: "Recalled",
-    icon: Undo2,
-    color: "text-amber-600",
-    bg: "bg-amber-100",
-  },
-  APPROVED: {
-    label: "Approved",
-    icon: Check,
-    color: "text-emerald-600",
-    bg: "bg-emerald-100",
-  },
-  REJECTED: {
-    label: "Rejected",
-    icon: X,
-    color: "text-red-500",
-    bg: "bg-red-100",
-  },
-  APPROVED_FOR_FILING: {
-    label: "Approved for filing",
-    icon: FileCheck,
-    color: "text-indigo-600",
-    bg: "bg-indigo-100",
-  },
-  FILED: {
-    label: "Marked as filed",
-    icon: Flag,
-    color: "text-purple-600",
-    bg: "bg-purple-100",
-  },
-  COMPLETED: {
-    label: "Completed",
-    icon: CheckCircle,
-    color: "text-emerald-600",
-    bg: "bg-emerald-100",
-  },
+  CREATED: { label: "Created", icon: Plus, color: "text-blue-600", bg: "bg-blue-100" },
+  SUBMITTED: { label: "Submitted", icon: Send, color: "text-blue-600", bg: "bg-blue-100" },
+  RECALLED: { label: "Recalled", icon: Undo2, color: "text-amber-600", bg: "bg-amber-100" },
+  APPROVED: { label: "Approved", icon: Check, color: "text-emerald-600", bg: "bg-emerald-100" },
+  REJECTED: { label: "Rejected", icon: X, color: "text-red-500", bg: "bg-red-100" },
+  APPROVED_FOR_FILING: { label: "Approved for filing", icon: FileCheck, color: "text-indigo-600", bg: "bg-indigo-100" },
+  FILED: { label: "Marked as filed", icon: Flag, color: "text-purple-600", bg: "bg-purple-100" },
+  COMPLETED: { label: "Completed", icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-100" },
 };
 
 function LogEntry({
   log,
+  taskId,
   isLast,
   currentUserName,
 }: {
   log: TaxRecordTaskLogResponse;
+  taskId: string;
   isLast: boolean;
   currentUserName: string;
 }) {
   const config = actionConfig[log.action] ?? actionConfig.CREATED;
   const Icon = config.icon;
-  const displayName =
-    log.performedBy === currentUserName ? "You" : log.performedBy;
+  const displayName = log.performedBy === currentUserName ? "You" : log.performedBy;
+
+  const fetchComment = useCallback(
+    async () => {
+      const res = await taxRecordTaskAPI.getTaskLogComment(taskId, log.id);
+      return res.comment;
+    },
+    [taskId, log.id],
+  );
 
   return (
     <div className="relative flex gap-3">
@@ -96,17 +68,16 @@ function LogEntry({
         <Icon className={`h-3 w-3 ${config.color}`} strokeWidth={2.5} />
       </div>
 
-      <div className="pb-5 min-w-0">
+      <div className="pb-5 min-w-0 flex-1">
         <p className="text-sm font-medium text-primary leading-[26px]">
           {config.label} &middot; {displayName}
         </p>
         <p className="text-xs text-gray-400 mt-0.5">
           {formatDateTime(log.performedAt)}
         </p>
-        {log.comment && log.comment.trim() !== "" && (
-          <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">
-            {log.comment}
-          </p>
+
+        {log.hasComment && (
+          <CommentPopover fetchComment={fetchComment} />
         )}
       </div>
     </div>
@@ -114,7 +85,7 @@ function LogEntry({
 }
 
 export default function TaskActivityLogs() {
-  const { logs } = useTaxRecordTaskDetails();
+  const { task, logs } = useTaxRecordTaskDetails();
   const { user } = useAuth();
   const currentUserName = user?.name ?? "";
 
@@ -134,6 +105,7 @@ export default function TaskActivityLogs() {
             <LogEntry
               key={log.id}
               log={log}
+              taskId={task?.id ?? ""}
               isLast={i === logs.length - 1}
               currentUserName={currentUserName}
             />

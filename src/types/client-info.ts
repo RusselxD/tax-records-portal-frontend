@@ -293,20 +293,38 @@ export interface OnboardingDetails {
 
 export type { ClientStatus as ClientStatusType } from "./client";
 
-// Header-only response (lightweight, fetched on page load)
-export interface ClientInfoHeaderResponse {
-  clientDisplayName: string | null;
-  taxpayerClassification: string | null;
-  clientStatus: import("./client").ClientStatus;
-  isProfileApproved: boolean;
-  handedOff: boolean;
+// Header sub-types
+export interface ClientInfoHeaderAccountants {
+  csdOos: AssignedAccountant[];
+  qtd: AssignedAccountant[];
+}
+
+export interface ClientInfoHeaderTaskReview {
   hasActiveTask: boolean;
   activeTaskId: string | null;
   activeTaskType: ProfileReviewType | null;
   lastReviewStatus: ProfileReviewStatus | null;
-  assignedCsdOosAccountants: AssignedAccountant[];
-  assignedQtdAccountants: AssignedAccountant[];
+}
+
+export interface ClientInfoHeaderOffboarding {
+  accountantName: string | null;
+  endOfEngagementDate: string | null;
+  deactivationDate: string | null;
+  taxRecordsProtected: boolean;
+  endOfEngagementLetterSent: boolean;
+}
+
+// Header-only response (lightweight, fetched on page load)
+export interface ClientInfoHeaderResponse {
+  displayName: string | null;
+  taxpayerClassification: string | null;
+  status: import("./client").ClientStatus;
   pocEmail: string | null;
+  isProfileApproved: boolean;
+  handedOff: boolean;
+  accountants: ClientInfoHeaderAccountants;
+  taskReview: ClientInfoHeaderTaskReview;
+  offboarding: ClientInfoHeaderOffboarding;
 }
 
 // Same as header but includes clientId — returned by GET /client-info/tasks/{taskId}

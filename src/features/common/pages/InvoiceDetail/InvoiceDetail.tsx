@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronRight, Loader2, AlertTriangle, CreditCard, Ban, Trash2, Send, Info } from "lucide-react";
+import { Loader2, AlertTriangle, CreditCard, Ban, Trash2, Send, Info } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import { invoiceAPI } from "../../../../api/invoice";
 import { getErrorMessage, isNotFoundError } from "../../../../lib/api-error";
@@ -83,7 +83,6 @@ export default function InvoiceDetail() {
   const isVoid = invoice.status === INVOICE_STATUS.VOID;
   const isFullyPaid = invoice.status === INVOICE_STATUS.FULLY_PAID;
   const backPath = canManage ? `${prefix}/billings` : `${prefix}/invoice`;
-  const backLabel = canManage ? "Billings" : "Invoices";
 
   const handleSendEmail = async () => {
     if (isSendingEmail) return;
@@ -101,15 +100,6 @@ export default function InvoiceDetail() {
 
   return (
     <div className="pb-12">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-gray-400 mb-5">
-        <button onClick={() => navigate(backPath)} className="hover:text-accent transition-colors">
-          {backLabel}
-        </button>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-primary font-medium">{invoice.invoiceNumber}</span>
-      </nav>
-
       {/* No recipients warning — billing only */}
       {canManage && !invoice.hasEmailRecipients && !isVoid && (
         <div className="flex items-center gap-2.5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 mb-5">
@@ -162,8 +152,10 @@ export default function InvoiceDetail() {
         <InvoiceInfo invoice={invoice} />
         <PaymentHistory
           invoiceId={invoice.id}
+          clientId={invoice.clientId}
           payments={invoice.payments}
           hasEmailRecipients={canManage && invoice.hasEmailRecipients}
+          onRefresh={fetchInvoice}
         />
       </div>
 

@@ -1,7 +1,18 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
-import { Modal, Button } from "../../../../../components/common";
+import { Modal, Button, CommentEditor, cleanupCommentImages } from "../../../../../components/common";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import { useEditClientProfile } from "../context/EditClientProfileContext";
+import type { RichTextContent } from "../../../../../types/client-info";
+
+const EMPTY_DOC: RichTextContent = { type: "doc", content: [] };
+
+function hasContent(value: RichTextContent): boolean {
+  if (!value.content || value.content.length === 0) return false;
+  return value.content.some((node) => {
+    if (node.type === "image") return true;
+    return node.content && Array.isArray(node.content) && (node.content as unknown[]).length > 0;
+  });
+}
 
 export default function ConfirmSubmitModal({
   setModalOpen,
@@ -9,13 +20,18 @@ export default function ConfirmSubmitModal({
   setModalOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const { submitUpdate, isSubmitting } = useEditClientProfile();
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState<RichTextContent>(EMPTY_DOC);
   const [error, setError] = useState<string | null>(null);
+
+  const handleClose = () => {
+    cleanupCommentImages(comment);
+    setModalOpen(false);
+  };
 
   const handleSubmit = async () => {
     setError(null);
     try {
-      await submitUpdate(comment || undefined);
+      await submitUpdate(hasContent(comment) ? comment : null);
     } catch (err) {
       setError(getErrorMessage(err, "Submission failed. Please try again."));
     }
@@ -24,12 +40,13 @@ export default function ConfirmSubmitModal({
   return (
     <Modal
       title="Submit Profile Update?"
-      setModalOpen={setModalOpen}
+      setModalOpen={handleClose}
+      maxWidth="max-w-2xl"
       actions={
         <>
           <Button
             variant="secondary"
-            onClick={() => setModalOpen(false)}
+            onClick={handleClose}
             disabled={isSubmitting}
           >
             Cancel
@@ -48,12 +65,11 @@ export default function ConfirmSubmitModal({
           <label className="block text-xs font-medium text-gray-500 mb-1">
             Comment <span className="font-normal text-gray-400">(optional)</span>
           </label>
-          <textarea
+          <CommentEditor
             value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            rows={3}
+            onChange={setComment}
             placeholder="Add a note for the reviewer..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-primary placeholder-gray-400 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent resize-none"
+            minHeight="60px"
           />
         </div>
         {error && (

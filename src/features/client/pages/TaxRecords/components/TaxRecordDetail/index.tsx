@@ -7,9 +7,10 @@ import RecordDetails from "./components/RecordDetails";
 
 interface TaxRecordDetailProps {
   record: TaxRecordEntryResponse;
+  protected?: boolean;
 }
 
-export default function TaxRecordDetail({ record }: TaxRecordDetailProps) {
+export default function TaxRecordDetail({ record, protected: isProtected = false }: TaxRecordDetailProps) {
   const fileEntries = record.workingFiles.filter((f) => f.type === "file");
   const linkEntries = record.workingFiles.filter((f) => f.type === "link");
   const hasWorkingFiles = fileEntries.length > 0 || linkEntries.length > 0;
@@ -25,6 +26,7 @@ export default function TaxRecordDetail({ record }: TaxRecordDetailProps) {
           file={record.outputFile}
           displayName={outputDisplayName}
           emptyMessage="No file available"
+          disabled={isProtected}
         />
         <FileCard
           icon={<ShieldCheck className="h-4 w-4 text-emerald-500" />}
@@ -32,11 +34,13 @@ export default function TaxRecordDetail({ record }: TaxRecordDetailProps) {
           title="Proof of Filing"
           file={record.proofOfFilingFile}
           emptyMessage="No file available"
+          disabled={isProtected}
         />
         <WorkingFilesCard
           fileEntries={fileEntries}
           linkEntries={linkEntries}
           hasFiles={hasWorkingFiles}
+          disabled={isProtected}
         />
       </div>
 

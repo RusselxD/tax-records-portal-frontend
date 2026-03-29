@@ -7,18 +7,16 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
-import { useAuth } from "../../../../../contexts/AuthContext";
-import { hasPermission, Permission } from "../../../../../constants/permissions";
 import { taxRecordTaskAPI } from "../../../../../api/tax-record-task";
 import { isNotFoundError, isConflictError, getErrorMessage } from "../../../../../lib/api-error";
 import { useToast } from "../../../../../contexts/ToastContext";
 import {
-  TAX_RECORD_TASK_STATUS,
   type TaxRecordTaskDetailResponse,
   type TaxRecordTaskFilesResponse,
   type TaxRecordTaskLogResponse,
   type TaxRecordTaskStatus,
 } from "../../../../../types/tax-record-task";
+import type { RichTextContent } from "../../../../../types/client-info";
 
 interface TaxRecordTaskDetailsContextType {
   task: TaxRecordTaskDetailResponse | null;
@@ -28,7 +26,7 @@ interface TaxRecordTaskDetailsContextType {
   error: string | null;
   notFound: boolean;
 
-  // Derived booleans
+  // Server-provided action flags
   canEdit: boolean;
   canSubmit: boolean;
   canReview: boolean;
@@ -49,9 +47,9 @@ interface TaxRecordTaskDetailsContextType {
   deleteProofOfFiling: () => Promise<void>;
 
   // Workflow actions
-  submitTask: (comment: string) => Promise<void>;
-  approveTask: (comment: string) => Promise<void>;
-  rejectTask: (comment: string) => Promise<void>;
+  submitTask: (comment: RichTextContent | null) => Promise<void>;
+  approveTask: (comment: RichTextContent | null) => Promise<void>;
+  rejectTask: (comment: RichTextContent | null) => Promise<void>;
   markFiled: () => Promise<void>;
   markCompleted: () => Promise<void>;
   recallTask: () => Promise<void>;
@@ -68,7 +66,6 @@ export function TaxRecordTaskDetailsProvider({
   taskId: string;
   children: ReactNode;
 }) {
-  const { user } = useAuth();
   const { toastError } = useToast();
 
   const [task, setTask] = useState<TaxRecordTaskDetailResponse | null>(null);
@@ -98,8 +95,8 @@ export function TaxRecordTaskDetailsProvider({
     try {
       const filesData = await taxRecordTaskAPI.getTaskFiles(taskId);
       setFiles(filesData);
-    } catch (err) {
-      console.error("Failed to refetch files:", err);
+    } catch {
+      // silently fail — partial refetch
     }
   }, [taskId]);
 
@@ -108,8 +105,8 @@ export function TaxRecordTaskDetailsProvider({
     try {
       const logsData = await taxRecordTaskAPI.getTaskLogs(taskId);
       setLogs(logsData);
-    } catch (err) {
-      console.error("Failed to refetch logs:", err);
+    } catch {
+      // silently fail — partial refetch
     }
   }, [taskId]);
 
@@ -154,27 +151,15 @@ export function TaxRecordTaskDetailsProvider({
     };
   }, [taskId, version]);
 
-  // Derived booleans
-  const canExecute = hasPermission(user?.permissions, Permission.TASK_EXECUTE);
-  const canReviewTasks = hasPermission(user?.permissions, Permission.TASK_REVIEW);
-  const status = task?.status;
-
-  const canEdit =
-    canExecute &&
-    (status === TAX_RECORD_TASK_STATUS.OPEN ||
-      status === TAX_RECORD_TASK_STATUS.REJECTED);
-  const canRecall = canExecute && status === TAX_RECORD_TASK_STATUS.SUBMITTED;
-  const hasFiles =
-    (files?.workingFiles?.length ?? 0) > 0 || files?.outputFile != null;
-  const canSubmit =
-    canEdit &&
-    hasFiles &&
-    (status === TAX_RECORD_TASK_STATUS.OPEN ||
-      status === TAX_RECORD_TASK_STATUS.REJECTED);
-  const canReview = canReviewTasks && status === TAX_RECORD_TASK_STATUS.SUBMITTED;
-  const canMarkFiled = canExecute && status === TAX_RECORD_TASK_STATUS.APPROVED_FOR_FILING;
-  const canMarkCompleted = canExecute && status === TAX_RECORD_TASK_STATUS.FILED;
-  const canEditProof = canExecute && status === TAX_RECORD_TASK_STATUS.FILED;
+  // Server-provided action flags (from task.actions)
+  const actions = task?.actions;
+  const canEdit = actions?.canEdit ?? false;
+  const canRecall = actions?.canRecall ?? false;
+  const canSubmit = actions?.canSubmit ?? false;
+  const canReview = (actions?.canApprove || actions?.canReject) ?? false;
+  const canMarkFiled = actions?.canMarkFiled ?? false;
+  const canMarkCompleted = actions?.canMarkCompleted ?? false;
+  const canEditProof = actions?.canUploadProof ?? false;
 
   // Working file actions — only refetch files
   const uploadWorkingFile = useCallback(
@@ -195,10 +180,20 @@ export function TaxRecordTaskDetailsProvider({
 
   const deleteWorkingFile = useCallback(
     async (workingFileId: string) => {
-      await taxRecordTaskAPI.deleteWorkingFile(taskId, workingFileId).catch(handleConflict);
-      await refetchFiles();
+      const prev = files;
+      setFiles((f) => f ? {
+        ...f,
+        workingFiles: f.workingFiles.filter((w) => w.fileId !== workingFileId),
+      } : f);
+      try {
+        await taxRecordTaskAPI.deleteWorkingFile(taskId, workingFileId);
+      } catch (err) {
+        setFiles(prev);
+        if (!isConflictError(err)) toastError(getErrorMessage(err, "Failed to delete file."));
+        handleConflict(err);
+      }
     },
-    [taskId, refetchFiles, handleConflict],
+    [taskId, files, handleConflict, toastError],
   );
 
   // Single file actions — only refetch files
@@ -211,9 +206,16 @@ export function TaxRecordTaskDetailsProvider({
   );
 
   const deleteOutputFile = useCallback(async () => {
-    await taxRecordTaskAPI.deleteOutputFile(taskId).catch(handleConflict);
-    await refetchFiles();
-  }, [taskId, refetchFiles, handleConflict]);
+    const prev = files;
+    setFiles((f) => f ? { ...f, outputFile: null } : f);
+    try {
+      await taxRecordTaskAPI.deleteOutputFile(taskId);
+    } catch (err) {
+      setFiles(prev);
+      if (!isConflictError(err)) toastError(getErrorMessage(err, "Failed to delete file."));
+      handleConflict(err);
+    }
+  }, [taskId, files, handleConflict, toastError]);
 
   const uploadProofOfFiling = useCallback(
     async (file: File) => {
@@ -224,13 +226,20 @@ export function TaxRecordTaskDetailsProvider({
   );
 
   const deleteProofOfFiling = useCallback(async () => {
-    await taxRecordTaskAPI.deleteProofOfFiling(taskId).catch(handleConflict);
-    await refetchFiles();
-  }, [taskId, refetchFiles, handleConflict]);
+    const prev = files;
+    setFiles((f) => f ? { ...f, proofOfFilingFile: null } : f);
+    try {
+      await taxRecordTaskAPI.deleteProofOfFiling(taskId);
+    } catch (err) {
+      setFiles(prev);
+      if (!isConflictError(err)) toastError(getErrorMessage(err, "Failed to delete file."));
+      handleConflict(err);
+    }
+  }, [taskId, files, handleConflict, toastError]);
 
   // Workflow actions — full refetch (status changes, logs update)
   const submitTask = useCallback(
-    async (comment: string) => {
+    async (comment: RichTextContent | null) => {
       await taxRecordTaskAPI.submitTask(taskId, comment).catch(handleConflict);
       updateStatus("SUBMITTED");
       refetchLogs();
@@ -239,7 +248,7 @@ export function TaxRecordTaskDetailsProvider({
   );
 
   const approveTask = useCallback(
-    async (comment: string) => {
+    async (comment: RichTextContent | null) => {
       await taxRecordTaskAPI.approveTask(taskId, comment).catch(handleConflict);
       updateStatus("APPROVED_FOR_FILING");
       refetchLogs();
@@ -248,7 +257,7 @@ export function TaxRecordTaskDetailsProvider({
   );
 
   const rejectTask = useCallback(
-    async (comment: string) => {
+    async (comment: RichTextContent | null) => {
       await taxRecordTaskAPI.rejectTask(taskId, comment).catch(handleConflict);
       updateStatus("REJECTED");
       refetchLogs();

@@ -35,7 +35,7 @@ function GlobalSaveIndicator({ status }: { status: SaveStatus }) {
 
 function useClientDisplayName(): string {
   const { header, sections } = useNewClient();
-  if (header?.clientDisplayName) return header.clientDisplayName;
+  if (header?.displayName) return header.displayName;
   return deriveClientDisplayName(
     sections.clientInformation?.registeredName,
     sections.clientInformation?.tradeName,
@@ -69,9 +69,9 @@ export default function NewClientHeader() {
         <GlobalSaveIndicator status={globalSaveStatus} />
       </div>
 
-      {header?.clientStatus && (
+      {header?.status && (
         <div className="mt-3">
-          <ClientStatusBadge status={header.clientStatus} />
+          <ClientStatusBadge status={header.status} />
         </div>
       )}
     </div>

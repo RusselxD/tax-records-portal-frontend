@@ -7,6 +7,7 @@ import { isConflictError, getErrorMessage } from "../../../../../lib/api-error";
 import type {
   ClientInfoSections,
   InfoSectionKey,
+  RichTextContent,
 } from "../../../../../types/client-info";
 import type { SaveStatus } from "../../../../../types/client";
 import { DEBOUNCE_MS } from "./new-client-helpers";
@@ -126,7 +127,7 @@ export default function useNewClientActions({
   );
 
   const submitForReview = useCallback(
-    async (comment?: string) => {
+    async (comment?: RichTextContent | null) => {
       if (!clientIdRef.current) return;
       setIsSubmitting(true);
       try {

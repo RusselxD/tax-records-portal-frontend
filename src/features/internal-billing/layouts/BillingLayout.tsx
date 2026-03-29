@@ -1,6 +1,5 @@
-import { Outlet, useLocation } from "react-router-dom";
 import { Users, Receipt } from "lucide-react";
-import MainLayout from "../../../components/layout/MainLayout";
+import createRoleLayout from "../../../components/layout/createRoleLayout";
 import type { NavItem } from "../../../types/navigation";
 
 const billingNavItems: NavItem[] = [
@@ -21,15 +20,8 @@ const billingNavItems: NavItem[] = [
 const pageTitles: Record<string, string> = {
   "/internal-billing/clients": "Billing Clients",
   "/internal-billing/billings": "Billings",
+  "/internal-billing/help": "Help & Guides",
 };
 
-export default function BillingLayout() {
-  const location = useLocation();
-  const pageTitle = pageTitles[location.pathname] || "";
-
-  return (
-    <MainLayout navItems={billingNavItems} pageTitle={pageTitle}>
-      <Outlet />
-    </MainLayout>
-  );
-}
+const BillingLayout = createRoleLayout(billingNavItems, pageTitles, "/internal-billing/help");
+export default BillingLayout;

@@ -20,6 +20,7 @@ import {
   type ClientInfoHeaderResponse,
   type ClientInfoSections,
   type InfoSectionKey,
+  type RichTextContent,
 } from "../../../../../types/client-info";
 import { hydrateSectionUids } from "../../../../../lib/hydrate-sections";
 
@@ -50,7 +51,7 @@ interface EditClientProfileContextType {
   ) => void;
   toggleSection: (key: InfoSectionKey) => void;
   scrollToSection: (key: InfoSectionKey) => void;
-  submitUpdate: (comment?: string) => Promise<void>;
+  submitUpdate: (comment?: RichTextContent | null) => Promise<void>;
   isSubmitting: boolean;
 }
 
@@ -82,8 +83,20 @@ export function EditClientProfileProvider({
 
   const sectionRefs = useRef(buildSectionRefs()).current;
   const loadingRef = useRef<Set<InfoSectionKey>>(new Set());
+  const isDirty = useRef(false);
 
   const retryLoad = useCallback(() => setVersion((v) => v + 1), []);
+
+  // Warn on tab close / refresh when there are unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty.current) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
 
   // Fetch header only on mount
   useEffect(() => {
@@ -127,10 +140,9 @@ export function EditClientProfileProvider({
         const data = hydrateSectionUids(key, raw);
         setSections((prev) => ({ ...prev, [key]: data }));
         setSectionLoadStatus((prev) => ({ ...prev, [key]: "loaded" }));
-      } catch (err) {
+      } catch {
         loadingRef.current.delete(key);
         setSectionLoadStatus((prev) => ({ ...prev, [key]: "error" }));
-        console.error(`Failed to load section "${key}":`, err);
       }
     },
     [clientId],
@@ -141,6 +153,7 @@ export function EditClientProfileProvider({
       key: K,
       data: ClientInfoSections[K] | ((prev: ClientInfoSections[K]) => ClientInfoSections[K]),
     ) => {
+      isDirty.current = true;
       setSections((prev) => {
         const current = prev[key];
         if (!current) return prev;
@@ -174,7 +187,8 @@ export function EditClientProfileProvider({
         }
       }, 50);
     },
-    [sectionRefs],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- sectionRefs is a stable ref, never changes
+    [],
   );
 
   useEffect(() => () => clearTimeout(scrollTimerRef.current), []);
@@ -183,7 +197,7 @@ export function EditClientProfileProvider({
   sectionsRef.current = sections;
 
   const submitUpdate = useCallback(
-    async (comment?: string) => {
+    async (comment?: RichTextContent | null) => {
       setIsSubmitting(true);
       try {
         // Start with whatever is already loaded in state
@@ -204,7 +218,7 @@ export function EditClientProfileProvider({
         }
 
         await clientAPI.submitProfileUpdate(clientId, {
-          comment: comment || null,
+          comment: comment ?? null,
           mainDetails: merged.mainDetails!,
           clientInformation: merged.clientInformation!,
           corporateOfficerInformation: merged.corporateOfficerInformation!,
@@ -213,6 +227,7 @@ export function EditClientProfileProvider({
           professionalFees: merged.professionalFees!,
           onboardingDetails: merged.onboardingDetails!,
         });
+        isDirty.current = false;
         toastSuccess("Submitted for review", "The profile update has been submitted for review.");
         const prefix = getRolePrefix(user?.roleKey ?? "");
         navigate(`/${prefix}/client-details/${clientId}`);
@@ -241,9 +256,10 @@ export function EditClientProfileProvider({
       submitUpdate,
       isSubmitting,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- sectionRefs is a stable ref, never changes
     [
       clientId, header, sections, sectionLoadStatus, isLoading, error, retryLoad,
-      loadSection, expandedSections, sectionRefs, updateSection, toggleSection,
+      loadSection, expandedSections, updateSection, toggleSection,
       scrollToSection, submitUpdate, isSubmitting,
     ],
   );

@@ -23,7 +23,7 @@ export default function ClientInfoHeader({
   const navigate = useNavigate();
 
   return (
-    <div className="mb-6">
+    <div className="mb-4">
       {/* Breadcrumb */}
       <div className="flex items-center gap-1.5 text-sm text-gray-400 mb-2">
         <button
@@ -47,7 +47,7 @@ export default function ClientInfoHeader({
         </div>
       </div>
 
-      {children}
+      {children && <div className="mt-4">{children}</div>}
     </div>
   );
 }

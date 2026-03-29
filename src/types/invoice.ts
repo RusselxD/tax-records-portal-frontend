@@ -48,10 +48,8 @@ export interface InvoiceListItemResponse {
   clientName: string;
   invoiceNumber: string;
   invoiceDate: string;
-  termsName: string;
   dueDate: string;
   description: string | null;
-  amountDue: number;
   balance: number;
   status: InvoiceStatus;
   emailSent: boolean;
@@ -108,6 +106,30 @@ export interface CreateTermPayload {
   days: number;
 }
 
+// ── Client invoice sidebar (accountant-facing) ──
+
+export type ClientInvoiceFilter = "all" | "outstanding";
+
+export interface ClientInvoiceSidebarItem {
+  id: string;
+  invoiceNumber: string;
+  invoiceDate: string;
+  dueDate: string;
+  amountDue: number;
+  balance: number;
+  status: InvoiceStatus;
+  isOverdue: boolean;
+}
+
+export interface ClientInvoiceSidebarPageResponse {
+  content: ClientInvoiceSidebarItem[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  totalBalance: number;
+}
+
 // ── Client-facing ──
 
 export interface ClientOutstandingInvoice {
@@ -117,6 +139,7 @@ export interface ClientOutstandingInvoice {
   amountDue: number;
   balance: number;
   status: "UNPAID" | "PARTIALLY_PAID";
+  isOverdue: boolean;
 }
 
 export interface ClientInvoiceListItem {

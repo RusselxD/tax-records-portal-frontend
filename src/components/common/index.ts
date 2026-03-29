@@ -54,3 +54,10 @@ export { default as JumpToSectionDropdown } from "./JumpToSectionDropdown";
 export { default as SearchInput } from "./SearchInput";
 
 export { default as UserAvatar } from "./UserAvatar";
+
+export { default as CommentEditor, cleanupCommentImages } from "./CommentEditor";
+
+export { default as CommentPreview } from "./CommentPreview";
+
+export { default as StatusBadge } from "./StatusBadge";
+export type { StatusBadgeProps, StatusBadgeConfig } from "./StatusBadge";

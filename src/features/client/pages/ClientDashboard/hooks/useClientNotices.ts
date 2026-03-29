@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { clientAPI } from "../../../../../api/client";
 import { NOTICE_TYPE } from "../../../../../types/client";
 import type { ClientNoticeResponse } from "../../../../../types/client";
@@ -7,21 +7,23 @@ export default function useClientNotices() {
   const [notices, setNotices] = useState<ClientNoticeResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchNotices = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const data = await clientAPI.getMyNotices();
-      setNotices(data);
-    } catch {
-      // silent — sections show empty state
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchNotices();
-  }, [fetchNotices]);
+    let cancelled = false;
+
+    (async () => {
+      setIsLoading(true);
+      try {
+        const data = await clientAPI.getMyNotices();
+        if (!cancelled) setNotices(data);
+      } catch {
+        // silent — sections show empty state
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, []);
 
   const reminders = useMemo(
     () => notices.filter((n) => n.type === NOTICE_TYPE.REMINDER),

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Trash2 } from "lucide-react";
 
 export interface DropdownOption {
   label: string;
@@ -21,6 +21,8 @@ export interface DropdownProps {
   portal?: boolean;
   /** Renders trigger as a plain column header (no border/bg). Use with placeholder as the column name. */
   headerStyle?: boolean;
+  /** When provided, each option shows a delete icon on hover. Called with the option's value. */
+  onDeleteOption?: (value: string) => void;
 }
 
 const HeaderTrigger = ({
@@ -94,14 +96,14 @@ const FormTrigger = ({
     type="button"
     onClick={onClick}
     disabled={disabled}
-    className={`flex w-full items-center justify-between rounded-md border px-3 py-2.5 text-sm transition-colors focus:outline-none focus:ring-1 ${
+    className={`flex w-full items-center justify-between rounded-md border px-3 py-2.5 text-sm transition-colors focus:outline-none focus:ring-1 min-w-0 ${
       error
         ? "border-status-rejected focus:border-status-rejected focus:ring-status-rejected"
         : "border-gray-300 focus:border-primary/40 focus:ring-primary/20"
     } ${disabled ? "bg-gray-50 cursor-not-allowed" : "bg-white hover:bg-gray-50"}`}
   >
     <span
-      className={`truncate ${isPlaceholder ? "text-gray-400" : "text-primary"}`}
+      className={`truncate min-w-0 ${isPlaceholder ? "text-gray-400" : "text-primary"}`}
     >
       {label}
     </span>
@@ -124,6 +126,7 @@ export default function Dropdown({
   className,
   portal = false,
   headerStyle = false,
+  onDeleteOption,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -199,19 +202,40 @@ export default function Dropdown({
       }}
     >
       {options.map((option) => (
-        <button
+        <div
           key={option.value}
-          type="button"
-          onClick={() => handleSelect(option.value)}
-          className={`w-full text-left px-3 py-2 text-sm transition-colors truncate ${
+          className={`flex items-center group ${
             option.value === value
-              ? "bg-accent/10 text-accent font-medium"
-              : "text-gray-700 hover:bg-gray-50"
+              ? "bg-accent/10"
+              : "hover:bg-gray-50"
           }`}
-          title={option.label}
         >
-          {option.label}
-        </button>
+          <button
+            type="button"
+            onClick={() => handleSelect(option.value)}
+            className={`flex-1 min-w-0 text-left px-3 py-2 text-sm transition-colors truncate ${
+              option.value === value
+                ? "text-accent font-medium"
+                : "text-gray-700"
+            }`}
+            title={option.label}
+          >
+            {option.label}
+          </button>
+          {onDeleteOption && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteOption(option.value);
+              }}
+              className="px-2 py-2 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all shrink-0"
+              title={`Delete ${option.label}`}
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
       ))}
     </div>
   );

@@ -8,11 +8,11 @@ import UserFormModal from "./UserFormModal";
 
 const roleOptions = [
   { label: "All Roles", value: "" },
-  { label: "Manager", value: "Manager" },
-  { label: "Onboarding, Offboarding & Support", value: "Onboarding, Offboarding & Support" },
-  { label: "Quality, Training & Development", value: "Quality, Training & Development" },
-  { label: "Client Service Delivery", value: "Client Service Delivery" },
-  { label: "Internal Accounting / Billing", value: "Internal Accounting / Billing" },
+  { label: "Manager", value: "MANAGER" },
+  { label: "Onboarding, Offboarding & Support", value: "OOS" },
+  { label: "Quality, Training & Development", value: "QTD" },
+  { label: "Client Service Delivery", value: "CSD" },
+  { label: "Internal Accounting / Billing", value: "BILLING" },
 ];
 
 const statusOptions = [

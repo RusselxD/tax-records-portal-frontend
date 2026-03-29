@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { useAuth } from "../../../../../../contexts/AuthContext";
 import { hasPermission, Permission } from "../../../../../../constants/permissions";
 import { getRolePrefix } from "../../../../../../constants/roles";
@@ -9,6 +10,7 @@ import { useTaxRecordTasks } from "../../context/TaxRecordTasksContext";
 import { usersAPI } from "../../../../../../api/users";
 import { clientAPI } from "../../../../../../api/client";
 import { taxRecordTaskAPI } from "../../../../../../api/tax-record-task";
+import type { SortBy } from "../../../../../../types/tax-record-task";
 import TaskRow from "./components/TaskRow";
 
 interface HeaderDef {
@@ -16,16 +18,17 @@ interface HeaderDef {
   className: string;
   showWhen?: "canViewAllOrReview" | "notReviewOnly";
   filter?: "client" | "taskName" | "status" | "period" | "accountant";
+  sortKey?: SortBy;
 }
 
 const HEADERS: HeaderDef[] = [
-  { label: "Client Name", className: "w-[18%] min-w-[160px]", filter: "client" },
-  { label: "Task", className: "w-[25%] min-w-[220px]", filter: "taskName" },
-  { label: "Period", className: "w-[7%] min-w-[80px]", filter: "period" },
-  { label: "Status", className: "w-[14%] min-w-[150px]", filter: "status" },
-  { label: "Deadline", className: "w-[10%] min-w-[100px]" },
+  { label: "Client Name", className: "w-[18%] min-w-[160px]", filter: "client", sortKey: "clientDisplayName" },
+  { label: "Task", className: "w-[25%] min-w-[220px]", filter: "taskName", sortKey: "taskName" },
+  { label: "Period", className: "w-[7%] min-w-[80px]", filter: "period", sortKey: "period" },
+  { label: "Status", className: "w-[14%] min-w-[150px]", filter: "status", sortKey: "status" },
+  { label: "Deadline", className: "w-[10%] min-w-[100px]", sortKey: "deadline" },
   { label: "Assigned To", className: "w-[12%] min-w-[120px]", showWhen: "canViewAllOrReview", filter: "accountant" },
-  { label: "Created", className: "w-[14%] min-w-[150px]", showWhen: "notReviewOnly" },
+  { label: "Created", className: "w-[14%] min-w-[150px]", showWhen: "notReviewOnly", sortKey: "createdAt" },
 ];
 
 const statusOptions = [
@@ -86,8 +89,18 @@ const EmptyState = ({ colCount }: { colCount: number }) => (
   </tbody>
 );
 
+function SortIcon({ column, activeSortBy, activeSortDir }: { column: SortBy; activeSortBy?: SortBy; activeSortDir?: string }) {
+  if (activeSortBy !== column) {
+    return <ArrowUpDown className="w-3 h-3 text-gray-300" />;
+  }
+  if (activeSortDir === "ASC") {
+    return <ArrowUp className="w-3 h-3 text-accent" />;
+  }
+  return <ArrowDown className="w-3 h-3 text-accent" />;
+}
+
 export default function TaxRecordTasksTable() {
-  const { tasks, isFetching, error, refetch, page, totalPages, totalElements, setPage, filters, setClientFilter, setTaskNameFilter, setStatusFilter, setPeriodFilter, setAccountantFilter } = useTaxRecordTasks();
+  const { tasks, isFetching, error, refetch, page, totalPages, totalElements, setPage, filters, sortBy, sortDirection, setClientFilter, setTaskNameFilter, setStatusFilter, setPeriodFilter, setAccountantFilter, toggleSort } = useTaxRecordTasks();
   const { user } = useAuth();
   const navigate = useNavigate();
   const canViewAll = hasPermission(user?.permissions, Permission.TASK_VIEW_ALL);
@@ -113,7 +126,7 @@ export default function TaxRecordTasksTable() {
         { label: "All Tasks", value: "" },
         ...data.map((t) => ({ label: t.name, value: String(t.id) })),
       ]);
-    }).catch(() => {});
+    }).catch(() => { console.warn("Failed to load task name filter options"); });
   }, []);
 
   useEffect(() => {
@@ -122,7 +135,7 @@ export default function TaxRecordTasksTable() {
         { label: "All Clients", value: "" },
         ...data.map((c) => ({ label: c.displayName, value: c.id })),
       ]);
-    }).catch(() => {});
+    }).catch(() => { console.warn("Failed to load client filter options"); });
   }, []);
 
   useEffect(() => {
@@ -132,7 +145,7 @@ export default function TaxRecordTasksTable() {
         { label: "All Accountants", value: "" },
         ...data.map((a) => ({ label: a.displayName, value: a.id })),
       ]);
-    }).catch(() => {});
+    }).catch(() => { console.warn("Failed to load accountant filter options"); });
   }, [showAssignedTo]);
 
   const visibleHeaders = HEADERS.filter((h) => {
@@ -226,7 +239,32 @@ export default function TaxRecordTasksTable() {
                     key={header.label}
                     className={`${header.className} px-4 py-3 text-left align-middle`}
                   >
-                    {filter ?? (
+                    {filter ? (
+                      <div className="flex items-center gap-1.5">
+                        <div className="flex-1 min-w-0">{filter}</div>
+                        {header.sortKey && (
+                          <button
+                            type="button"
+                            onClick={() => toggleSort(header.sortKey!)}
+                            className="shrink-0 p-1 rounded hover:bg-gray-100 transition-colors"
+                            title={`Sort by ${header.label}`}
+                          >
+                            <SortIcon column={header.sortKey} activeSortBy={sortBy} activeSortDir={sortDirection} />
+                          </button>
+                        )}
+                      </div>
+                    ) : header.sortKey ? (
+                      <button
+                        type="button"
+                        onClick={() => toggleSort(header.sortKey!)}
+                        className="flex items-center gap-1.5 group"
+                      >
+                        <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                          {header.label}
+                        </span>
+                        <SortIcon column={header.sortKey} activeSortBy={sortBy} activeSortDir={sortDirection} />
+                      </button>
+                    ) : (
                       <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
                         {header.label}
                       </span>

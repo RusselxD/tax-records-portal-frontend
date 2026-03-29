@@ -2,6 +2,8 @@ import { useState, useRef, type DragEvent } from "react";
 import { Upload, Loader2 } from "lucide-react";
 import FileRow from "./FileRow";
 import FilePreviewOverlay from "./FilePreviewOverlay";
+import { useToast } from "../../contexts/ToastContext";
+import { validateDocumentFile } from "../../lib/file-validation";
 import type { FileReference } from "../../types/client-info";
 
 interface MultiFileDropZoneProps {
@@ -17,6 +19,7 @@ export default function MultiFileDropZone({
   onChange,
   uploadFile,
 }: MultiFileDropZoneProps) {
+  const { toastError } = useToast();
   const value = rawValue ?? [];
   const valueRef = useRef(value);
   valueRef.current = value;
@@ -32,6 +35,11 @@ export default function MultiFileDropZone({
     setError(null);
     try {
       for (const file of Array.from(fileList)) {
+        const result = validateDocumentFile(file);
+        if (!result.valid) {
+          toastError(result.error!);
+          continue;
+        }
         const ref = await uploadFile(file);
         const updated = [...valueRef.current, ref];
         valueRef.current = updated;

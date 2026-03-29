@@ -8,6 +8,7 @@ import {
   FileText,
   FileSearch,
   GitCompare,
+  MessageSquareText,
 } from "lucide-react";
 import { P, Heading, Steps, BulletList, StatusTable, Tip } from "./shared";
 import type { HelpSection } from "../types";
@@ -379,6 +380,47 @@ export const qtdSections: HelpSection[] = [
           rejected — it may be a resubmission, and you can see what feedback
           was given last time.
         </Tip>
+      </>
+    ),
+  },
+
+  // ─── Consultation Logs ───
+  {
+    id: "consultation-logs",
+    title: "Consultation Logs",
+    subtitle: "Review consultation logs submitted by accountants",
+    icon: MessageSquareText,
+    iconBg: "bg-teal-50",
+    iconColor: "text-teal-600",
+    content: (
+      <>
+        <P>
+          The Consultation Logs page shows logs submitted by OOS and CSD
+          accountants for review. You can approve or reject submitted logs.
+        </P>
+
+        <Heading>Reviewing a Log</Heading>
+        <Steps
+          items={[
+            "Click a submitted log to open the detail page.",
+            "Review the consultation details, notes, and attachments.",
+            "Click Approve to accept, or Reject with feedback.",
+            "You can add a comment with your decision.",
+          ]}
+        />
+
+        <Heading>Billable Types</Heading>
+        <BulletList
+          items={[
+            "Included — within the client's monthly included hours.",
+            "Excess — beyond the monthly cap, billed at the excess rate.",
+            "Courtesy — manually flagged by the accountant, not billed.",
+          ]}
+        />
+        <P>
+          The system automatically assigns Included vs. Excess at approval
+          time based on cumulative approved hours for the month.
+        </P>
       </>
     ),
   },

@@ -97,8 +97,8 @@ function InfoReviewContent() {
           getSection={getSection}
           fetchSection={fetchSection}
           classification={header.taxpayerClassification}
-          assignedCsdOos={header.assignedCsdOosAccountants}
-          assignedQtd={header.assignedQtdAccountants}
+          assignedCsdOos={header.accountants.csdOos}
+          assignedQtd={header.accountants.qtd}
         />
       )}
 

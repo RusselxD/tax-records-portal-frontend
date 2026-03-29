@@ -12,6 +12,8 @@ import UserProfile from "../features/common/pages/UserProfile";
 import AccountantAnalytics from "../features/common/pages/AccountantAnalytics";
 import EditClientProfile from "../features/common/pages/EditClientProfile";
 import ProfileUpdateReview from "../features/common/pages/ProfileUpdateReview";
+import ConsultationLogs from "../features/common/pages/ConsultationLogs";
+import ConsultationLogDetail from "../features/common/pages/ConsultationLogDetail";
 import Help from "../features/common/pages/Help";
 
 export const csdRoutes: RouteObject = {
@@ -52,6 +54,14 @@ export const csdRoutes: RouteObject = {
         {
           path: "tax-record-task/:id",
           element: <TaxRecordTaskDetails />,
+        },
+        {
+          path: "consultation-logs",
+          element: <ConsultationLogs />,
+        },
+        {
+          path: "consultation-logs/:id",
+          element: <ConsultationLogDetail />,
         },
         {
           path: "notifications",

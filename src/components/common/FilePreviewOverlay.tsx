@@ -37,9 +37,28 @@ const EXTENSION_MAP: Record<string, FileType> = {
   svg: "image",
 };
 
-function getFileType(fileName: string): FileType {
+const MIME_MAP: Record<string, FileType> = {
+  "application/pdf": "pdf",
+  "application/msword": "word",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "word",
+  "application/vnd.ms-excel": "excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "excel",
+  "text/csv": "csv",
+  "image/jpeg": "image",
+  "image/png": "image",
+  "image/gif": "image",
+  "image/webp": "image",
+  "image/bmp": "image",
+  "image/svg+xml": "image",
+};
+
+function getFileTypeFromName(fileName: string): FileType {
   const ext = fileName.split(".").pop()?.toLowerCase() ?? "";
   return EXTENSION_MAP[ext] ?? "unsupported";
+}
+
+function getFileTypeFromMime(mimeType: string): FileType {
+  return MIME_MAP[mimeType] ?? "unsupported";
 }
 
 const LoadingFallback = () => (
@@ -57,8 +76,10 @@ export default function FilePreviewOverlay({
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [blobMime, setBlobMime] = useState<string>("");
 
-  const fileType = getFileType(fileName);
+  const extType = getFileTypeFromName(fileName);
+  const fileType = extType !== "unsupported" ? extType : getFileTypeFromMime(blobMime);
 
   useEffect(() => {
     let revoked = false;
@@ -67,9 +88,13 @@ export default function FilePreviewOverlay({
       try {
         const blob = await fileAPI.getFilePreview(fileId);
         if (revoked) return;
+        setBlobMime(blob.type);
         setFileUrl(URL.createObjectURL(blob));
-      } catch {
-        if (!revoked) setError("Failed to load file preview.");
+      } catch (err) {
+        if (!revoked) {
+          const is403 = err instanceof Error && "response" in err && (err as { response?: { status?: number } }).response?.status === 403;
+          setError(is403 ? "This file is currently protected and unavailable for download." : "Failed to load file preview.");
+        }
       } finally {
         if (!revoked) setLoading(false);
       }

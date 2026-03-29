@@ -33,11 +33,13 @@ export interface TaxRecordEntryResponse {
 export interface DrillDownItemsResponse {
   level: Exclude<DrillDownLevel, "record">;
   items: DrillDownItem[];
+  taxRecordsProtected?: boolean;
 }
 
 export interface DrillDownRecordResponse {
   level: "record";
   record: TaxRecordEntryResponse;
+  taxRecordsProtected?: boolean;
 }
 
 export type DrillDownResponse = DrillDownItemsResponse | DrillDownRecordResponse;

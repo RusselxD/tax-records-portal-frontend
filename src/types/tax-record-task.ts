@@ -56,23 +56,54 @@ export interface TaxRecordTaskPageResponse {
   totalPages: number;
 }
 
+export type SortBy =
+  | "clientDisplayName"
+  | "taskName"
+  | "categoryName"
+  | "period"
+  | "status"
+  | "deadline"
+  | "createdAt";
+
+export type SortDirection = "ASC" | "DESC";
+
 export interface TaxRecordTaskFilters {
   page?: number;
   size?: number;
   search?: string;
   clientId?: string;
-  categoryId?: number;
-  subCategoryId?: number;
   taskNameId?: number;
-  year?: number;
   period?: Period;
   status?: TaxRecordTaskStatus;
   accountantId?: string;
+  sortBy?: SortBy;
+  sortDirection?: SortDirection;
 }
 
 export interface LookupResponse {
   id: string;
   displayName: string;
+}
+
+export interface TaxRecordLookupResponse {
+  id: number;
+  name: string;
+}
+
+export interface CreateTaxRecordTaskRequest {
+  clientId: string;
+  categoryId: number;
+  subCategoryId: number;
+  taskNameId: number;
+  year: number;
+  period: Period;
+  deadline: string;
+  description: string | null;
+  assignedToId: string;
+}
+
+export interface CreateTaxRecordTaskResponse {
+  id: string;
 }
 
 export interface BulkImportItem {
@@ -93,6 +124,20 @@ export interface BulkImportResponse {
   errors: { index: number; message: string }[];
 }
 
+export interface TaskActions {
+  canEdit: boolean;
+  canSubmit: boolean;
+  canRecall: boolean;
+  canApprove: boolean;
+  canReject: boolean;
+  canMarkFiled: boolean;
+  canMarkCompleted: boolean;
+  canUploadWorkingFiles: boolean;
+  canUploadOutput: boolean;
+  canUploadProof: boolean;
+  canDelete: boolean;
+}
+
 export interface TaxRecordTaskDetailResponse {
   id: string;
   clientId: string;
@@ -109,6 +154,7 @@ export interface TaxRecordTaskDetailResponse {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
+  actions: TaskActions;
 }
 
 export interface WorkingFileItem {
@@ -122,7 +168,6 @@ export interface WorkingFileItem {
 export interface FileItem {
   id: string;
   name: string;
-  url: string;
 }
 
 export interface TaxRecordTaskFilesResponse {
@@ -166,7 +211,7 @@ export interface ClientTaxRecordTaskPageResponse {
 export interface TaxRecordTaskLogResponse {
   id: string;
   action: TaxRecordTaskLogAction;
-  comment: string | null;
+  hasComment: boolean;
   performedBy: string;
   performedAt: string;
 }
@@ -231,6 +276,27 @@ export interface ReviewerDecidedItemResponse {
   assignedTo: string[];
   decision: "APPROVED_FOR_FILING" | "REJECTED";
   decidedAt: string;
+}
+
+export interface TaxRecordTaskProgressListItemResponse {
+  id: string;
+  clientName: string;
+  categoryName: string;
+  subCategoryName: string;
+  taskName: string;
+  year: number;
+  period: Period;
+  deadline: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface TaxRecordTaskProgressPageResponse {
+  content: TaxRecordTaskProgressListItemResponse[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
 }
 
 export interface TaxRecordTaskTodoListPageResponse {

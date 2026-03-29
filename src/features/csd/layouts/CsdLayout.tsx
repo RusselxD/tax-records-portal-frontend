@@ -1,14 +1,12 @@
-import { Outlet, useLocation } from "react-router-dom";
-import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   ClipboardList,
   Users,
   Bell,
   BarChart2,
-  HelpCircle,
+  MessageSquareText,
 } from "lucide-react";
-import MainLayout from "../../../components/layout/MainLayout";
+import createRoleLayout from "../../../components/layout/createRoleLayout";
 import type { NavItem } from "../../../types/navigation";
 
 const csdNavItems: NavItem[] = [
@@ -37,6 +35,12 @@ const csdNavItems: NavItem[] = [
     icon: BarChart2,
   },
   {
+    id: "consultation-logs",
+    label: "Consultation Logs",
+    path: "/csd/consultation-logs",
+    icon: MessageSquareText,
+  },
+  {
     id: "notifications",
     label: "Notifications",
     path: "/csd/notifications",
@@ -49,37 +53,10 @@ const pageTitles: Record<string, string> = {
   "/csd/tasks": "Task List",
   "/csd/clients": "Client List",
   "/csd/analytics": "My Analytics",
+  "/csd/consultation-logs": "Consultation Logs",
   "/csd/notifications": "Notifications",
   "/csd/help": "Help & Guides",
 };
 
-const HelpLink = () => (
-  <NavLink
-    to="/csd/help"
-    className={({ isActive }) =>
-      `flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-        isActive
-          ? "bg-accent text-primary"
-          : "text-white/70 hover:bg-white/10 hover:text-white"
-      }`
-    }
-  >
-    <HelpCircle className="w-4 h-4" />
-    <span>Help & Guides</span>
-  </NavLink>
-);
-
-export default function CsdLayout() {
-  const location = useLocation();
-  const pageTitle = pageTitles[location.pathname] || "";
-
-  return (
-    <MainLayout
-      navItems={csdNavItems}
-      pageTitle={pageTitle}
-      sidebarBottomAction={<HelpLink />}
-    >
-      <Outlet />
-    </MainLayout>
-  );
-}
+const CsdLayout = createRoleLayout(csdNavItems, pageTitles, "/csd/help");
+export default CsdLayout;

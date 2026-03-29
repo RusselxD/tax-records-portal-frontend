@@ -85,11 +85,11 @@ export default function Profile() {
     <div className="pb-12">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-primary">
-          {header.clientDisplayName || "My Profile"}
+          {header.displayName || "My Profile"}
         </h1>
-        {header.clientStatus && (
+        {header.status && (
           <div className="mt-2">
-            <ClientStatusBadge status={header.clientStatus} size="lg" />
+            <ClientStatusBadge status={header.status} size="lg" />
           </div>
         )}
       </div>
@@ -122,8 +122,8 @@ export default function Profile() {
               <MainDetailsPreview
                 data={mainDetails.data}
                 classification={header.taxpayerClassification}
-                assignedCsdOos={header.assignedCsdOosAccountants}
-                assignedQtd={header.assignedQtdAccountants}
+                assignedCsdOos={header.accountants.csdOos}
+                assignedQtd={header.accountants.qtd}
               />
             )}
           </div>

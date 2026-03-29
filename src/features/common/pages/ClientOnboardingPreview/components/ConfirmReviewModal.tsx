@@ -1,10 +1,11 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { getErrorMessage, isConflictError } from "../../../../../lib/api-error";
-import { Modal, Button } from "../../../../../components/common";
+import { Modal, Button, CommentPreview } from "../../../../../components/common";
 import { clientAPI } from "../../../../../api/client";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { useInfoReview } from "../context/ClientOnboardingPreviewContext";
 import type { ProfileReviewStatus } from "../../../../../types/client-profile";
+import type { RichTextContent } from "../../../../../types/client-info";
 
 type ReviewAction = "approve" | "reject";
 
@@ -18,7 +19,7 @@ const CONFIG: Record<
     toastMessage: string;
     status: ProfileReviewStatus;
     buttonClass: string;
-    apiFn: (taskId: string, remarks: string) => Promise<unknown>;
+    apiFn: (taskId: string, remarks: RichTextContent | null) => Promise<unknown>;
   }
 > = {
   approve: {
@@ -43,11 +44,19 @@ const CONFIG: Record<
   },
 };
 
+function hasContent(value: RichTextContent): boolean {
+  if (!value.content || value.content.length === 0) return false;
+  return value.content.some((node) => {
+    if (node.type === "image") return true;
+    return node.content && Array.isArray(node.content) && (node.content as unknown[]).length > 0;
+  });
+}
+
 interface ConfirmReviewModalProps {
   action: ReviewAction;
   setModalOpen: (() => void) | Dispatch<SetStateAction<boolean>>;
   clientName: string;
-  remarks: string;
+  remarks: RichTextContent;
   onSuccess: () => void;
 }
 
@@ -64,12 +73,13 @@ export default function ConfirmReviewModal({
   const [error, setError] = useState<string | null>(null);
 
   const cfg = CONFIG[action];
+  const remarksToSend = hasContent(remarks) ? remarks : null;
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setError(null);
     try {
-      await cfg.apiFn(taskId, remarks);
+      await cfg.apiFn(taskId, remarksToSend);
       toastSuccess(cfg.toastTitle, cfg.toastMessage);
       setHasActiveTask(false);
       setLastReviewStatus(cfg.status);
@@ -116,12 +126,12 @@ export default function ConfirmReviewModal({
           <span className="font-semibold text-primary">{clientName}</span>?
         </p>
 
-        {remarks && (
+        {remarksToSend && (
           <div>
             <p className="text-xs font-medium text-gray-500 mb-1">Remarks</p>
-            <p className="text-sm text-gray-700 bg-gray-50 rounded-md px-3 py-2 border border-gray-200">
-              {remarks}
-            </p>
+            <div className="bg-gray-50 rounded-md px-3 py-2 border border-gray-200">
+              <CommentPreview content={remarksToSend} />
+            </div>
           </div>
         )}
 

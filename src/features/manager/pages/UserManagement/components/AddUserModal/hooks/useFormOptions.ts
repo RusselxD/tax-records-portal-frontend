@@ -12,28 +12,32 @@ export default function useFormOptions() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchRoles = async () => {
       try {
         const data = await roleAPI.getEmployeeRoles();
-        setRoles(data);
+        if (!cancelled) setRoles(data);
       } catch {
-        setError("Failed to load roles.");
+        if (!cancelled) setError("Failed to load roles.");
       } finally {
-        setRolesLoading(false);
+        if (!cancelled) setRolesLoading(false);
       }
     };
     const fetchPositions = async () => {
       try {
         const data = await usersAPI.getEmployeePositions();
-        setPositions(data);
+        if (!cancelled) setPositions(data);
       } catch {
-        setError("Failed to load positions.");
+        if (!cancelled) setError("Failed to load positions.");
       } finally {
-        setPositionsLoading(false);
+        if (!cancelled) setPositionsLoading(false);
       }
     };
     fetchRoles();
     fetchPositions();
+
+    return () => { cancelled = true; };
   }, []);
 
   const addPosition = (position: PositionListItem) => {

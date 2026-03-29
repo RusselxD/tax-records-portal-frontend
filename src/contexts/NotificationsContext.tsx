@@ -34,8 +34,19 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!user || user.roleKey === UserRole.CLIENT) return;
-    fetchUnreadCount();
-  }, [user, fetchUnreadCount]);
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const { unread } = await notificationAPI.countUnreadNotifications();
+        if (!cancelled) setUnreadCount(unread);
+      } catch {
+        // fail silently — badge is non-critical
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [user]);
 
   const decrementUnread = useCallback(() => {
     setUnreadCount((prev) => Math.max(0, prev - 1));

@@ -4,36 +4,52 @@ import { TaxRecordTasksProvider, useTaxRecordTasks } from "./context/TaxRecordTa
 import TaxRecordTasksFilters from "./components/TaxRecordTasksFilters";
 import TaxRecordTasksTable from "./components/TaxRecordTasksTable";
 import ImportTaxRecordTasksForm from "./components/ImportTaxRecordTasksForm";
+import CreateTaxRecordTaskForm from "./components/CreateTaxRecordTaskForm";
 
-type View = "table" | "import";
+type View = "table" | "import" | "create";
 
 function TaxRecordTasksContent() {
   const [view, setView] = useState<View>("table");
   const { refetch } = useTaxRecordTasks();
-  const didImportRef = useRef(false);
+  const didChangeRef = useRef(false);
 
   const handleBackToTable = () => {
-    if (didImportRef.current) refetch();
-    didImportRef.current = false;
+    if (didChangeRef.current) refetch();
+    didChangeRef.current = false;
     setView("table");
   };
 
-  const handleImportSuccess = () => {
-    didImportRef.current = true;
+  const handleSuccess = () => {
+    didChangeRef.current = true;
   };
 
   if (view === "import") {
     return (
       <ImportTaxRecordTasksForm
         onCancel={handleBackToTable}
-        onSuccess={handleImportSuccess}
+        onSuccess={handleSuccess}
+      />
+    );
+  }
+
+  if (view === "create") {
+    return (
+      <CreateTaxRecordTaskForm
+        onCancel={handleBackToTable}
+        onSuccess={() => {
+          didChangeRef.current = true;
+          handleBackToTable();
+        }}
       />
     );
   }
 
   return (
     <div className="space-y-4">
-      <TaxRecordTasksFilters onImport={() => setView("import")} />
+      <TaxRecordTasksFilters
+        onImport={() => setView("import")}
+        onNewTask={() => setView("create")}
+      />
       <TaxRecordTasksTable />
     </div>
   );

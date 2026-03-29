@@ -1,8 +1,10 @@
 import { useState, useRef, type DragEvent } from "react";
-import { Upload, FileText, Link2, Trash2, Loader2, Plus } from "lucide-react";
-import { Button, FilePreviewButton } from "../../../../../../components/common";
+import { Upload, Loader2, Plus, Trash2 } from "lucide-react";
+import { Button } from "../../../../../../components/common";
+import { WorkingFileItem, WorkingLinkItem } from "../../../../../../components/common/file-cards";
 import { useTaxRecordTaskDetails } from "../../context/TaxRecordTaskDetailsContext";
-import type { WorkingFileItem } from "../../../../../../types/tax-record-task";
+import { useToast } from "../../../../../../contexts/ToastContext";
+import { validateDocumentFile } from "../../../../../../lib/file-validation";
 
 function AddLinkForm({ onAdd }: { onAdd: (url: string, label: string) => Promise<void> }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -63,67 +65,26 @@ function AddLinkForm({ onAdd }: { onAdd: (url: string, label: string) => Promise
   );
 }
 
-function WorkingFileRow({
-  item,
-  canDelete,
-  onDelete,
-}: {
-  item: WorkingFileItem;
-  canDelete: boolean;
-  onDelete: (id: string) => void;
-}) {
+function DeleteButton({ onDelete }: { onDelete: () => void }) {
   const [isDeleting, setIsDeleting] = useState(false);
-  const isLink = item.type === "link";
 
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      onDelete(item.fileId);
+      onDelete();
     } finally {
       setIsDeleting(false);
     }
   };
 
   return (
-    <li className="flex items-center gap-1.5 py-2.5">
-      {isLink ? (
-        <Link2 className="h-4 w-4 text-blue-400 flex-shrink-0" />
-      ) : (
-        <FileText className="h-4 w-4 text-gray-400 flex-shrink-0" />
-      )}
-      <div className="flex-1 min-w-0">
-        {isLink ? (
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-accent hover:text-accent-hover font-medium leading-relaxed"
-          >
-            {item.label || item.url}
-          </a>
-        ) : (
-          <span className="text-sm text-primary font-medium leading-relaxed">
-            {item.fileName}
-          </span>
-        )}
-      </div>
-      {!isLink && (
-        <FilePreviewButton fileId={item.fileId} fileName={item.fileName} />
-      )}
-      {canDelete && (
-        <button
-          onClick={handleDelete}
-          disabled={isDeleting}
-          className="p-1.5 text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50"
-        >
-          {isDeleting ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Trash2 className="w-4 h-4" />
-          )}
-        </button>
-      )}
-    </li>
+    <button
+      onClick={handleDelete}
+      disabled={isDeleting}
+      className="p-1.5 text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50"
+    >
+      {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+    </button>
   );
 }
 
@@ -135,18 +96,26 @@ export default function WorkingFilesSection() {
     addWorkingLink,
     deleteWorkingFile,
   } = useTaxRecordTaskDetails();
+  const { toastError } = useToast();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
   const workingFiles = files?.workingFiles ?? [];
+  const fileEntries = workingFiles.filter((f) => f.type === "file");
+  const linkEntries = workingFiles.filter((f) => f.type === "link");
 
   const handleUploadMultiple = async (fileList: FileList) => {
     if (fileList.length === 0) return;
     setIsUploading(true);
     try {
       for (const file of Array.from(fileList)) {
+        const result = validateDocumentFile(file);
+        if (!result.valid) {
+          toastError(result.error!);
+          continue;
+        }
         await uploadWorkingFile(file);
       }
     } finally {
@@ -212,16 +181,24 @@ export default function WorkingFilesSection() {
       {workingFiles.length === 0 ? (
         <p className="text-sm text-gray-400">No working files yet.</p>
       ) : (
-        <ul className="divide-y divide-gray-100">
-          {workingFiles.map((item) => (
-            <WorkingFileRow
+        <div className="space-y-2">
+          {fileEntries.map((item) => (
+            <WorkingFileItem
               key={item.fileId}
-              item={item}
-              canDelete={canEdit}
-              onDelete={deleteWorkingFile}
+              fileId={item.fileId}
+              fileName={item.fileName}
+              action={canEdit ? <DeleteButton onDelete={() => deleteWorkingFile(item.fileId)} /> : undefined}
             />
           ))}
-        </ul>
+          {linkEntries.map((item) => (
+            <WorkingLinkItem
+              key={item.fileId}
+              url={item.url}
+              label={item.label}
+              action={canEdit ? <DeleteButton onDelete={() => deleteWorkingFile(item.fileId)} /> : undefined}
+            />
+          ))}
+        </div>
       )}
     </div>
   );

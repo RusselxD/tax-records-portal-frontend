@@ -7,6 +7,7 @@ import TaxRecordTasks from "../features/common/pages/TaxRecordTasks";
 import ClientList from "../features/common/pages/ClientList";
 import Notifications from "../features/common/pages/Notifications";
 import ClientOnboarding from "../features/oos/pages/ClientOnboarding";
+import ClientOffboarding from "../features/oos/pages/ClientOffboarding";
 import NewClient from "../features/oos/pages/NewClient";
 import ClientInfoReview from "../features/common/pages/ClientOnboardingPreview";
 import ClientInfoView from "../features/common/pages/ClientDetails";
@@ -15,6 +16,8 @@ import UserProfile from "../features/common/pages/UserProfile";
 import AccountantAnalytics from "../features/common/pages/AccountantAnalytics";
 import EditClientProfile from "../features/common/pages/EditClientProfile";
 import ProfileUpdateReview from "../features/common/pages/ProfileUpdateReview";
+import ConsultationLogs from "../features/common/pages/ConsultationLogs";
+import ConsultationLogDetail from "../features/common/pages/ConsultationLogDetail";
 import Help from "../features/common/pages/Help";
 
 export const oosRoutes: RouteObject = {
@@ -43,6 +46,10 @@ export const oosRoutes: RouteObject = {
         {
           path: "client-onboarding",
           element: <ClientOnboarding />,
+        },
+        {
+          path: "client-offboarding",
+          element: <ClientOffboarding />,
         },
         {
           path: "new-client",
@@ -75,6 +82,14 @@ export const oosRoutes: RouteObject = {
         {
           path: "tax-record-task/:id",
           element: <TaxRecordTaskDetails />,
+        },
+        {
+          path: "consultation-logs",
+          element: <ConsultationLogs />,
+        },
+        {
+          path: "consultation-logs/:id",
+          element: <ConsultationLogDetail />,
         },
         {
           path: "notifications",

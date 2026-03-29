@@ -13,6 +13,7 @@ export interface ConfirmActionModalProps {
   comment?: string;
   commentLabel?: string;
   onSuccess?: () => void;
+  onError?: (err: unknown) => void;
   children?: ReactNode;
 }
 
@@ -26,6 +27,8 @@ export default function ConfirmActionModal({
   confirmClassName,
   comment,
   commentLabel = "Comment",
+  onSuccess,
+  onError,
   children,
 }: ConfirmActionModalProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -37,10 +40,17 @@ export default function ConfirmActionModal({
     setError(null);
     try {
       await onConfirm();
+      setModalOpen(false);
+      onSuccess?.();
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Something went wrong. Please try again.";
-      setError(message);
+      if (onError) {
+        onError(err);
+        setModalOpen(false);
+      } else {
+        const message =
+          err instanceof Error ? err.message : "Something went wrong. Please try again.";
+        setError(message);
+      }
     } finally {
       setIsLoading(false);
     }

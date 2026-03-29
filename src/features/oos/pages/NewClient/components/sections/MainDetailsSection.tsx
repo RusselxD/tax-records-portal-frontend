@@ -43,15 +43,24 @@ export default function MainDetailsSection({
   >([]);
 
   useEffect(() => {
+    if (hideAccountants) return;
+    let cancelled = false;
     async function fetchCsdOos() {
-      try { setCsdOosAccountants(await usersAPI.getAccountants("CSD,OOS")); } catch {}
+      try {
+        const data = await usersAPI.getAccountants("CSD,OOS");
+        if (!cancelled) setCsdOosAccountants(data);
+      } catch {}
     }
     async function fetchQtd() {
-      try { setQtdAccountants(await usersAPI.getAccountants("QTD")); } catch {}
+      try {
+        const data = await usersAPI.getAccountants("QTD");
+        if (!cancelled) setQtdAccountants(data);
+      } catch {}
     }
     fetchCsdOos();
     fetchQtd();
-  }, []);
+    return () => { cancelled = true; };
+  }, [hideAccountants]);
 
   const csdOosOptions = csdOosAccountants.map((a) => ({
     value: a.id,
@@ -89,7 +98,7 @@ export default function MainDetailsSection({
               const ids = v.length ? v : null;
               update({ csdOosAccountantIds: ids });
               updateHeaderAccountants({
-                assignedCsdOosAccountants: resolveAccountants(ids, csdOosAccountants),
+                csdOos: resolveAccountants(ids, csdOosAccountants),
               });
             }}
             placeholder="Select accountants"
@@ -102,7 +111,7 @@ export default function MainDetailsSection({
               const id = v || null;
               update({ qtdAccountantId: id });
               updateHeaderAccountants({
-                assignedQtdAccountants: resolveAccountants(
+                qtd: resolveAccountants(
                   id ? [id] : null,
                   qtdAccountants,
                 ),

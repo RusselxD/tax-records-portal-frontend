@@ -131,7 +131,7 @@ export function NewClientProvider({
           const headerData = await clientAPI.getClientInfoHeader(editClientId);
           if (cancelled) return;
 
-          if (headerData.hasActiveTask) {
+          if (headerData.taskReview.hasActiveTask) {
             navigate(`/oos/client-preview/${editClientId}`, { replace: true });
             return;
           }
@@ -182,12 +182,12 @@ export function NewClientProvider({
       if (!prev.mainDetails) return prev;
       const md = { ...prev.mainDetails };
       let changed = false;
-      if (header.assignedCsdOosAccountants?.length && !md.csdOosAccountantIds?.length) {
-        md.csdOosAccountantIds = header.assignedCsdOosAccountants.map((a) => a.id);
+      if (header.accountants.csdOos?.length && !md.csdOosAccountantIds?.length) {
+        md.csdOosAccountantIds = header.accountants.csdOos.map((a) => a.id);
         changed = true;
       }
-      if (header.assignedQtdAccountants?.length && !md.qtdAccountantId) {
-        md.qtdAccountantId = header.assignedQtdAccountants[0]?.id ?? null;
+      if (header.accountants.qtd?.length && !md.qtdAccountantId) {
+        md.qtdAccountantId = header.accountants.qtd[0]?.id ?? null;
         changed = true;
       }
       return changed ? { ...prev, mainDetails: md } : prev;
@@ -220,14 +220,24 @@ export function NewClientProvider({
         }
       }, 50);
     },
-    [sectionRefs],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- sectionRefs is a stable ref, never changes
+    [],
   );
 
   useEffect(() => () => clearTimeout(scrollTimerRef.current), []);
 
   const updateHeaderAccountants = useCallback(
     (fields: Parameters<NewClientContextType["updateHeaderAccountants"]>[0]) => {
-      setHeader((prev) => (prev ? { ...prev, ...fields } : prev));
+      setHeader((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          accountants: {
+            csdOos: fields.csdOos ?? prev.accountants.csdOos,
+            qtd: fields.qtd ?? prev.accountants.qtd,
+          },
+        };
+      });
     },
     [],
   );
@@ -255,9 +265,10 @@ export function NewClientProvider({
     updateHeaderAccountants,
     isSubmitting,
     isDiscarding,
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- sectionRefs is a stable ref, never changes
   }), [
     header, sections, isLoading, fetchError, clientId, isEditMode,
-    sectionSaveStatus, globalSaveStatus, expandedSections, sectionRefs,
+    sectionSaveStatus, globalSaveStatus, expandedSections,
     sectionLoadStatus, loadSection, updateSection, toggleSection,
     scrollToSection, submitForReview, discardDraft, retrySection,
     uploadFile, updateHeaderAccountants, isSubmitting, isDiscarding,
@@ -289,8 +300,8 @@ export function NewClientShimProvider({
 }: {
   clientId: string;
   onUpdateHeaderAccountants?: (fields: {
-    assignedCsdOosAccountants?: AssignedAccountant[];
-    assignedQtdAccountants?: AssignedAccountant[];
+    csdOos?: AssignedAccountant[];
+    qtd?: AssignedAccountant[];
   }) => void;
   children: ReactNode;
 }) {
@@ -300,7 +311,7 @@ export function NewClientShimProvider({
   );
 
   const updateHeaderAccountants = useCallback(
-    (fields: { assignedCsdOosAccountants?: AssignedAccountant[]; assignedQtdAccountants?: AssignedAccountant[] }) => {
+    (fields: { csdOos?: AssignedAccountant[]; qtd?: AssignedAccountant[] }) => {
       onUpdateHeaderAccountants?.(fields);
     },
     [onUpdateHeaderAccountants],

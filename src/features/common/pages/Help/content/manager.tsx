@@ -9,6 +9,8 @@ import {
   UserCircle,
   FileText,
   Settings,
+  MessageSquareText,
+  Upload,
 } from "lucide-react";
 import { P, Heading, Steps, BulletList, StatusTable, Tip } from "./shared";
 import type { HelpSection } from "../types";
@@ -475,11 +477,23 @@ export const managerSections: HelpSection[] = [
           ]}
         />
 
-        <Heading>Creating Tasks</Heading>
-        <P>
-          Tasks can be created individually or imported in bulk using an Excel
-          template.
-        </P>
+        <Heading>Creating a Single Task</Heading>
+        <Steps
+          items={[
+            "Click New Task to open the creation form.",
+            "Select a client and the assigned accountant.",
+            "Pick the category, sub-category, and task name using the cascading dropdowns. You can create new entries inline with \u201c+ Add New\u201d.",
+            "Set the year, period, and deadline.",
+            "Optionally add a description, then click Create Task.",
+          ]}
+        />
+        <Tip>
+          You can delete unused categories, sub-categories, or task names from
+          the dropdown menu by hovering over an option and clicking the trash
+          icon. Items that are already used by existing tasks cannot be deleted.
+        </Tip>
+
+        <Heading>Bulk Import</Heading>
         <Steps
           items={[
             "Click Import to open the bulk import form.",
@@ -616,15 +630,105 @@ export const managerSections: HelpSection[] = [
           items={[
             "Onboarding — keep this status while the OOS is building the client's profile and the handoff process is ongoing.",
             "Active Client — set this after the handoff is complete, accountants are assigned, and the client is being actively serviced.",
-            "Offboarding — use when the client has decided to wind down their engagement and work is being wrapped up.",
+            "Offboarding — initiates the offboarding workflow. You'll be asked to assign an OOS accountant, set an end-of-engagement date, and optionally set a deactivation date.",
             "Inactive Client — set when the client is fully off-boarded and no ongoing work remains.",
           ]}
         />
+
+        <Heading>Initiating Offboarding</Heading>
+        <P>
+          When you select "Offboarding" as the new status, the modal expands
+          with additional fields:
+        </P>
+        <BulletList
+          items={[
+            "Assigned OOS Accountant — the accountant responsible for the offboarding process.",
+            "End of Engagement Date — when the professional engagement formally ends.",
+            "Deactivation Date (optional) — if set, all client portal accounts will be automatically deactivated on this date and the status set to Inactive.",
+          ]}
+        />
+
+        <Heading>After Initiating Offboarding</Heading>
+        <P>
+          The client details page will show an offboarding banner with the
+          assigned OOS, dates, and actions. From there you can:
+        </P>
+        <BulletList
+          items={[
+            "Send the end-of-engagement letter email using a template.",
+            "Toggle tax records protection — blocks the client from downloading files while still allowing them to browse their records.",
+            "Deactivate individual client portal accounts from the Client Accounts card.",
+          ]}
+        />
+
         <Tip>
-          These are recommended conventions, not hard rules. The system allows
-          any status to be set at any time. Use your judgment based on the
-          client's actual situation.
+          All status transitions except Offboarding are simple changes. Only
+          Offboarding requires the additional assignment and date setup.
         </Tip>
+      </>
+    ),
+  },
+
+  // ─── Consultation Logs ───
+  {
+    id: "consultation-logs",
+    title: "Consultation Logs",
+    subtitle: "Log and track client consultations",
+    icon: MessageSquareText,
+    iconBg: "bg-teal-50",
+    iconColor: "text-teal-600",
+    content: (
+      <>
+        <P>
+          The Consultation Logs page lets you log consultations rendered to
+          clients. Each log tracks the date, time, platform, subject, and
+          duration of a consultation session.
+        </P>
+
+        <Heading>Creating a Consultation Log</Heading>
+        <Steps
+          items={[
+            "Click New Consultation to open the form.",
+            "Select the client, date, platform, start and end times.",
+            "Enter the subject and optionally add notes and attachments.",
+            "Check \"Mark as courtesy\" if the consultation shouldn't count toward billing.",
+            "Click Save as Draft — the log is saved but not yet submitted.",
+          ]}
+        />
+
+        <Heading>Submitting for Review</Heading>
+        <P>
+          Open a draft log and click Submit for Review. A QTD reviewer or
+          Manager will approve or reject it. You can add a comment when
+          submitting.
+        </P>
+
+        <Heading>Editing & Resubmitting</Heading>
+        <P>
+          If a log is rejected, you'll see a red banner with an "Edit &
+          Resubmit" button. Make corrections and submit again.
+        </P>
+
+        <Heading>Billable Types</Heading>
+        <BulletList
+          items={[
+            "Included — within the client's monthly included hours.",
+            "Excess — beyond the monthly cap, billed at the excess rate.",
+            "Courtesy — manually flagged, doesn't count toward billing.",
+          ]}
+        />
+        <P>
+          Included vs. Excess is automatically computed when the log is
+          approved, based on the client's consultation config.
+        </P>
+
+        <Heading>Client Details — Consultations Tab</Heading>
+        <P>
+          On any client's details page, the Consultations tab shows a monthly
+          summary with a progress bar, hours breakdown (included, excess,
+          courtesy), and estimated excess fees. Below that is a table of
+          approved logs for the selected month.
+        </P>
       </>
     ),
   },
@@ -654,12 +758,48 @@ export const managerSections: HelpSection[] = [
             "Task Completed — a task was completed.",
             "Client Handoff — a client was handed off by OOS.",
             "Profile Submitted — a client profile was submitted for review.",
+            "Offboarding Assigned — an OOS accountant was assigned to offboard a client.",
           ]}
         />
         <P>
           Click any notification to navigate directly to the relevant task or
           client page. Notifications are also sent to your email.
         </P>
+      </>
+    ),
+  },
+
+  // ─── File Uploads ───
+  {
+    id: "file-uploads",
+    title: "File Upload Guidelines",
+    subtitle: "Accepted file types and size limits",
+    icon: Upload,
+    iconBg: "bg-gray-100",
+    iconColor: "text-gray-600",
+    content: (
+      <>
+        <P>
+          All file uploads across the system are validated before uploading.
+          Files that don't meet the requirements will be skipped with an error
+          message.
+        </P>
+        <Heading>Document Uploads</Heading>
+        <BulletList
+          items={[
+            "Accepted formats: PDF, DOC, DOCX, XLS, XLSX, CSV, JPG, JPEG, PNG, GIF, WEBP, DAT",
+            "Maximum file size: 25MB per file",
+            "Applies to: task files, invoice attachments, payment receipts, consultation attachments, and client profile files",
+          ]}
+        />
+        <Heading>Image Uploads (Rich Text Editor)</Heading>
+        <BulletList
+          items={[
+            "Accepted formats: JPG, JPEG, PNG, GIF, WEBP",
+            "Maximum file size: 10MB per file",
+            "Applies to: images embedded in comments and consultation notes",
+          ]}
+        />
       </>
     ),
   },

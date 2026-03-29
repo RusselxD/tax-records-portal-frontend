@@ -2,12 +2,14 @@ import { useState, useEffect, useCallback, useRef, type FormEvent } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronRight, Upload, Loader2 } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
-import { Input, Dropdown, Button, Alert, FilePreviewOverlay } from "../../../../components/common";
+import { Input, Dropdown, Button, Alert, FilePreviewOverlay, ConfirmActionModal } from "../../../../components/common";
+import { useToast } from "../../../../contexts/ToastContext";
 import FileRow from "../../../../components/common/FileRow";
 import { invoiceAPI } from "../../../../api/invoice";
 import { clientAPI } from "../../../../api/client";
 import { fileAPI } from "../../../../api/file";
 import { getErrorMessage, isConflictError } from "../../../../lib/api-error";
+import { validateDocumentFile } from "../../../../lib/file-validation";
 import { formatDate, formatCurrency } from "../../../../lib/formatters";
 import type { InvoiceTermResponse, FileItemResponse } from "../../../../types/invoice";
 import type { LookupResponse } from "../../../../types/tax-record-task";
@@ -21,6 +23,7 @@ function addDays(dateStr: string, days: number): string {
 export default function CreateInvoice() {
   usePageTitle("Create Invoice");
   const navigate = useNavigate();
+  const { toastSuccess, toastError } = useToast();
   const [searchParams] = useSearchParams();
   const prefilledClientId = searchParams.get("clientId") || "";
 
@@ -35,7 +38,7 @@ export default function CreateInvoice() {
   const [amountDue, setAmountDue] = useState("");
   const [attachments, setAttachments] = useState<FileItemResponse[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [previewFile, setPreviewFile] = useState<FileItemResponse | null>(null);
@@ -48,14 +51,20 @@ export default function CreateInvoice() {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([
-      clientAPI.getActiveClients(),
-      invoiceAPI.getTerms(),
-    ]).then(([c, t]) => {
-      if (cancelled) return;
-      setClients(c);
-      setTerms(t);
-    });
+    const fetchData = async () => {
+      try {
+        const [c, t] = await Promise.all([
+          clientAPI.getActiveClients(),
+          invoiceAPI.getTerms(),
+        ]);
+        if (cancelled) return;
+        setClients(c);
+        setTerms(t);
+      } catch (err) {
+        console.warn("Failed to load invoice form data", err);
+      }
+    };
+    fetchData();
     return () => { cancelled = true; };
   }, []);
 
@@ -112,6 +121,11 @@ export default function CreateInvoice() {
     setIsUploading(true);
     try {
       for (const file of Array.from(fileList)) {
+        const result = validateDocumentFile(file);
+        if (!result.valid) {
+          toastError(result.error!);
+          continue;
+        }
         const ref = await uploadFile(file);
         setAttachments((prev) => [...prev, ref]);
       }
@@ -137,31 +151,24 @@ export default function CreateInvoice() {
     navigate("/internal-billing/billings");
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmitClick = (e: FormEvent) => {
     e.preventDefault();
-    if (!clientId || !invoiceNumber.trim() || !invoiceDate || !termsId || !amountDue) return;
-    setError(null);
-    setIsSubmitting(true);
-    try {
-      const created = await invoiceAPI.createInvoice({
-        clientId,
-        invoiceNumber: invoiceNumber.trim(),
-        invoiceDate,
-        termsId: parseInt(termsId),
-        description: description.trim() || undefined,
-        amountDue: parseFloat(amountDue),
-        attachments: attachments.length > 0 ? attachments : undefined,
-      });
-      navigate(`/internal-billing/billings/${created.id}`);
-    } catch (err) {
-      if (isConflictError(err)) {
-        setError("An invoice with this number already exists.");
-      } else {
-        setError(getErrorMessage(err));
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+    if (!canSubmit) return;
+    setShowConfirm(true);
+  };
+
+  const handleConfirmCreate = async () => {
+    const created = await invoiceAPI.createInvoice({
+      clientId,
+      invoiceNumber: invoiceNumber.trim(),
+      invoiceDate,
+      termsId: parseInt(termsId),
+      description: description.trim() || undefined,
+      amountDue: parseFloat(amountDue),
+      attachments: attachments.length > 0 ? attachments : undefined,
+    });
+    toastSuccess("Invoice Created", `Invoice ${invoiceNumber.trim()} has been created.`);
+    navigate(`/internal-billing/billings/${created.id}`);
   };
 
   const canSubmit = clientId && invoiceNumber.trim() && invoiceDate && termsId && amountDue && parseFloat(amountDue) > 0;
@@ -178,7 +185,7 @@ export default function CreateInvoice() {
       </nav>
 
       <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmitClick} className="space-y-5">
           {error && <Alert variant="error">{error}</Alert>}
 
           {/* Row 1: Client + Invoice Number */}
@@ -337,15 +344,35 @@ export default function CreateInvoice() {
 
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
-            <Button variant="secondary" onClick={handleCancel} disabled={isSubmitting}>
+            <Button variant="secondary" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button type="submit" isLoading={isSubmitting} disabled={!canSubmit}>
+            <Button type="submit" disabled={!canSubmit}>
               Create Invoice
             </Button>
           </div>
         </form>
       </div>
+
+      {showConfirm && (
+        <ConfirmActionModal
+          setModalOpen={setShowConfirm}
+          onConfirm={handleConfirmCreate}
+          title="Create Invoice?"
+          description={`Create invoice ${invoiceNumber.trim()} for ${formatCurrency(parseFloat(amountDue))}?`}
+          confirmLabel="Create Invoice"
+          loadingLabel="Creating..."
+          onSuccess={() => setShowConfirm(false)}
+          onError={(err) => {
+            setShowConfirm(false);
+            if (isConflictError(err)) {
+              setError("An invoice with this number already exists.");
+            } else {
+              setError(getErrorMessage(err));
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -2,14 +2,17 @@ import { useState } from "react";
 import { Send, Check, X, Flag, CheckCircle, Undo2, Loader2 } from "lucide-react";
 import { useTaxRecordTaskDetails } from "../context/TaxRecordTaskDetailsContext";
 import { getErrorMessage } from "../../../../../lib/api-error";
+import { CommentEditor } from "../../../../../components/common";
+import type { RichTextContent } from "../../../../../types/client-info";
 import TaskActionModals from "./TaskActionModals";
+import type { ModalType } from "./task-action-types";
 
-export type ModalType = "submit" | "approve" | "reject" | "mark-filed" | "mark-completed" | null;
+const EMPTY_DOC: RichTextContent = { type: "doc", content: [] };
 
 export default function TaskActions() {
   const { canSubmit, canReview, canMarkFiled, canMarkCompleted, canRecall, recallTask } =
     useTaxRecordTaskDetails();
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState<RichTextContent>(EMPTY_DOC);
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [isRecalling, setIsRecalling] = useState(false);
   const [recallError, setRecallError] = useState<string | null>(null);
@@ -40,21 +43,16 @@ export default function TaskActions() {
       </div>
       <div className="px-6 py-5">
         {showComment && (
-          <div className="relative mb-5">
-            <textarea
+          <div className="mb-5 max-w-2xl">
+            <CommentEditor
               value={comment}
-              onChange={(e) => setComment(e.target.value)}
+              onChange={setComment}
               placeholder={
                 canReview
                   ? "Enter details regarding approval or specific reasons for rejection..."
                   : "Add a comment (optional)..."
               }
-              rows={4}
-              className="w-full max-w-2xl rounded-md border border-gray-300 px-3 py-2.5 text-sm text-primary placeholder-gray-400 transition-colors resize-none focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30"
             />
-            <span className="absolute bottom-3 right-3 text-xs text-gray-400 max-w-2xl">
-              Optional
-            </span>
           </div>
         )}
 
@@ -128,7 +126,7 @@ export default function TaskActions() {
         activeModal={activeModal}
         comment={comment}
         onClose={() => setActiveModal(null)}
-        onSuccess={() => setComment("")}
+        onSuccess={() => setComment(EMPTY_DOC)}
       />
     </div>
   );

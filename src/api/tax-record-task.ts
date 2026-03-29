@@ -11,31 +11,24 @@ import type {
   TaxRecordTaskOverdueItemResponse,
   TaxRecordTaskRejectedItemResponse,
   TaxRecordTaskTodoListPageResponse,
+  TaxRecordTaskProgressPageResponse,
   ReviewerQueueItemResponse,
   ReviewerDecidedItemResponse,
   TaxTaskNameResponse,
+  TaxRecordLookupResponse,
+  CreateTaxRecordTaskRequest,
+  CreateTaxRecordTaskResponse,
 } from "../types/tax-record-task";
+import type { LogCommentResponse } from "../types/client";
+import type { RichTextContent } from "../types/client-info";
 import apiClient from "./axios-config";
+import { buildParams } from "./api-utils";
 
 export const taxRecordTaskAPI = {
   getTasks: async (
     filters: TaxRecordTaskFilters = {},
   ): Promise<TaxRecordTaskPageResponse> => {
-    const params: Record<string, string | number> = {};
-
-    if (filters.page != null) params.page = filters.page;
-    if (filters.size != null) params.size = filters.size;
-    if (filters.search) params.search = filters.search;
-    if (filters.clientId) params.clientId = filters.clientId;
-    if (filters.categoryId != null) params.categoryId = filters.categoryId;
-    if (filters.subCategoryId != null)
-      params.subCategoryId = filters.subCategoryId;
-    if (filters.taskNameId != null) params.taskNameId = filters.taskNameId;
-    if (filters.year != null) params.year = filters.year;
-    if (filters.period) params.period = filters.period;
-    if (filters.status) params.status = filters.status;
-    if (filters.accountantId) params.accountantId = filters.accountantId;
-
+    const params = buildParams(filters);
     const res = await apiClient.get("/tax-record-tasks", { params });
     return res.data;
   },
@@ -70,6 +63,36 @@ export const taxRecordTaskAPI = {
     return res.data;
   },
 
+  getSubmittedTasks: async (
+    page: number = 0,
+    size: number = 10,
+  ): Promise<TaxRecordTaskProgressPageResponse> => {
+    const res = await apiClient.get("/tax-record-tasks/submitted", {
+      params: { page, size },
+    });
+    return res.data;
+  },
+
+  getForFilingTasks: async (
+    page: number = 0,
+    size: number = 10,
+  ): Promise<TaxRecordTaskProgressPageResponse> => {
+    const res = await apiClient.get("/tax-record-tasks/for-filing", {
+      params: { page, size },
+    });
+    return res.data;
+  },
+
+  getFiledTasks: async (
+    page: number = 0,
+    size: number = 10,
+  ): Promise<TaxRecordTaskProgressPageResponse> => {
+    const res = await apiClient.get("/tax-record-tasks/filed", {
+      params: { page, size },
+    });
+    return res.data;
+  },
+
   downloadBulkTemplate: async (): Promise<void> => {
     const res = await apiClient.get("/tax-record-tasks/bulk-template", {
       responseType: "blob",
@@ -87,12 +110,60 @@ export const taxRecordTaskAPI = {
     return res.data;
   },
 
+  createTask: async (payload: CreateTaxRecordTaskRequest): Promise<CreateTaxRecordTaskResponse> => {
+    const res = await apiClient.post("/tax-record-tasks", payload);
+    return res.data;
+  },
+
+  // ── Lookup hierarchy (categories → sub-categories → task names) ──
+
+  getCategories: async (): Promise<TaxRecordLookupResponse[]> => {
+    const res = await apiClient.get("/tax-record-categories");
+    return res.data;
+  },
+
+  createCategory: async (name: string): Promise<TaxRecordLookupResponse> => {
+    const res = await apiClient.post("/tax-record-categories", { name });
+    return res.data;
+  },
+
+  deleteCategory: async (id: number): Promise<void> => {
+    await apiClient.delete(`/tax-record-categories/${id}`);
+  },
+
+  getSubCategories: async (categoryId: number): Promise<TaxRecordLookupResponse[]> => {
+    const res = await apiClient.get(`/tax-record-categories/${categoryId}/sub-categories`);
+    return res.data;
+  },
+
+  createSubCategory: async (categoryId: number, name: string): Promise<TaxRecordLookupResponse> => {
+    const res = await apiClient.post(`/tax-record-categories/${categoryId}/sub-categories`, { name });
+    return res.data;
+  },
+
+  deleteSubCategory: async (categoryId: number, subCategoryId: number): Promise<void> => {
+    await apiClient.delete(`/tax-record-categories/${categoryId}/sub-categories/${subCategoryId}`);
+  },
+
+  getTaskNamesForSubCategory: async (subCategoryId: number): Promise<TaxRecordLookupResponse[]> => {
+    const res = await apiClient.get(`/tax-record-sub-categories/${subCategoryId}/task-names`);
+    return res.data;
+  },
+
+  createTaskName: async (subCategoryId: number, name: string): Promise<TaxRecordLookupResponse> => {
+    const res = await apiClient.post(`/tax-record-sub-categories/${subCategoryId}/task-names`, { name });
+    return res.data;
+  },
+
+  deleteTaskName: async (subCategoryId: number, taskNameId: number): Promise<void> => {
+    await apiClient.delete(`/tax-record-sub-categories/${subCategoryId}/task-names/${taskNameId}`);
+  },
+
   getClientTasks: async (
     clientId: string,
     cursor?: string,
   ): Promise<ClientTaxRecordTaskPageResponse> => {
-    const params: Record<string, string> = {};
-    if (cursor) params.cursor = cursor;
+    const params = buildParams({ cursor: cursor ?? "" });
     const res = await apiClient.get(`/tax-record-tasks/client/${clientId}`, {
       params,
     });
@@ -178,15 +249,20 @@ export const taxRecordTaskAPI = {
     return res.data;
   },
 
-  submitTask: async (id: string, comment: string): Promise<void> => {
+  getTaskLogComment: async (taskId: string, logId: string): Promise<LogCommentResponse> => {
+    const res = await apiClient.get(`/tax-record-tasks/${taskId}/logs/${logId}/comment`);
+    return res.data;
+  },
+
+  submitTask: async (id: string, comment: RichTextContent | null): Promise<void> => {
     await apiClient.post(`/tax-record-tasks/${id}/submit`, { comment });
   },
 
-  approveTask: async (id: string, comment: string): Promise<void> => {
+  approveTask: async (id: string, comment: RichTextContent | null): Promise<void> => {
     await apiClient.post(`/tax-record-tasks/${id}/approve`, { comment });
   },
 
-  rejectTask: async (id: string, comment: string): Promise<void> => {
+  rejectTask: async (id: string, comment: RichTextContent | null): Promise<void> => {
     await apiClient.post(`/tax-record-tasks/${id}/reject`, { comment });
   },
 
@@ -200,6 +276,10 @@ export const taxRecordTaskAPI = {
 
   recallTask: async (id: string): Promise<void> => {
     await apiClient.post(`/tax-record-tasks/${id}/recall`);
+  },
+
+  deleteTask: async (id: string): Promise<void> => {
+    await apiClient.delete(`/tax-record-tasks/${id}`);
   },
 
   getTaskNames: async (): Promise<TaxTaskNameResponse[]> => {

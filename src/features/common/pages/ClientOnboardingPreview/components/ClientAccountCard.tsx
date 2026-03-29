@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { UserCircle, Send, Check } from "lucide-react";
-import { AccountStatus, Input, Button } from "../../../../../components/common";
+import { UserCircle, Send, Check, UserX } from "lucide-react";
+import { AccountStatus, Input, Button, ConfirmActionModal } from "../../../../../components/common";
 import { getAvatarColor } from "../../../../../lib/avatar-colors";
 import { getInitials, resolveAssetUrl } from "../../../../../lib/formatters";
 import { usersAPI } from "../../../../../api/users";
 import { useToast } from "../../../../../contexts/ToastContext";
+import { useAuth } from "../../../../../contexts/AuthContext";
+import { hasPermission, Permission } from "../../../../../constants/permissions";
+import { getErrorMessage } from "../../../../../lib/api-error";
 import type { ClientAccountResponse } from "../../../../../types/client";
 
 interface ResendResult {
@@ -109,7 +112,16 @@ export default function ClientAccountCard({ clientAccount }: { clientAccount: Cl
 }
 
 /** Row without card wrapper — used inside ClientAccountsSection */
-export function AccountRow({ clientAccount }: { clientAccount: ClientAccountResponse }) {
+export function AccountRow({
+  clientAccount,
+  onDeactivated,
+}: {
+  clientAccount: ClientAccountResponse;
+  onDeactivated?: () => void;
+}) {
+  const { user } = useAuth();
+  const canDeactivate = hasPermission(user?.permissions, Permission.USER_CREATE);
+  const { toastSuccess, toastError } = useToast();
   const [displayData, setDisplayData] = useState({
     firstName: clientAccount.firstName,
     lastName: clientAccount.lastName,
@@ -119,6 +131,8 @@ export function AccountRow({ clientAccount }: { clientAccount: ClientAccountResp
   const fullName = `${displayData.firstName} ${displayData.lastName}`;
   const [showResendForm, setShowResendForm] = useState(false);
   const [resent, setResent] = useState(false);
+  const [showDeactivateConfirm, setShowDeactivateConfirm] = useState(false);
+  const [isDeactivated, setIsDeactivated] = useState(status === "DEACTIVATED");
 
   return (
     <>
@@ -160,7 +174,16 @@ export function AccountRow({ clientAccount }: { clientAccount: ClientAccountResp
               </button>
             )
           )}
-          <AccountStatus status={status} />
+          {canDeactivate && (status === "ACTIVE" || status === "PENDING") && !isDeactivated && (
+            <button
+              onClick={() => setShowDeactivateConfirm(true)}
+              title="Deactivate account"
+              className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+            >
+              <UserX className="w-4 h-4" />
+            </button>
+          )}
+          <AccountStatus status={isDeactivated ? "DEACTIVATED" : status} />
         </div>
       </div>
 
@@ -172,6 +195,27 @@ export function AccountRow({ clientAccount }: { clientAccount: ClientAccountResp
             if (updated) setDisplayData(updated);
             setShowResendForm(false);
             setResent(true);
+          }}
+        />
+      )}
+
+      {showDeactivateConfirm && (
+        <ConfirmActionModal
+          setModalOpen={setShowDeactivateConfirm}
+          onConfirm={() => usersAPI.changeUserStatus(clientAccount.id, "DEACTIVATED")}
+          title="Deactivate Account?"
+          description={`This will deactivate the portal account for ${fullName} (${displayData.email}). They will no longer be able to log in.`}
+          confirmLabel="Deactivate"
+          loadingLabel="Deactivating..."
+          confirmClassName="bg-red-600 hover:bg-red-700"
+          onSuccess={() => {
+            setIsDeactivated(true);
+            setShowDeactivateConfirm(false);
+            toastSuccess("Account Deactivated", `${fullName}'s account has been deactivated.`);
+            onDeactivated?.();
+          }}
+          onError={(err) => {
+            toastError(getErrorMessage(err, "Failed to deactivate account."));
           }}
         />
       )}

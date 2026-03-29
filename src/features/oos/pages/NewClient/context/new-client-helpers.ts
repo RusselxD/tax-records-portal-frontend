@@ -4,6 +4,7 @@ import {
   type ClientInfoSections,
   type ClientInfoHeaderResponse,
   type AssignedAccountant,
+  type RichTextContent,
 } from "../../../../../types/client-info";
 import type { SaveStatus } from "../../../../../types/client";
 
@@ -52,13 +53,13 @@ export interface NewClientContextType {
   ) => void;
   toggleSection: (key: InfoSectionKey) => void;
   scrollToSection: (key: InfoSectionKey) => void;
-  submitForReview: (comment?: string) => Promise<void>;
+  submitForReview: (comment?: RichTextContent | null) => Promise<void>;
   discardDraft: () => Promise<void>;
   retrySection: (key: InfoSectionKey) => void;
   uploadFile: (file: File) => Promise<{ id: string; name: string }>;
   updateHeaderAccountants: (fields: {
-    assignedCsdOosAccountants?: AssignedAccountant[];
-    assignedQtdAccountants?: AssignedAccountant[];
+    csdOos?: AssignedAccountant[];
+    qtd?: AssignedAccountant[];
   }) => void;
   isSubmitting: boolean;
   isDiscarding: boolean;

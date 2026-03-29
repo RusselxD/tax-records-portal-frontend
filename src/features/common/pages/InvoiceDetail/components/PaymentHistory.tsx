@@ -1,20 +1,24 @@
-import { useState } from "react";
-import { ChevronDown, Send, Loader2 } from "lucide-react";
-import { FilePreviewOverlay } from "../../../../../components/common";
+import { useState, useRef } from "react";
+import { ChevronDown, Send, Loader2, Pencil, Upload } from "lucide-react";
+import { FilePreviewOverlay, Input, Button } from "../../../../../components/common";
 import FileRow from "../../../../../components/common/FileRow";
 import { invoiceAPI } from "../../../../../api/invoice";
+import { fileAPI } from "../../../../../api/file";
 import { getErrorMessage } from "../../../../../lib/api-error";
+import { validateDocumentFile } from "../../../../../lib/file-validation";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { formatDate, formatCurrency } from "../../../../../lib/formatters";
 import type { InvoicePaymentResponse, FileItemResponse } from "../../../../../types/invoice";
 
 interface PaymentHistoryProps {
   invoiceId: string;
+  clientId: string;
   payments: InvoicePaymentResponse[];
   hasEmailRecipients: boolean;
+  onRefresh: () => void;
 }
 
-export default function PaymentHistory({ invoiceId, payments, hasEmailRecipients }: PaymentHistoryProps) {
+export default function PaymentHistory({ invoiceId, clientId, payments, hasEmailRecipients, onRefresh }: PaymentHistoryProps) {
   const [previewFile, setPreviewFile] = useState<FileItemResponse | null>(null);
 
   if (!payments || payments.length === 0) {
@@ -36,9 +40,11 @@ export default function PaymentHistory({ invoiceId, payments, hasEmailRecipients
           <PaymentRow
             key={payment.id}
             invoiceId={invoiceId}
+            clientId={clientId}
             payment={payment}
             hasEmailRecipients={hasEmailRecipients}
             onPreview={setPreviewFile}
+            onRefresh={onRefresh}
           />
         ))}
       </div>
@@ -56,17 +62,22 @@ export default function PaymentHistory({ invoiceId, payments, hasEmailRecipients
 
 function PaymentRow({
   invoiceId,
+  clientId,
   payment,
   hasEmailRecipients,
   onPreview,
+  onRefresh,
 }: {
   invoiceId: string;
+  clientId: string;
   payment: InvoicePaymentResponse;
   hasEmailRecipients: boolean;
   onPreview: (file: FileItemResponse) => void;
+  onRefresh: () => void;
 }) {
   const { toastSuccess, toastError } = useToast();
   const [isOpen, setIsOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [sent, setSent] = useState(payment.emailSent);
   const hasFiles = (payment.attachments?.length ?? 0) > 0;
@@ -86,11 +97,23 @@ function PaymentRow({
     }
   };
 
+  if (isEditing) {
+    return (
+      <EditPaymentForm
+        invoiceId={invoiceId}
+        clientId={clientId}
+        payment={payment}
+        onCancel={() => setIsEditing(false)}
+        onSuccess={() => { setIsEditing(false); onRefresh(); }}
+      />
+    );
+  }
+
   return (
     <div>
       <div
         onClick={hasFiles ? () => setIsOpen(!isOpen) : undefined}
-        className={`flex items-center gap-4 px-6 py-4 ${hasFiles ? "cursor-pointer hover:bg-gray-50" : ""} transition-colors`}
+        className={`flex items-center gap-4 px-6 py-4 group ${hasFiles ? "cursor-pointer hover:bg-gray-50" : "hover:bg-gray-50/50"} transition-colors`}
       >
         <div className="flex-1 flex items-center justify-between">
           <div className="flex items-center gap-6">
@@ -103,6 +126,14 @@ function PaymentRow({
           </div>
           <div className="flex items-center gap-3">
             <span className="text-sm font-medium text-primary">{formatCurrency(payment.amount)}</span>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
+              title="Edit payment"
+              className="p-1 text-gray-300 hover:text-accent transition-colors"
+            >
+              <Pencil className="h-3 w-3" />
+            </button>
             {hasEmailRecipients && (
               <button
                 type="button"
@@ -130,6 +161,125 @@ function PaymentRow({
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function EditPaymentForm({
+  invoiceId,
+  clientId,
+  payment,
+  onCancel,
+  onSuccess,
+}: {
+  invoiceId: string;
+  clientId: string;
+  payment: InvoicePaymentResponse;
+  onCancel: () => void;
+  onSuccess: () => void;
+}) {
+  const { toastSuccess, toastError } = useToast();
+  const [date, setDate] = useState(payment.date);
+  const [amount, setAmount] = useState(String(payment.amount));
+  const [attachments, setAttachments] = useState<FileItemResponse[]>([...(payment.attachments ?? [])]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const parsedAmount = amount ? parseFloat(amount) : 0;
+
+  const handleFileUpload = async (fileList: FileList) => {
+    if (fileList.length === 0) return;
+    setIsUploading(true);
+    try {
+      for (const file of Array.from(fileList)) {
+        const result = validateDocumentFile(file);
+        if (!result.valid) {
+          toastError(result.error!);
+          continue;
+        }
+        const ref = await fileAPI.upload(clientId, file);
+        setAttachments((prev) => [...prev, ref]);
+      }
+    } catch {
+      toastError("File upload failed");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveFile = (id: string) => {
+    const isNew = !payment.attachments.some((a) => a.id === id);
+    if (isNew) fileAPI.delete(id).catch(() => {});
+    setAttachments((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const handleSave = async () => {
+    if (!date || parsedAmount <= 0) return;
+    setIsSubmitting(true);
+    try {
+      await invoiceAPI.updatePayment(invoiceId, payment.id, {
+        date,
+        amount: parsedAmount,
+        attachments: attachments.length > 0 ? attachments : undefined,
+      });
+      toastSuccess("Payment Updated", `Payment of ${formatCurrency(parsedAmount)} has been updated.`);
+      onSuccess();
+    } catch (err) {
+      toastError(getErrorMessage(err, "Failed to update payment."));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="px-6 py-4 bg-accent/5 border-l-4 border-accent">
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <Input
+          label="Payment Date"
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+        <Input
+          label="Amount"
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="0.00"
+        />
+      </div>
+
+      <div className="mb-3">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Attachments</label>
+        {attachments.length > 0 && (
+          <div className="space-y-1.5 mb-2">
+            {attachments.map((file) => (
+              <FileRow key={file.id} name={file.name} onClick={() => {}} onRemove={() => handleRemoveFile(file.id)} />
+            ))}
+          </div>
+        )}
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
+          className="flex items-center gap-1.5 text-sm text-accent hover:text-accent-hover font-medium transition-colors"
+        >
+          {isUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+          {isUploading ? "Uploading..." : "Add file"}
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          className="hidden"
+          onChange={(e) => { if (e.target.files) handleFileUpload(e.target.files); e.target.value = ""; }}
+        />
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <Button variant="secondary" onClick={onCancel} disabled={isSubmitting}>Cancel</Button>
+        <Button onClick={handleSave} isLoading={isSubmitting} disabled={!date || parsedAmount <= 0}>Save</Button>
+      </div>
     </div>
   );
 }

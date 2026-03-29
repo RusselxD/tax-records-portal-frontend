@@ -22,7 +22,9 @@ const monthOptions: DropdownOption[] = [
 
 const formatMonth = (raw: string): string => {
   const [year, month] = raw.split("-");
+  if (!year || !month) return raw;
   const date = new Date(+year, +month - 1);
+  if (isNaN(date.getTime())) return raw;
   const mon = date.toLocaleDateString("en-US", { month: "short" });
   return `${mon} '${year.slice(2)}`;
 };

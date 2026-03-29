@@ -7,6 +7,7 @@ import Billings from "../features/internal-billing/pages/Billings";
 import CreateInvoice from "../features/internal-billing/pages/CreateInvoice";
 import InvoiceDetail from "../features/common/pages/InvoiceDetail";
 import UserProfile from "../features/common/pages/UserProfile";
+import Help from "../features/common/pages/Help";
 
 export const billingRoutes: RouteObject = {
   element: <RoleGuard allowedRoles={[UserRole.BILLING]} />,
@@ -38,6 +39,10 @@ export const billingRoutes: RouteObject = {
         {
           path: "profile",
           element: <UserProfile />,
+        },
+        {
+          path: "help",
+          element: <Help />,
         },
       ],
     },

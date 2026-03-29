@@ -7,6 +7,7 @@ import { csdSections } from "./content/csd";
 import { oosSections } from "./content/oos";
 import { qtdSections } from "./content/qtd";
 import { managerSections } from "./content/manager";
+import { billingSections } from "./content/billing";
 import type { HelpSection } from "./types";
 
 function getSections(roleKey: string): HelpSection[] {
@@ -19,6 +20,8 @@ function getSections(roleKey: string): HelpSection[] {
       return qtdSections;
     case UserRole.CSD:
       return csdSections;
+    case UserRole.BILLING:
+      return billingSections;
     default:
       return [];
   }

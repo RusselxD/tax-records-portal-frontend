@@ -1,14 +1,14 @@
-import { Outlet, useLocation, NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   ClipboardList,
   Users,
   Bell,
   UserPlus,
+  UserMinus,
   BarChart2,
-  HelpCircle,
+  MessageSquareText,
 } from "lucide-react";
-import MainLayout from "../../../components/layout/MainLayout";
+import createRoleLayout from "../../../components/layout/createRoleLayout";
 import type { NavItem } from "../../../types/navigation";
 
 const oosNavItems: NavItem[] = [
@@ -37,10 +37,22 @@ const oosNavItems: NavItem[] = [
     icon: UserPlus,
   },
   {
+    id: "client-offboarding",
+    label: "Client Offboarding",
+    path: "/oos/client-offboarding",
+    icon: UserMinus,
+  },
+  {
     id: "analytics",
     label: "My Analytics",
     path: "/oos/analytics",
     icon: BarChart2,
+  },
+  {
+    id: "consultation-logs",
+    label: "Consultation Logs",
+    path: "/oos/consultation-logs",
+    icon: MessageSquareText,
   },
   {
     id: "notifications",
@@ -55,38 +67,12 @@ const pageTitles: Record<string, string> = {
   "/oos/tasks": "Task List",
   "/oos/clients": "Client List",
   "/oos/client-onboarding": "Client Onboarding",
+  "/oos/client-offboarding": "Client Offboarding",
   "/oos/analytics": "My Analytics",
+  "/oos/consultation-logs": "Consultation Logs",
   "/oos/notifications": "Notifications",
   "/oos/help": "Help & Guides",
 };
 
-const HelpLink = () => (
-  <NavLink
-    to="/oos/help"
-    className={({ isActive }) =>
-      `flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-        isActive
-          ? "bg-accent text-primary"
-          : "text-white/70 hover:bg-white/10 hover:text-white"
-      }`
-    }
-  >
-    <HelpCircle className="w-4 h-4" />
-    <span>Help & Guides</span>
-  </NavLink>
-);
-
-export default function OosLayout() {
-  const location = useLocation();
-  const pageTitle = pageTitles[location.pathname] || "";
-
-  return (
-    <MainLayout
-      navItems={oosNavItems}
-      pageTitle={pageTitle}
-      sidebarBottomAction={<HelpLink />}
-    >
-      <Outlet />
-    </MainLayout>
-  );
-}
+const OosLayout = createRoleLayout(oosNavItems, pageTitles, "/oos/help");
+export default OosLayout;

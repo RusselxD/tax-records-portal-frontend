@@ -1,3 +1,5 @@
+import type { RichTextContent } from "./client-info";
+
 export const PROFILE_REVIEW_TYPE = {
   ONBOARDING: "ONBOARDING",
   PROFILE_UPDATE: "PROFILE_UPDATE",
@@ -49,7 +51,7 @@ export interface ProfileUpdateReviewResponse {
     name: string;
   };
   submittedAt: string;
-  comment: string | null;
+  comment: RichTextContent | null;
   sections: DiffSection[];
 }
 

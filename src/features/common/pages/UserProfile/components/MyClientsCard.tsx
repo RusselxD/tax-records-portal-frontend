@@ -38,7 +38,7 @@ export default function MyClientsCard() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (!entries[0].isIntersecting) return;
+        if (!entries[0]?.isIntersecting) return;
         const nextPage = page + 1;
         setIsFetchingMore(true);
         const loadMore = async () => {

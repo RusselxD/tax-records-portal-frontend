@@ -164,6 +164,7 @@ export default function UserFormModal({
 
         <div className="grid grid-cols-2 gap-4">
           <Dropdown
+            portal
             label="Role"
             options={roles.map((r) => ({ label: r.name, value: String(r.id) }))}
             value={roleId}
@@ -190,6 +191,7 @@ export default function UserFormModal({
               )}
             </div>
             <Dropdown
+              portal
               options={positions.map((p) => ({
                 label: p.name,
                 value: String(p.id),

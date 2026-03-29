@@ -13,14 +13,19 @@ export default function OutstandingBilling() {
 
   useEffect(() => {
     let cancelled = false;
-    invoiceAPI.getMyOutstanding()
-      .then((data) => { if (!cancelled) setInvoices(data); })
-      .catch(() => {})
-      .finally(() => { if (!cancelled) setIsLoading(false); });
+    const fetchInvoices = async () => {
+      try {
+        const data = await invoiceAPI.getMyOutstanding();
+        if (!cancelled) setInvoices(data);
+      } catch (err) {
+        console.warn("Failed to load outstanding invoices", err);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+    fetchInvoices();
     return () => { cancelled = true; };
   }, []);
-
-  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg h-full flex flex-col">
@@ -44,9 +49,7 @@ export default function OutstandingBilling() {
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
-            {invoices.map((inv) => {
-              const isOverdue = inv.dueDate < today;
-              return (
+            {invoices.map((inv) => (
                 <button
                   key={inv.id}
                   onClick={() => navigate(`/client/invoice/${inv.id}`)}
@@ -58,16 +61,15 @@ export default function OutstandingBilling() {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
-                      {isOverdue && <AlertCircle className="h-3.5 w-3.5 text-red-500" />}
-                      <span className={`text-xs ${isOverdue ? "text-red-500 font-medium" : "text-gray-400"}`}>
+                      {inv.isOverdue && <AlertCircle className="h-3.5 w-3.5 text-red-500" />}
+                      <span className={`text-xs ${inv.isOverdue ? "text-red-500 font-medium" : "text-gray-400"}`}>
                         Due {formatDate(inv.dueDate)}
                       </span>
                     </div>
                     <span className="text-sm font-semibold text-primary">{formatCurrency(inv.balance)}</span>
                   </div>
                 </button>
-              );
-            })}
+              ))}
           </div>
         )}
       </div>

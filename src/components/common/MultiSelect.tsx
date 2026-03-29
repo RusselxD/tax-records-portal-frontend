@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { ChevronDown, X } from "lucide-react";
 
 export interface MultiSelectOption {
@@ -28,9 +28,10 @@ export default function MultiSelect({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const selectedLabels = value
-    .map((v) => options.find((o) => o.value === v)?.label)
-    .filter(Boolean) as string[];
+  const selectedLabels = useMemo(
+    () => value.map((v) => options.find((o) => o.value === v)?.label).filter(Boolean) as string[],
+    [value, options],
+  );
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

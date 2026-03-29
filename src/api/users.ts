@@ -1,4 +1,5 @@
 import apiClient from "./axios-config";
+import { buildParams } from "./api-utils";
 import type {
   ManagedUser,
   CreateUserRequest,
@@ -28,8 +29,11 @@ export const usersAPI = {
     return res.data as UpdateMyProfileResponse;
   },
 
-  getUsers: async (): Promise<ManagedUser[]> => {
-    const res = await apiClient.get("/users");
+  getUsers: async (
+    filters?: { search?: string; roleKey?: string; status?: string; position?: string },
+  ): Promise<ManagedUser[]> => {
+    const params = filters ? buildParams(filters) : undefined;
+    const res = await apiClient.get("/users", { params });
     return res.data as ManagedUser[];
   },
 

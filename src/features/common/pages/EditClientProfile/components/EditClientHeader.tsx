@@ -9,7 +9,7 @@ export default function EditClientHeader() {
   const { user } = useAuth();
   const { clientId, header } = useEditClientProfile();
   const prefix = getRolePrefix(user?.roleKey ?? "");
-  const clientName = header?.clientDisplayName || "Client";
+  const clientName = header?.displayName || "Client";
 
   return (
     <div className="mb-8">

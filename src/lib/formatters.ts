@@ -1,5 +1,6 @@
 export function formatDate(dateStr: string) {
   const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
   return date.toLocaleDateString("en-US", {
     month: "short",
     day: "2-digit",
@@ -9,6 +10,7 @@ export function formatDate(dateStr: string) {
 
 export function formatDateTime(dateStr: string) {
   const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
   return date.toLocaleString("en-US", {
     month: "short",
     day: "2-digit",

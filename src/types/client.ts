@@ -7,6 +7,7 @@ import type {
   ProfessionalFeeEntry,
   OnboardingDetails,
   AssignedAccountant,
+  RichTextContent,
 } from "./client-info";
 
 export const CLIENT_STATUS = {
@@ -27,6 +28,42 @@ export interface ClientOnboardingListItemResponse {
   hasActiveTask: boolean;
   activeTaskId: string | null;
   lastTaskId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ClientOffboardingListItemResponse {
+  id: string;
+  name: string;
+  email: string;
+  status: ClientStatus;
+  offboardingAccountantName: string;
+  endOfEngagementDate: string;
+  deactivationDate: string | null;
+  taxRecordsProtected: boolean;
+  endOfEngagementLetterSent: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OffboardClientRequest {
+  oosAccountantId: string;
+  endOfEngagementDate: string;
+  deactivationDate: string | null;
+}
+
+export interface EndOfEngagementLetterTemplateSummary {
+  id: string;
+  name: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface EndOfEngagementLetterTemplate {
+  id: string;
+  name: string;
+  body: RichTextContent;
+  createdBy: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -52,11 +89,17 @@ export interface ClientPageResponse {
 
 type ClientInfoLogAction = "SUBMITTED" | "REJECTED" | "RESUBMITTED" | "APPROVED";
 
-export interface ClientInfoLogsItemResponse {
+export interface ClientInfoTaskLogResponse {
+  id: string;
   performedBy: string;
   action: ClientInfoLogAction;
-  comment: string | null;
+  hasComment: boolean;
   createdAt: string;
+}
+
+export interface LogCommentResponse {
+  id: string;
+  comment: RichTextContent | null;
 }
 
 export type SaveStatus = "idle" | "saving" | "saved" | "error";

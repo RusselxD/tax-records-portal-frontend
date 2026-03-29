@@ -35,29 +35,78 @@ const UserManagementContext = createContext<UserManagementContextType | null>(
 
 export function UserManagementProvider({ children }: { children: ReactNode }) {
   const [allUsers, setAllUsers] = useState<ManagedUser[]>([]);
+  const [positions, setPositions] = useState<string[]>([]);
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [positionFilter, setPositionFilter] = useState("");
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // Fetch positions once on mount
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const data = await usersAPI.getEmployeePositions();
+        if (!cancelled) setPositions(data.map((p) => p.name).sort());
+      } catch {
+        // positions are non-critical; silently ignore
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, []);
 
   const fetchUsers = useCallback(async () => {
     setIsFetching(true);
     setError(null);
     try {
-      const data = await usersAPI.getUsers();
+      const data = await usersAPI.getUsers({
+        search: debouncedSearch,
+        roleKey: roleFilter,
+        status: statusFilter,
+        position: positionFilter,
+      });
       setAllUsers(data);
     } catch (err) {
       setError(getErrorMessage(err, "Failed to fetch users. Try again."));
     } finally {
       setIsFetching(false);
     }
-  }, []);
+  }, [debouncedSearch, roleFilter, statusFilter, positionFilter]);
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    let cancelled = false;
+
+    (async () => {
+      setIsFetching(true);
+      setError(null);
+      try {
+        const data = await usersAPI.getUsers({
+          search: debouncedSearch,
+          roleKey: roleFilter,
+          status: statusFilter,
+          position: positionFilter,
+        });
+        if (!cancelled) setAllUsers(data);
+      } catch (err) {
+        if (!cancelled) setError(getErrorMessage(err, "Failed to fetch users. Try again."));
+      } finally {
+        if (!cancelled) setIsFetching(false);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [debouncedSearch, roleFilter, statusFilter, positionFilter]);
 
   const addUser = useCallback((user: ManagedUser) => {
     setAllUsers((prev) => [user, ...prev]);
@@ -67,48 +116,41 @@ export function UserManagementProvider({ children }: { children: ReactNode }) {
     setAllUsers((prev) => prev.map((u) => (u.id === user.id ? user : u)));
   }, []);
 
-  const positions = useMemo(() => {
-    const set = new Set(allUsers.map((u) => u.position).filter(Boolean));
-    return [...set].sort();
-  }, [allUsers]);
-
-  const users = useMemo(() => {
-    const query = search.toLowerCase();
-
-    return allUsers.filter((user) => {
-      const matchesSearch =
-        !query ||
-        user.name.toLowerCase().includes(query) ||
-        user.email.toLowerCase().includes(query);
-
-      const matchesRole = !roleFilter || user.roleName === roleFilter;
-      const matchesStatus = !statusFilter || user.status === statusFilter;
-      const matchesPosition = !positionFilter || user.position === positionFilter;
-
-      return matchesSearch && matchesRole && matchesStatus && matchesPosition;
-    });
-  }, [allUsers, search, roleFilter, statusFilter, positionFilter]);
+  const value = useMemo(
+    () => ({
+      users: allUsers,
+      positions,
+      isFetching,
+      error,
+      search,
+      roleFilter,
+      statusFilter,
+      positionFilter,
+      setSearch,
+      setRoleFilter,
+      setStatusFilter,
+      setPositionFilter,
+      addUser,
+      updateUser,
+      refetch: fetchUsers,
+    }),
+    [
+      allUsers,
+      positions,
+      isFetching,
+      error,
+      search,
+      roleFilter,
+      statusFilter,
+      positionFilter,
+      addUser,
+      updateUser,
+      fetchUsers,
+    ],
+  );
 
   return (
-    <UserManagementContext.Provider
-      value={{
-        users,
-        positions,
-        isFetching,
-        error,
-        search,
-        roleFilter,
-        statusFilter,
-        positionFilter,
-        setSearch,
-        setRoleFilter,
-        setStatusFilter,
-        setPositionFilter,
-        addUser,
-        updateUser,
-        refetch: fetchUsers,
-      }}
-    >
+    <UserManagementContext.Provider value={value}>
       {children}
     </UserManagementContext.Provider>
   );

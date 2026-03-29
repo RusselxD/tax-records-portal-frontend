@@ -5,8 +5,8 @@ export function getErrorMessage(
   fallback = "Something went wrong. Please try again.",
 ): string {
   if (err instanceof AxiosError) {
-    const data = err.response?.data as { message?: string; error?: string } | undefined;
-    return data?.message || data?.error || fallback;
+    const data = err.response?.data as { message?: string; errors?: Record<string, string> } | undefined;
+    return data?.message || fallback;
   }
   return fallback;
 }

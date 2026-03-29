@@ -12,6 +12,8 @@ import TaxRecordTaskDetails from "../features/common/pages/TaxRecordTaskDetails"
 import UserProfile from "../features/common/pages/UserProfile";
 import ClientProfiles from "../features/common/pages/ClientProfiles";
 import ProfileUpdateReview from "../features/common/pages/ProfileUpdateReview";
+import ConsultationLogs from "../features/common/pages/ConsultationLogs";
+import ConsultationLogDetail from "../features/common/pages/ConsultationLogDetail";
 import Help from "../features/common/pages/Help";
 
 export const qtdRoutes: RouteObject = {
@@ -56,6 +58,14 @@ export const qtdRoutes: RouteObject = {
         {
           path: "tax-record-task/:id",
           element: <TaxRecordTaskDetails />,
+        },
+        {
+          path: "consultation-logs",
+          element: <ConsultationLogs />,
+        },
+        {
+          path: "consultation-logs/:id",
+          element: <ConsultationLogDetail />,
         },
         {
           path: "notifications",

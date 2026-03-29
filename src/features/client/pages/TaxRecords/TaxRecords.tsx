@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import { Loader2, AlertTriangle, FolderOpen } from "lucide-react";
+import { Loader2, AlertTriangle, FolderOpen, ShieldAlert } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import { taxRecordAPI } from "../../../../api/tax-record";
 import { getErrorMessage } from "../../../../lib/api-error";
@@ -56,6 +56,7 @@ export default function TaxRecords() {
   const [record, setRecord] = useState<TaxRecordEntryResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isProtected, setIsProtected] = useState(false);
 
   const currentLevel = LEVEL_ORDER[selections.length];
   const isRecordLevel = currentLevel === DRILL_DOWN_LEVEL.RECORD;
@@ -66,6 +67,8 @@ export default function TaxRecords() {
     try {
       const filters = buildFilters(sels);
       const res: DrillDownResponse = await taxRecordAPI.drillDown(filters);
+
+      if (res.taxRecordsProtected) setIsProtected(true);
 
       if (res.level === "record") {
         setRecord(res.record);
@@ -99,6 +102,15 @@ export default function TaxRecords() {
         selections={selections}
         onNavigate={handleBreadcrumbClick}
       />
+
+      {isProtected && (
+        <div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 mb-5">
+          <ShieldAlert className="h-5 w-5 text-amber-600 shrink-0" />
+          <p className="text-sm text-amber-800">
+            Your tax records are currently protected and unavailable for download.
+          </p>
+        </div>
+      )}
 
       {isLoading && (
         <div className="flex items-center justify-center py-24">
@@ -135,7 +147,7 @@ export default function TaxRecords() {
       )}
 
       {!isLoading && !error && isRecordLevel && record && (
-        <TaxRecordDetail record={record} />
+        <TaxRecordDetail record={record} protected={isProtected} />
       )}
     </div>
   );

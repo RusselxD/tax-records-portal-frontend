@@ -1,13 +1,14 @@
 import { useEffect, useCallback, useState, type Dispatch, type SetStateAction } from "react";
-import { Button, Modal } from "../../../../../components/common";
+import { Button, Modal, CommentPreview } from "../../../../../components/common";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { useTaxRecordTaskDetails } from "../context/TaxRecordTaskDetailsContext";
-import type { ModalType } from "./TaskActions";
+import type { RichTextContent } from "../../../../../types/client-info";
+import type { ModalType } from "./task-action-types";
 
 interface TaskActionModalsProps {
   activeModal: ModalType;
-  comment: string;
+  comment: RichTextContent;
   onClose: () => void;
   onSuccess: () => void;
 }
@@ -51,6 +52,14 @@ const modalConfig: Record<
   },
 };
 
+function hasCommentContent(comment: RichTextContent): boolean {
+  if (!comment.content || comment.content.length === 0) return false;
+  return comment.content.some((node) => {
+    if (node.type === "image") return true;
+    return node.content && Array.isArray(node.content) && (node.content as unknown[]).length > 0;
+  });
+}
+
 export default function TaskActionModals({
   activeModal,
   comment,
@@ -63,6 +72,8 @@ export default function TaskActionModals({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const commentToSend = hasCommentContent(comment) ? comment : null;
+
   const handleConfirm = useCallback(async () => {
     if (!activeModal) return;
     setIsLoading(true);
@@ -70,13 +81,13 @@ export default function TaskActionModals({
     try {
       switch (activeModal) {
         case "submit":
-          await submitTask(comment);
+          await submitTask(commentToSend);
           break;
         case "approve":
-          await approveTask(comment);
+          await approveTask(commentToSend);
           break;
         case "reject":
-          await rejectTask(comment);
+          await rejectTask(commentToSend);
           break;
         case "mark-filed":
           await markFiled();
@@ -93,7 +104,7 @@ export default function TaskActionModals({
     } finally {
       setIsLoading(false);
     }
-  }, [activeModal, comment, submitTask, approveTask, rejectTask, markFiled, markCompleted, toastSuccess, onSuccess, onClose]);
+  }, [activeModal, commentToSend, submitTask, approveTask, rejectTask, markFiled, markCompleted, toastSuccess, onSuccess, onClose]);
 
   useEffect(() => {
     if (!activeModal) return;
@@ -144,12 +155,12 @@ export default function TaskActionModals({
           </p>
         )}
 
-        {comment && (
+        {commentToSend && (
           <div>
             <p className="text-xs font-medium text-gray-500 mb-1">Comment</p>
-            <p className="text-sm text-gray-700 bg-gray-50 rounded-md px-3 py-2 border border-gray-200">
-              {comment}
-            </p>
+            <div className="bg-gray-50 rounded-md px-3 py-2 border border-gray-200">
+              <CommentPreview content={commentToSend} />
+            </div>
           </div>
         )}
 

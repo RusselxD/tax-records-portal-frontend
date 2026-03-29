@@ -1,12 +1,13 @@
 import { useState, useCallback, useRef, type FormEvent } from "react";
 import { Upload, Loader2, CreditCard } from "lucide-react";
-import { Input, Button, Alert } from "../../../../../components/common";
+import { Input, Button, ConfirmActionModal } from "../../../../../components/common";
 import FileRow from "../../../../../components/common/FileRow";
 import { FilePreviewOverlay } from "../../../../../components/common";
 import { invoiceAPI } from "../../../../../api/invoice";
 import { fileAPI } from "../../../../../api/file";
-import { getErrorMessage } from "../../../../../lib/api-error";
 import { formatCurrency } from "../../../../../lib/formatters";
+import { useToast } from "../../../../../contexts/ToastContext";
+import { validateDocumentFile } from "../../../../../lib/file-validation";
 import type { FileItemResponse } from "../../../../../types/invoice";
 
 interface ReceivePaymentFormProps {
@@ -24,15 +25,15 @@ export default function ReceivePaymentForm({
   onSuccess,
   onCancel,
 }: ReceivePaymentFormProps) {
+  const { toastSuccess, toastError } = useToast();
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [amount, setAmount] = useState("");
   const [attachments, setAttachments] = useState<FileItemResponse[]>([]);
   const [fieldErrors, setFieldErrors] = useState<{ date?: string; amount?: string }>({});
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [previewFile, setPreviewFile] = useState<FileItemResponse | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const parsedAmount = amount ? parseFloat(amount) : 0;
@@ -43,11 +44,16 @@ export default function ReceivePaymentForm({
     setIsUploading(true);
     try {
       for (const file of Array.from(fileList)) {
+        const result = validateDocumentFile(file);
+        if (!result.valid) {
+          toastError(result.error!);
+          continue;
+        }
         const ref = await fileAPI.upload(clientId, file);
         setAttachments((prev) => [...prev, ref]);
       }
     } catch {
-      setError("File upload failed");
+      // silently fail
     } finally {
       setIsUploading(false);
     }
@@ -79,26 +85,22 @@ export default function ReceivePaymentForm({
     return errors;
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmitClick = (e: FormEvent) => {
     e.preventDefault();
     const errors = validate();
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
+    setShowConfirm(true);
+  };
 
-    setError(null);
-    setIsSubmitting(true);
-    try {
-      await invoiceAPI.receivePayment(invoiceId, {
-        date,
-        amount: parsedAmount,
-        attachments: attachments.length > 0 ? attachments : undefined,
-      });
-      onSuccess();
-    } catch (err) {
-      setError(getErrorMessage(err));
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleConfirm = async () => {
+    await invoiceAPI.receivePayment(invoiceId, {
+      date,
+      amount: parsedAmount,
+      attachments: attachments.length > 0 ? attachments : undefined,
+    });
+    toastSuccess("Payment Recorded", `${formatCurrency(parsedAmount)} payment has been recorded.`);
+    onSuccess();
   };
 
   return (
@@ -109,9 +111,7 @@ export default function ReceivePaymentForm({
       </div>
 
       <div className="p-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && <Alert variant="error">{error}</Alert>}
-
+        <form onSubmit={handleSubmitClick} className="space-y-4">
           {/* Balance cards */}
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-md bg-gray-50 border border-gray-200 px-4 py-3">
@@ -208,10 +208,10 @@ export default function ReceivePaymentForm({
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="secondary" onClick={handleCancel} disabled={isSubmitting}>
+            <Button variant="secondary" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button type="submit" isLoading={isSubmitting}>
+            <Button type="submit">
               Record Payment
             </Button>
           </div>
@@ -223,6 +223,18 @@ export default function ReceivePaymentForm({
           fileId={previewFile.id}
           fileName={previewFile.name}
           setModalOpen={() => setPreviewFile(null)}
+        />
+      )}
+
+      {showConfirm && (
+        <ConfirmActionModal
+          setModalOpen={setShowConfirm}
+          onConfirm={handleConfirm}
+          title="Confirm Payment"
+          description={`Record a payment of ${formatCurrency(parsedAmount)} for this invoice?`}
+          confirmLabel="Confirm Payment"
+          loadingLabel="Recording..."
+          onSuccess={() => setShowConfirm(false)}
         />
       )}
     </div>

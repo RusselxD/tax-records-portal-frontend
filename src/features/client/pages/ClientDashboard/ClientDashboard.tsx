@@ -5,6 +5,7 @@ import PendingDocumentsAndReminders from "./components/PendingDocumentsAndRemind
 import OutstandingBilling from "./components/OutstandingBilling";
 import RecentTaxDocuments from "./components/RecentTaxDocuments";
 import Highlights from "./components/Highlights";
+import ConsultationSummary from "./components/ConsultationSummary";
 
 export default function ClientDashboard() {
   usePageTitle("Dashboard");
@@ -12,8 +13,8 @@ export default function ClientDashboard() {
   const { reminders, pendingDocuments, highlights, isLoading: noticesLoading } = useClientNotices();
 
   return (
-    <div className="space-y-6 pb-12">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="space-y-4 pb-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <ImportantDates />
         <PendingDocumentsAndReminders
           reminders={reminders}
@@ -23,13 +24,10 @@ export default function ClientDashboard() {
         <OutstandingBilling />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-3">
-          <RecentTaxDocuments />
-        </div>
-        <div className="lg:col-span-2">
-          <Highlights highlights={highlights} isLoading={noticesLoading} />
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <RecentTaxDocuments />
+        <ConsultationSummary />
+        <Highlights highlights={highlights} isLoading={noticesLoading} />
       </div>
     </div>
   );

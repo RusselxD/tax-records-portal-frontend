@@ -36,53 +36,67 @@ export function ClientOnboardingProvider({
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const fetchClients = useCallback(async () => {
     setIsFetching(true);
     setError(null);
     try {
-      const data = await oosClientAPI.getMyOnboardingClients();
+      const data = await oosClientAPI.getMyOnboardingClients({
+        search: debouncedSearch,
+      });
       setAllClients(data);
     } catch (err) {
       setError(getErrorMessage(err, "Failed to fetch clients. Try again."));
     } finally {
       setIsFetching(false);
     }
-  }, []);
+  }, [debouncedSearch]);
 
   useEffect(() => {
-    fetchClients();
-  }, [fetchClients]);
+    let cancelled = false;
 
-  const clients = useMemo(() => {
-    const query = search.toLowerCase();
+    (async () => {
+      setIsFetching(true);
+      setError(null);
+      try {
+        const data = await oosClientAPI.getMyOnboardingClients({
+          search: debouncedSearch,
+        });
+        if (!cancelled) setAllClients(data);
+      } catch (err) {
+        if (!cancelled) setError(getErrorMessage(err, "Failed to fetch clients. Try again."));
+      } finally {
+        if (!cancelled) setIsFetching(false);
+      }
+    })();
 
-    return allClients.filter((client) => {
-      const matchesSearch =
-        !query ||
-        client.name.toLowerCase().includes(query) ||
-        client.email.toLowerCase().includes(query);
+    return () => { cancelled = true; };
+  }, [debouncedSearch]);
 
-      const matchesStatus = !statusFilter || client.status === statusFilter;
-
-      return matchesSearch && matchesStatus;
-    });
-  }, [allClients, search, statusFilter]);
+  const value = useMemo(
+    () => ({
+      clients: allClients,
+      isFetching,
+      error,
+      search,
+      statusFilter,
+      setSearch,
+      setStatusFilter,
+      refetch: fetchClients,
+    }),
+    [allClients, isFetching, error, search, statusFilter, fetchClients],
+  );
 
   return (
-    <ClientOnboardingContext.Provider
-      value={{
-        clients,
-        isFetching,
-        error,
-        search,
-        statusFilter,
-        setSearch,
-        setStatusFilter,
-        refetch: fetchClients,
-      }}
-    >
+    <ClientOnboardingContext.Provider value={value}>
       {children}
     </ClientOnboardingContext.Provider>
   );

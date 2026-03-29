@@ -1,3 +1,4 @@
+import { FileOutput, FileCheck, FolderOpen, FileText } from "lucide-react";
 import { useTaxRecordTaskDetails } from "../../context/TaxRecordTaskDetailsContext";
 import { TAX_RECORD_TASK_STATUS } from "../../../../../../types/tax-record-task";
 import WorkingFilesSection from "./WorkingFilesSection";
@@ -30,26 +31,30 @@ export default function TaskFiles() {
       <WorkingFilesSection />
 
       <div className="border-t border-gray-100 pt-5">
-        <SingleFileSlot
-          label="Output File / Tax Return"
-          file={files?.outputFile ?? null}
-          canEdit={canEdit}
-          onUpload={uploadOutputFile}
-          onDelete={deleteOutputFile}
-        />
-      </div>
-
-      {showProofOfFiling && (
-        <div className="border-t border-gray-100 pt-5">
+        <div className="grid grid-cols-2 gap-4">
           <SingleFileSlot
-            label="Proof of Filing"
-            file={files?.proofOfFilingFile ?? null}
-            canEdit={canEditProof}
-            onUpload={uploadProofOfFiling}
-            onDelete={deleteProofOfFiling}
+            label="Output File / Tax Return"
+            icon={<FileOutput className="h-4 w-4 text-indigo-500" />}
+            emptyIcon={<FileText className="h-10 w-10" />}
+            file={files?.outputFile ?? null}
+            canEdit={canEdit}
+            onUpload={uploadOutputFile}
+            onDelete={deleteOutputFile}
           />
+
+          {showProofOfFiling && (
+            <SingleFileSlot
+              label="Proof of Filing"
+              icon={<FileCheck className="h-4 w-4 text-emerald-500" />}
+              emptyIcon={<FolderOpen className="h-10 w-10" />}
+              file={files?.proofOfFilingFile ?? null}
+              canEdit={canEditProof}
+              onUpload={uploadProofOfFiling}
+              onDelete={deleteProofOfFiling}
+            />
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

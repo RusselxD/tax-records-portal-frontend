@@ -10,6 +10,8 @@ import type {
   CreateTermPayload,
   ClientOutstandingInvoice,
   ClientInvoiceListItem,
+  ClientInvoiceSidebarPageResponse,
+  ClientInvoiceFilter,
 } from "../types/invoice";
 
 export const invoiceAPI = {
@@ -25,7 +27,7 @@ export const invoiceAPI = {
   // ── Invoice list ──
 
   getInvoices: async (
-    params: { clientId?: string; page?: number; size?: number },
+    params: { clientId?: string; page?: number; size?: number; status?: string; search?: string },
   ): Promise<PageResponse<InvoiceListItemResponse>> => {
     const res = await apiClient.get("/invoices", { params });
     return res.data;
@@ -75,12 +77,31 @@ export const invoiceAPI = {
     return res.data;
   },
 
+  updatePayment: async (
+    invoiceId: string,
+    paymentId: string,
+    payload: { date: string; amount: number; attachments?: { id: string; name: string }[] },
+  ): Promise<InvoicePaymentResponse> => {
+    const res = await apiClient.put(`/invoices/${invoiceId}/payments/${paymentId}`, payload);
+    return res.data;
+  },
+
   sendEmail: async (id: string): Promise<void> => {
     await apiClient.post(`/invoices/${id}/send-email`);
   },
 
   sendPaymentEmail: async (invoiceId: string, paymentId: string): Promise<void> => {
     await apiClient.post(`/invoices/${invoiceId}/payments/${paymentId}/send-email`);
+  },
+
+  // ── Accountant-facing: client invoices sidebar ──
+
+  getClientInvoices: async (
+    clientId: string,
+    params: { page?: number; size?: number; filter?: ClientInvoiceFilter } = {},
+  ): Promise<ClientInvoiceSidebarPageResponse> => {
+    const res = await apiClient.get(`/invoices/client/${clientId}`, { params });
+    return res.data;
   },
 
   // ── Client-facing ──

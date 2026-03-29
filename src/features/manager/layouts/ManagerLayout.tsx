@@ -1,4 +1,3 @@
-import { Outlet, useLocation, NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -7,9 +6,9 @@ import {
   ClipboardList,
   UserCheck,
   Bell,
-  HelpCircle,
+  MessageSquareText,
 } from "lucide-react";
-import MainLayout from "../../../components/layout/MainLayout";
+import createRoleLayout from "../../../components/layout/createRoleLayout";
 import type { NavItem } from "../../../types/navigation";
 
 const managerNavItems: NavItem[] = [
@@ -50,6 +49,12 @@ const managerNavItems: NavItem[] = [
     icon: ClipboardList,
   },
   {
+    id: "consultation-logs",
+    label: "Consultation Logs",
+    path: "/manager/consultation-logs",
+    icon: MessageSquareText,
+  },
+  {
     id: "notifications",
     label: "Notifications",
     path: "/manager/notifications",
@@ -64,37 +69,10 @@ const pageTitles: Record<string, string> = {
   "/manager/clients": "Client List",
   "/manager/client-profiles": "Client Profiles",
   "/manager/tasks": "Task Overview",
+  "/manager/consultation-logs": "Consultation Logs",
   "/manager/client-template": "Client Info Template",
   "/manager/help": "Help & Guides",
 };
 
-const HelpLink = () => (
-  <NavLink
-    to="/manager/help"
-    className={({ isActive }) =>
-      `flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-        isActive
-          ? "bg-accent text-primary"
-          : "text-white/70 hover:bg-white/10 hover:text-white"
-      }`
-    }
-  >
-    <HelpCircle className="w-4 h-4" />
-    <span>Help & Guides</span>
-  </NavLink>
-);
-
-export default function ManagerLayout() {
-  const location = useLocation();
-  const pageTitle = pageTitles[location.pathname] || "";
-
-  return (
-    <MainLayout
-      navItems={managerNavItems}
-      pageTitle={pageTitle}
-      sidebarBottomAction={<HelpLink />}
-    >
-      <Outlet />
-    </MainLayout>
-  );
-}
+const ManagerLayout = createRoleLayout(managerNavItems, pageTitles, "/manager/help");
+export default ManagerLayout;

@@ -1,16 +1,58 @@
+import { useCallback } from "react";
+import { ClipboardList, Send, FileCheck, FolderCheck } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
+import { taxRecordTaskAPI } from "../../../../api/tax-record-task";
 import NeedsAttention from "./components/NeedsAttention";
 import TaskStats from "./components/TaskStats";
-import TodoList from "./components/TodoList";
+import TaskList from "./components/TaskList";
 
 export default function Dashboard() {
   usePageTitle("Dashboard");
 
+  const fetchTodo = useCallback(
+    (page: number, size: number) => taxRecordTaskAPI.getTodoTasks(page, size),
+    [],
+  );
+  const fetchSubmitted = useCallback(
+    (page: number, size: number) => taxRecordTaskAPI.getSubmittedTasks(page, size),
+    [],
+  );
+  const fetchForFiling = useCallback(
+    (page: number, size: number) => taxRecordTaskAPI.getForFilingTasks(page, size),
+    [],
+  );
+  const fetchFiled = useCallback(
+    (page: number, size: number) => taxRecordTaskAPI.getFiledTasks(page, size),
+    [],
+  );
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <TaskStats />
       <NeedsAttention />
-      <TodoList />
+      <TaskList
+        title="To-do List"
+        icon={<ClipboardList className="w-5 h-5 text-primary" />}
+        fetchFn={fetchTodo}
+        showStatus
+        defaultOpen
+        emptyMessage="You're all caught up — no tasks to do right now."
+      />
+      <TaskList
+        title="Submitted For Review"
+        icon={<Send className="w-5 h-5 text-primary" />}
+        fetchFn={fetchSubmitted}
+      />
+      <TaskList
+        title="Approved For Filing"
+        icon={<FileCheck className="w-5 h-5 text-primary" />}
+        fetchFn={fetchForFiling}
+      />
+      <TaskList
+        title="Filed & Waiting for Confirmation"
+        icon={<FolderCheck className="w-5 h-5 text-primary" />}
+        fetchFn={fetchFiled}
+      />
     </div>
   );
 }
