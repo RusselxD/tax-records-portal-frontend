@@ -119,8 +119,8 @@ export function ClientInfoReviewProvider({
 
   const clientName = header?.displayName ?? "";
   const status = statusOverride ?? header?.status ?? null;
-  const hasActiveTask = activeTaskOverride ?? header?.taskReview.hasActiveTask ?? false;
-  const lastReviewStatus = reviewStatusOverride ?? header?.taskReview.lastReviewStatus ?? null;
+  const hasActiveTask = activeTaskOverride ?? header?.taskReview?.hasActiveTask ?? false;
+  const lastReviewStatus = reviewStatusOverride ?? header?.taskReview?.lastReviewStatus ?? null;
   const hasAccounts = clientAccounts.length > 0;
 
   const setStatus = useCallback((newStatus: ClientStatusType) => {

@@ -26,11 +26,11 @@ export default function OffboardingBanner({
   const canManage = hasPermission(user?.permissions, Permission.CLIENT_MANAGE);
   const [isToggling, setIsToggling] = useState(false);
 
-  const isAssignedOos = header.offboarding.accountantName && user?.name === header.offboarding.accountantName;
+  const isAssignedOos = header.offboarding?.accountantName && user?.name === header.offboarding?.accountantName;
   const canSendLetter = canManage || isAssignedOos;
 
   const handleToggleProtection = async () => {
-    const newValue = !header.offboarding.taxRecordsProtected;
+    const newValue = !header.offboarding?.taxRecordsProtected;
     setIsToggling(true);
     try {
       await clientAPI.toggleTaxRecordsProtection(clientId, newValue);
@@ -65,7 +65,7 @@ export default function OffboardingBanner({
             Assigned OOS
           </p>
           <p className="text-sm text-amber-900 font-medium">
-            {header.offboarding.accountantName ?? "—"}
+            {header.offboarding?.accountantName ?? "—"}
           </p>
         </div>
         <div>
@@ -73,7 +73,7 @@ export default function OffboardingBanner({
             End of Engagement
           </p>
           <p className="text-sm text-amber-900 font-medium">
-            {header.offboarding.endOfEngagementDate ? formatDate(header.offboarding.endOfEngagementDate) : "—"}
+            {header.offboarding?.endOfEngagementDate ? formatDate(header.offboarding?.endOfEngagementDate) : "—"}
           </p>
         </div>
         <div>
@@ -81,7 +81,7 @@ export default function OffboardingBanner({
             Deactivation Date
           </p>
           <p className="text-sm text-amber-900 font-medium">
-            {header.offboarding.deactivationDate ? formatDate(header.offboarding.deactivationDate) : "Not set"}
+            {header.offboarding?.deactivationDate ? formatDate(header.offboarding?.deactivationDate) : "Not set"}
           </p>
         </div>
         <div>
@@ -89,7 +89,7 @@ export default function OffboardingBanner({
             End of Engagement Letter
           </p>
           <p className="text-sm text-amber-900 font-medium flex items-center gap-1.5">
-            {header.offboarding.endOfEngagementLetterSent ? (
+            {header.offboarding?.endOfEngagementLetterSent ? (
               <><MailCheck className="w-3.5 h-3.5 text-emerald-600" /> Sent</>
             ) : (
               <><Mail className="w-3.5 h-3.5 text-gray-400" /> Not sent</>
@@ -105,7 +105,7 @@ export default function OffboardingBanner({
             className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium bg-white border border-amber-300 text-amber-800 hover:bg-amber-100 transition-colors"
           >
             <Mail className="w-4 h-4" />
-            {header.offboarding.endOfEngagementLetterSent ? "Resend Letter" : "Send End of Engagement Letter"}
+            {header.offboarding?.endOfEngagementLetterSent ? "Resend Letter" : "Send End of Engagement Letter"}
           </button>
         )}
 
@@ -114,19 +114,19 @@ export default function OffboardingBanner({
             onClick={handleToggleProtection}
             disabled={isToggling}
             className={`inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium border transition-colors ${
-              header.offboarding.taxRecordsProtected
+              header.offboarding?.taxRecordsProtected
                 ? "bg-red-50 border-red-200 text-red-700 hover:bg-red-100"
                 : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
             }`}
           >
             {isToggling ? (
               <Loader2 className="w-4 h-4 animate-spin" />
-            ) : header.offboarding.taxRecordsProtected ? (
+            ) : header.offboarding?.taxRecordsProtected ? (
               <ShieldAlert className="w-4 h-4" />
             ) : (
               <ShieldCheck className="w-4 h-4" />
             )}
-            {header.offboarding.taxRecordsProtected ? "Records Protected" : "Protect Tax Records"}
+            {header.offboarding?.taxRecordsProtected ? "Records Protected" : "Protect Tax Records"}
           </button>
         )}
       </div>

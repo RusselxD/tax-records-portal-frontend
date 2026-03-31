@@ -131,7 +131,7 @@ export function NewClientProvider({
           const headerData = await clientAPI.getClientInfoHeader(editClientId);
           if (cancelled) return;
 
-          if (headerData.taskReview.hasActiveTask) {
+          if (headerData.taskReview?.hasActiveTask) {
             navigate(`/oos/client-preview/${editClientId}`, { replace: true });
             return;
           }

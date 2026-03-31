@@ -69,9 +69,9 @@ function ClientDetailsContent() {
 
   const isSnapshot = mode === "snapshot";
   const isOnboarding = status === CLIENT_STATUS.ONBOARDING;
-  const hasPendingUpdate = header?.taskReview.hasActiveTask;
+  const hasPendingUpdate = header?.taskReview?.hasActiveTask;
   const isAssignedAccountant =
-    header?.accountants.csdOos?.some((a) => a.id === user?.id) ?? false;
+    header?.accountants?.csdOos?.some((a) => a.id === user?.id) ?? false;
   const canEditProfile =
     !isOnboarding && !isSnapshot && isAssignedAccountant && !hasPendingUpdate;
 
@@ -113,7 +113,7 @@ function ClientDetailsContent() {
   const sidebar = (
     <>
       {isSnapshot || isOnboarding ? (
-        <ActivityLogs taskId={header?.taskReview.activeTaskId ?? null} />
+        <ActivityLogs taskId={header?.taskReview?.activeTaskId ?? null} />
       ) : (
         <>
           <ClientTasks />
@@ -132,11 +132,11 @@ function ClientDetailsContent() {
       Edit Profile
     </button>
   ) : hasPendingUpdate &&
-    header?.taskReview.activeTaskId &&
+    header?.taskReview?.activeTaskId &&
     (canReview || isAssignedAccountant) ? (
     <button
       onClick={() =>
-        navigate(`/${prefix}/profile-update-review/${header.taskReview.activeTaskId}`)
+        navigate(`/${prefix}/profile-update-review/${header.taskReview?.activeTaskId}`)
       }
       className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-accent transition-colors"
     >
@@ -244,8 +244,8 @@ function ClientDetailsContent() {
               getSection={getSection}
               fetchSection={fetchSection}
               classification={header.taxpayerClassification}
-              assignedCsdOos={header.accountants.csdOos}
-              assignedQtd={header.accountants.qtd}
+              assignedCsdOos={header.accountants?.csdOos ?? []}
+              assignedQtd={header.accountants?.qtd ?? []}
               mainDetailsAction={
                 (mainDetailsAction || reassignAction) ? (
                   <div className="flex items-center gap-3">
@@ -295,8 +295,8 @@ function ClientDetailsContent() {
       {reassignModalOpen && header && (
         <ReassignAccountantsModal
           clientId={clientId}
-          currentCsdOos={header.accountants.csdOos}
-          currentQtd={header.accountants.qtd}
+          currentCsdOos={header.accountants?.csdOos ?? []}
+          currentQtd={header.accountants?.qtd ?? []}
           setModalOpen={setReassignModalOpen}
           onSuccess={refetch}
         />
