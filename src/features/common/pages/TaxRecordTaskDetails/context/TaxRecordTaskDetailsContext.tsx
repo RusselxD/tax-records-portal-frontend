@@ -14,7 +14,6 @@ import {
   type TaxRecordTaskDetailResponse,
   type TaxRecordTaskFilesResponse,
   type TaxRecordTaskLogResponse,
-  type TaxRecordTaskStatus,
 } from "../../../../../types/tax-record-task";
 import type { RichTextContent } from "../../../../../types/client-info";
 
@@ -100,20 +99,6 @@ export function TaxRecordTaskDetailsProvider({
     }
   }, [taskId]);
 
-  // Refetch only logs
-  const refetchLogs = useCallback(async () => {
-    try {
-      const logsData = await taxRecordTaskAPI.getTaskLogs(taskId);
-      setLogs(logsData);
-    } catch {
-      // silently fail — partial refetch
-    }
-  }, [taskId]);
-
-  // Update status locally without refetching
-  const updateStatus = useCallback((newStatus: TaxRecordTaskStatus) => {
-    setTask((prev) => (prev ? { ...prev, status: newStatus } : prev));
-  }, []);
 
   // Initial fetch + full refetch (task, files, logs)
   useEffect(() => {
@@ -237,51 +222,45 @@ export function TaxRecordTaskDetailsProvider({
     }
   }, [taskId, files, handleConflict, toastError]);
 
-  // Workflow actions — full refetch (status changes, logs update)
+  // Workflow actions — full refetch so server-recomputed `actions` flags update the UI
   const submitTask = useCallback(
     async (comment: RichTextContent | null) => {
       await taxRecordTaskAPI.submitTask(taskId, comment).catch(handleConflict);
-      updateStatus("SUBMITTED");
-      refetchLogs();
+      refetch();
     },
-    [taskId, updateStatus, refetchLogs, handleConflict],
+    [taskId, refetch, handleConflict],
   );
 
   const approveTask = useCallback(
     async (comment: RichTextContent | null) => {
       await taxRecordTaskAPI.approveTask(taskId, comment).catch(handleConflict);
-      updateStatus("APPROVED_FOR_FILING");
-      refetchLogs();
+      refetch();
     },
-    [taskId, updateStatus, refetchLogs, handleConflict],
+    [taskId, refetch, handleConflict],
   );
 
   const rejectTask = useCallback(
     async (comment: RichTextContent | null) => {
       await taxRecordTaskAPI.rejectTask(taskId, comment).catch(handleConflict);
-      updateStatus("REJECTED");
-      refetchLogs();
+      refetch();
     },
-    [taskId, updateStatus, refetchLogs, handleConflict],
+    [taskId, refetch, handleConflict],
   );
 
   const markFiled = useCallback(async () => {
     await taxRecordTaskAPI.markFiled(taskId).catch(handleConflict);
-    updateStatus("FILED");
-    refetchLogs();
-  }, [taskId, updateStatus, refetchLogs, handleConflict]);
+    refetch();
+  }, [taskId, refetch, handleConflict]);
 
   const markCompleted = useCallback(async () => {
     await taxRecordTaskAPI.markCompleted(taskId).catch(handleConflict);
-    updateStatus("COMPLETED");
-    refetchLogs();
-  }, [taskId, updateStatus, refetchLogs, handleConflict]);
+    refetch();
+  }, [taskId, refetch, handleConflict]);
 
   const recallTask = useCallback(async () => {
     await taxRecordTaskAPI.recallTask(taskId).catch(handleConflict);
-    updateStatus("OPEN");
-    refetchLogs();
-  }, [taskId, updateStatus, refetchLogs, handleConflict]);
+    refetch();
+  }, [taskId, refetch, handleConflict]);
 
   const value = useMemo(
     () => ({
