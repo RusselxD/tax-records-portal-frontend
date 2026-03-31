@@ -327,9 +327,10 @@ export interface ClientInfoHeaderResponse {
   offboarding: ClientInfoHeaderOffboarding;
 }
 
-// Same as header but includes clientId — returned by GET /client-info/tasks/{taskId}
-export interface ClientInfoTaskResponse extends ClientInfoHeaderResponse {
+// Returned by GET /client-info/tasks/{taskId} — header is nested, not flat
+export interface ClientInfoTaskResponse {
   clientId: string;
+  header: ClientInfoHeaderResponse;
 }
 
 // Section data map (for lazy-loaded sections)

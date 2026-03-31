@@ -94,7 +94,7 @@ export function ClientInfoReviewProvider({
         const taskData = await clientAPI.getClientInfoTask(taskId);
         if (cancelled) return;
         setResolvedClientId(taskData.clientId);
-        setHeader(taskData);
+        setHeader(taskData.header);
 
         if (canManageOnboarding) {
           const accounts = await clientAPI.getClientAccounts(taskData.clientId).catch(() => []);
