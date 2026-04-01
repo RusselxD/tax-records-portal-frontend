@@ -99,6 +99,16 @@ export function TaxRecordTaskDetailsProvider({
     }
   }, [taskId]);
 
+  // Refetch only task (for updated action flags after file changes)
+  const refetchTask = useCallback(async () => {
+    try {
+      const taskData = await taxRecordTaskAPI.getTask(taskId);
+      setTask(taskData);
+    } catch {
+      // silently fail — partial refetch
+    }
+  }, [taskId]);
+
 
   // Initial fetch + full refetch (task, files, logs)
   useEffect(() => {
@@ -181,13 +191,13 @@ export function TaxRecordTaskDetailsProvider({
     [taskId, files, handleConflict, toastError],
   );
 
-  // Single file actions — only refetch files
+  // Single file actions — refetch files + task (action flags may change)
   const uploadOutputFile = useCallback(
     async (file: File) => {
       await taxRecordTaskAPI.uploadOutputFile(taskId, file).catch(handleConflict);
-      await refetchFiles();
+      await Promise.all([refetchFiles(), refetchTask()]);
     },
-    [taskId, refetchFiles, handleConflict],
+    [taskId, refetchFiles, refetchTask, handleConflict],
   );
 
   const deleteOutputFile = useCallback(async () => {
@@ -195,19 +205,20 @@ export function TaxRecordTaskDetailsProvider({
     setFiles((f) => f ? { ...f, outputFile: null } : f);
     try {
       await taxRecordTaskAPI.deleteOutputFile(taskId);
+      await refetchTask();
     } catch (err) {
       setFiles(prev);
       if (!isConflictError(err)) toastError(getErrorMessage(err, "Failed to delete file."));
       handleConflict(err);
     }
-  }, [taskId, files, handleConflict, toastError]);
+  }, [taskId, files, refetchTask, handleConflict, toastError]);
 
   const uploadProofOfFiling = useCallback(
     async (file: File) => {
       await taxRecordTaskAPI.uploadProofOfFiling(taskId, file).catch(handleConflict);
-      await refetchFiles();
+      await Promise.all([refetchFiles(), refetchTask()]);
     },
-    [taskId, refetchFiles, handleConflict],
+    [taskId, refetchFiles, refetchTask, handleConflict],
   );
 
   const deleteProofOfFiling = useCallback(async () => {
@@ -215,12 +226,13 @@ export function TaxRecordTaskDetailsProvider({
     setFiles((f) => f ? { ...f, proofOfFilingFile: null } : f);
     try {
       await taxRecordTaskAPI.deleteProofOfFiling(taskId);
+      await refetchTask();
     } catch (err) {
       setFiles(prev);
       if (!isConflictError(err)) toastError(getErrorMessage(err, "Failed to delete file."));
       handleConflict(err);
     }
-  }, [taskId, files, handleConflict, toastError]);
+  }, [taskId, files, refetchTask, handleConflict, toastError]);
 
   // Workflow actions — full refetch so server-recomputed `actions` flags update the UI
   const submitTask = useCallback(
