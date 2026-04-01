@@ -1,11 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../../../contexts/AuthContext";
 import { hasPermission, Permission } from "../../../../../../constants/permissions";
 import { getRolePrefix } from "../../../../../../constants/roles";
-import { Pagination } from "../../../../../../components/common";
+import { Pagination, ResponsiveTable } from "../../../../../../components/common";
+import type { CardField } from "../../../../../../components/common/ResponsiveTable";
 import Dropdown from "../../../../../../components/common/Dropdown";
 import { clientAPI } from "../../../../../../api/client";
+import { formatDate } from "../../../../../../lib/formatters";
+import {
+  statusLabels,
+  statusStyles,
+  billableLabels,
+  billableStyles,
+} from "../../../../../../constants/consultation";
+import type { ConsultationLogListItem } from "../../../../../../types/consultation";
 import { useConsultationLogs } from "../../context/ConsultationLogsContext";
 import LogRow from "./components/LogRow";
 
@@ -70,6 +79,54 @@ export default function ConsultationLogsTable() {
 
   const colCount = canViewAll ? 8 : 7;
 
+  const keyExtractor = useCallback((log: ConsultationLogListItem) => log.id, []);
+
+  const primaryFields = useCallback(
+    (log: ConsultationLogListItem): CardField[] => [
+      { label: "Client", value: log.clientDisplayName },
+      { label: "Date", value: formatDate(log.date) },
+      {
+        label: "Status",
+        value: (
+          <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${statusStyles[log.status]}`}>
+            {statusLabels[log.status]}
+          </span>
+        ),
+      },
+    ],
+    []
+  );
+
+  const secondaryFields = useCallback(
+    (log: ConsultationLogListItem): CardField[] => {
+      const fields: CardField[] = [
+        { label: "Time", value: `${log.startTime} – ${log.endTime}` },
+        { label: "Hours", value: `${log.hours.toFixed(2)}h` },
+        { label: "Subject", value: log.subject },
+        {
+          label: "Type",
+          value: (
+            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${billableStyles[log.billableType]}`}>
+              {billableLabels[log.billableType]}
+            </span>
+          ),
+        },
+      ];
+      if (canViewAll) {
+        fields.push({ label: "Created By", value: log.createdByName });
+      }
+      return fields;
+    },
+    [canViewAll]
+  );
+
+  const handleItemClick = useCallback(
+    (log: ConsultationLogListItem) => {
+      navigate(`/${prefix}/consultation-logs/${log.id}`);
+    },
+    [navigate, prefix]
+  );
+
   if (error) {
     return (
       <div className="rounded-lg bg-white custom-shadow p-8 text-center">
@@ -83,7 +140,15 @@ export default function ConsultationLogsTable() {
 
   return (
     <div className="rounded-lg bg-white custom-shadow">
-      <div>
+      <ResponsiveTable
+        data={logs}
+        keyExtractor={keyExtractor}
+        primaryFields={primaryFields}
+        secondaryFields={secondaryFields}
+        onItemClick={handleItemClick}
+        isLoading={isFetching}
+        emptyMessage="No consultation logs found."
+      >
         <table className="w-full table-fixed">
           <thead>
             <tr className="border-b border-gray-200">
@@ -153,7 +218,7 @@ export default function ConsultationLogsTable() {
             </tbody>
           )}
         </table>
-      </div>
+      </ResponsiveTable>
       <Pagination
         page={page}
         totalPages={totalPages}

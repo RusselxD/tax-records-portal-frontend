@@ -53,7 +53,7 @@ export default function PdfPreview({ fileUrl }: PdfPreviewProps) {
             type="button"
             onClick={goToPrev}
             disabled={currentPage <= 1}
-            className="p-1 text-gray-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="p-2 text-gray-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -68,7 +68,7 @@ export default function PdfPreview({ fileUrl }: PdfPreviewProps) {
             type="button"
             onClick={goToNext}
             disabled={currentPage >= numPages}
-            className="p-1 text-gray-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="p-2 text-gray-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             <ChevronRight className="h-4 w-4" />
           </button>

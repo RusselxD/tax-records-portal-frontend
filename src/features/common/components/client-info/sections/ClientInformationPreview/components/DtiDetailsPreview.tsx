@@ -44,7 +44,7 @@ export default function DtiDetailsPreview({ data }: { data: DtiDetails }) {
       {hasDti && (
         <>
           <SubsectionHeading label="DTI Registration" />
-          <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
             <TextDisplay label="DTI Registration No." value={data.dtiRegistrationNo} />
             <DateFieldDisplay label="Date of Registration" value={data.dtiDateOfRegistration} />
             <DateFieldDisplay label="Date of Expiration" value={data.dtiDateOfExpiration} />
@@ -58,7 +58,7 @@ export default function DtiDetailsPreview({ data }: { data: DtiDetails }) {
       {hasBmbe && (
         <>
           <SubsectionHeading label="BMBE Compliance" />
-          <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
             <TextDisplay label="Total Assets" value={data.bmbeTotalAssets} />
             <TextDisplay label="BMBE No." value={data.bmbeNo} />
             <DateFieldDisplay label="Date of Registration" value={data.bmbeDateOfRegistration} />

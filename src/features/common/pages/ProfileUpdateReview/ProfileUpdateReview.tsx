@@ -1,11 +1,12 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronRight, AlertTriangle, Clock, Pencil, CheckCircle2 } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
-import { Button, CommentPreview } from "../../../../components/common";
+import { Button, CommentPreview, CollapsibleSubsection } from "../../../../components/common";
 import NotFound from "../../../../pages/NotFound";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { getRolePrefix } from "../../../../constants/roles";
 import { PROFILE_REVIEW_STATUS } from "../../../../types/client-profile";
+import { useIsMobile } from "../../../../hooks/useMediaQuery";
 import { ActivityLogs } from "../../components/client-info";
 import {
   ProfileUpdateReviewProvider,
@@ -28,6 +29,7 @@ function ProfileUpdateReviewContent() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const prefix = getRolePrefix(user?.roleKey ?? "");
+  const isMobile = useIsMobile();
   const {
     taskId,
     clientId,
@@ -49,8 +51,8 @@ function ProfileUpdateReviewContent() {
       <div className="max-w-[1440px] mx-auto">
         <div className="h-4 w-48 rounded skeleton mb-2" />
         <div className="h-8 w-72 rounded skeleton mb-8" />
-        <div className="flex gap-2 items-start">
-          <div className="flex-1 min-w-0 space-y-3">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_21rem] gap-3 items-start">
+          <div className="min-w-0 space-y-3">
             <div className="rounded-lg bg-white p-5 space-y-3" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }}>
               <div className="h-4 w-64 rounded skeleton" />
               <div className="h-3 w-48 rounded skeleton" />
@@ -63,7 +65,7 @@ function ProfileUpdateReviewContent() {
               </div>
             ))}
           </div>
-          <div className="w-[21rem] flex-shrink-0 hidden lg:block">
+          <div>
             <div className="rounded-lg bg-white p-5 space-y-3" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }}>
               <div className="h-4 w-32 rounded skeleton" />
               <div className="h-3 w-full rounded skeleton" />
@@ -104,9 +106,9 @@ function ProfileUpdateReviewContent() {
         <span className="text-gray-600">Profile Update Review</span>
       </div>
 
-      <div className="flex gap-2 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_21rem] gap-3 items-start">
         {/* Main content */}
-        <div className="flex-1 min-w-0 space-y-3">
+        <div className="min-w-0 space-y-3">
           {/* Submission info */}
           <div className="rounded-lg bg-white border border-gray-200 p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }}>
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
@@ -171,9 +173,15 @@ function ProfileUpdateReviewContent() {
           {isReviewer && review.status === PROFILE_REVIEW_STATUS.SUBMITTED && <ReviewActions />}
         </div>
 
-        {/* Sidebar */}
-        <div className="w-[21rem] flex-shrink-0 hidden lg:block sticky top-6 self-start space-y-3">
-          <ActivityLogs taskId={taskId} refetchSignal={logsVersion} />
+        {/* Sidebar — collapsible on mobile so reviewers can focus on diffs */}
+        <div className="lg:sticky lg:top-6 space-y-3">
+          {isMobile ? (
+            <CollapsibleSubsection title="Activity Logs">
+              <ActivityLogs taskId={taskId} refetchSignal={logsVersion} />
+            </CollapsibleSubsection>
+          ) : (
+            <ActivityLogs taskId={taskId} refetchSignal={logsVersion} />
+          )}
         </div>
       </div>
     </div>

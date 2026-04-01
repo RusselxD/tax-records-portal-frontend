@@ -98,7 +98,7 @@ function AddAccountForm({
   return (
     <div className="px-6 py-4 border-t border-gray-100 space-y-3">
       {error && <Alert variant="error" className="mb-1">{error}</Alert>}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Input
           label="First Name"
           value={firstName}

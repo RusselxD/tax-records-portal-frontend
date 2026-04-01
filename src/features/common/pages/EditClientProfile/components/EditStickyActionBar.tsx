@@ -17,10 +17,10 @@ export default function EditStickyActionBar() {
   return (
     <>
       <div
-        className="fixed bottom-0 right-0 left-0 lg:left-60 z-20 bg-white border-t border-gray-200"
+        className="fixed bottom-0 right-0 left-0 lg:left-60 z-20 bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom)]"
         style={{ boxShadow: "0 -4px 12px rgba(0,0,0,0.08)" }}
       >
-        <div className="flex items-center justify-between max-w-[1100px] mx-auto px-8 py-3">
+        <div className="flex items-center justify-between max-w-[1100px] mx-auto px-4 sm:px-8 py-3">
           <Button
             variant="secondary"
             onClick={() => navigate(`/${prefix}/client-details/${clientId}`)}

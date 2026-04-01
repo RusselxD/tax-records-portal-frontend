@@ -17,7 +17,7 @@ import { formatNum } from "../../../../../lib/formatters";
 
 function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="skeleton rounded-lg h-28" />
       ))}
@@ -72,7 +72,7 @@ export default function MainMetrics() {
   const approvalRate = metrics.firstAttemptApprovalRate != null ? `${Math.round(approvalRateVal * 100)}%` : "—";
 
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <StatCard
         label="Total Clients"
         valueDisplay={formatNum(metrics.totalClients)}

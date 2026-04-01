@@ -69,7 +69,7 @@ function OfficersList({
           </div>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label="Full Name"
                 value={entry.name ?? ""}
@@ -88,7 +88,7 @@ function OfficersList({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <DateFieldInput
                 label="Birthday"
                 value={entry.birthday}
@@ -133,7 +133,7 @@ function PointOfContactForm({
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           label="Contact Person"
           value={data.contactPerson ?? ""}
@@ -155,7 +155,7 @@ function PointOfContactForm({
         placeholder="Full delivery address"
       />
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           label="Landmark / Pin Location"
           value={data.landmarkPinLocation ?? ""}
@@ -173,7 +173,7 @@ function PointOfContactForm({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           label="Preferred Method of Communication"
           value={data.preferredMethodOfCommunication ?? ""}

@@ -133,7 +133,7 @@ export default function UserFormModal({
       )}
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             id="firstName"
             label="First Name"
@@ -162,7 +162,7 @@ export default function UserFormModal({
           error={errors.email}
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Dropdown
             portal
             label="Role"

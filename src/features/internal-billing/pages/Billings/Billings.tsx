@@ -80,13 +80,14 @@ export default function Billings() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between mb-4">
         <SearchInput
           placeholder="Search by invoice number or client..."
           value={search}
           onChange={handleSearchChange}
+          className="w-full sm:w-auto"
         />
-        <Button onClick={() => navigate(createUrl)} className="shrink-0">
+        <Button onClick={() => navigate(createUrl)} className="w-full sm:w-auto shrink-0">
           <Plus className="h-4 w-4 mr-1.5" />
           Create Invoice
         </Button>

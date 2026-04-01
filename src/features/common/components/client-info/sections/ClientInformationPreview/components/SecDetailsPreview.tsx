@@ -45,7 +45,7 @@ export default function SecDetailsPreview({ data }: { data: SecDetails }) {
   if (!hasData) return null;
 
   return (
-    <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
       <DateFieldDisplay label="Date of Incorporation" value={data.dateOfIncorporation} />
       <TextDisplay label="SEC Registration Number" value={data.secRegistrationNumber} />
       <DateFieldDisplay label="Date of Actual Meeting per Bylaws" value={data.dateOfActualMeetingPerBylaws} />

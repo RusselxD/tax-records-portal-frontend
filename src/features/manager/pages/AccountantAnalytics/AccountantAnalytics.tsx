@@ -41,7 +41,7 @@ export default function AccountantAnalytics() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
         <p className="text-sm text-gray-500">
           Select an accountant to view their performance metrics.
         </p>
@@ -49,11 +49,12 @@ export default function AccountantAnalytics() {
           placeholder="Search by name or position..."
           value={search}
           onChange={setSearch}
+          className="w-full sm:w-auto"
         />
       </div>
 
       {loading && (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="skeleton rounded-lg h-40" />
           ))}
@@ -81,7 +82,7 @@ export default function AccountantAnalytics() {
       )}
 
       {!loading && !error && filtered.length > 0 && (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((a) => (
             <AccountantCard key={a.id} accountant={a} />
           ))}

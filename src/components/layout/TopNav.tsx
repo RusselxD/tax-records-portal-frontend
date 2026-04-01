@@ -69,7 +69,7 @@ const UserMenuDropdown = ({
   actions,
   onLogout,
 }: UserMenuDropdownProps) => (
-    <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-20">
+    <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-64 max-w-64 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-20">
       {/* Info header */}
       <div className="flex items-center gap-3 px-4 py-3.5 border-b border-gray-100">
         <UserAvatar name={name} profileUrl={profileUrl} size="lg" />
@@ -153,11 +153,11 @@ export default function TopNav({ pageTitle, onMenuClick }: TopNavProps) {
               className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <UserAvatar name={fullName} profileUrl={user?.profileUrl} />
-              <div className="text-left">
+              <div className="text-left hidden md:block">
                 <div className="text-sm font-medium text-primary">{fullName}</div>
                 <div className="text-xs text-gray-600">{subtitle}</div>
               </div>
-              <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />
+              <ChevronDown className="w-4 h-4 text-gray-400 shrink-0 hidden md:block" />
             </button>
 
             {showUserMenu && (

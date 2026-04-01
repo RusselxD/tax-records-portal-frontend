@@ -11,7 +11,7 @@ export default function SearchInput({
   placeholder,
   value,
   onChange,
-  className = "w-72",
+  className = "w-full sm:w-72",
 }: SearchInputProps) {
   return (
     <div className={`relative ${className}`}>
@@ -21,7 +21,7 @@ export default function SearchInput({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md border border-gray-300 bg-white pl-9 pr-4 py-2.5 text-sm text-primary placeholder-gray-400 transition-colors focus:outline-none focus:ring-1 focus:border-primary/40 focus:ring-primary/20"
+        className="w-full rounded-md border border-gray-300 bg-white pl-9 pr-4 py-3 sm:py-2.5 text-sm text-primary placeholder-gray-400 transition-colors focus:outline-none focus:ring-1 focus:border-primary/40 focus:ring-primary/20"
       />
     </div>
   );

@@ -165,7 +165,7 @@ export default function CreateNotice({ clientId }: CreateNoticeProps) {
                   <button
                     onClick={() => handleDelete(notice.id)}
                     disabled={isDeleting}
-                    className="shrink-0 p-1 rounded text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-50"
+                    className="shrink-0 p-2 rounded text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-50"
                     title="Remove notice"
                   >
                     {isDeleting ? (

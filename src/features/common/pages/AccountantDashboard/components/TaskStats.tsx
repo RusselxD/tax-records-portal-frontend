@@ -6,7 +6,7 @@ import { getErrorMessage } from "../../../../../lib/api-error";
 
 function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-3 gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
       <div className="skeleton rounded-lg h-28"></div>
       <div className="skeleton rounded-lg h-28"></div>
       <div className="skeleton rounded-lg h-28"></div>
@@ -113,7 +113,7 @@ export default function TaskStats() {
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <StatCard
           label="Open Tasks"
           value={stats.openTasks}

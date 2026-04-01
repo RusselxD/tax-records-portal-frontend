@@ -18,14 +18,14 @@ export default function InvoiceInfo({ invoice }: { invoice: InvoiceDetailRespons
         <InvoiceStatusBadge status={invoice.status} />
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-5">
         <Field label="Invoice Date" value={formatDate(invoice.invoiceDate)} />
         <Field label="Terms" value={invoice.terms.name} />
         <Field label="Due Date" value={formatDate(invoice.dueDate)} />
         <Field label="Description" value={invoice.description || "—"} />
       </div>
 
-      <div className="grid grid-cols-2 gap-6 mt-6 pt-5 border-t border-gray-100">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6 pt-5 border-t border-gray-100">
         <div className="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3">
           <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Amount Due</p>
           <p className="text-lg font-semibold text-primary">{formatCurrency(invoice.amountDue)}</p>

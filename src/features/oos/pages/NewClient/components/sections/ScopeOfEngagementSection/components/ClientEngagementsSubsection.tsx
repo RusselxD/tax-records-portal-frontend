@@ -89,7 +89,7 @@ export default function ClientEngagementsSubsection({
           onChange={(v: RichTextContent) => onUpdate({ taxCompliance: v })}
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Dropdown
             label="Book of Accounts"
             options={BOOK_OF_ACCOUNTS_OPTIONS}

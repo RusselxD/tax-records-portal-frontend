@@ -44,7 +44,7 @@ function InlineConfigSetup({ clientId, onConfigured }: { clientId: string; onCon
           <p className="text-sm text-amber-700 mt-1">Set the monthly included hours and excess rate to enable consultation tracking for this client.</p>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3 max-w-md">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-md">
         <div>
           <label className="block text-xs font-medium text-amber-700 mb-1">Included Hours / Month</label>
           <input
@@ -210,7 +210,7 @@ export default function ClientConsultations({ clientId }: { clientId: string }) 
               {editingConfig && canManageConfig ? (
                 <div className="mb-4 rounded-md border border-gray-200 bg-gray-50 p-3">
                   <p className="text-xs font-medium text-gray-500 mb-2">Edit Consultation Config</p>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs text-gray-500 mb-1">Included Hours / Month</label>
                       <input type="number" value={editHours} onChange={(e) => setEditHours(e.target.value)} placeholder="0.00" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
@@ -280,7 +280,7 @@ export default function ClientConsultations({ clientId }: { clientId: string }) 
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 <div className="rounded-md bg-blue-50 border border-blue-100 px-3 py-2.5">
                   <p className="text-xs text-blue-600 font-medium uppercase tracking-wider">Included</p>
                   <p className="text-lg font-bold text-blue-700">{(summary.billableHours - summary.excessHours).toFixed(2)}h</p>

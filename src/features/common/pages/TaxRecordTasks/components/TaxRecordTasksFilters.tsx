@@ -16,11 +16,12 @@ export default function TaxRecordTasksFilters({ onNewTask, onImport }: TaxRecord
   const canManageTasks = hasPermission(user?.permissions, Permission.TASK_CREATE);
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
       <SearchInput
         placeholder="Search by task name or client..."
         value={filters.search || ""}
         onChange={setSearch}
+        className="w-full sm:w-auto"
       />
       {canManageTasks && (
         <div className="flex items-center gap-3">

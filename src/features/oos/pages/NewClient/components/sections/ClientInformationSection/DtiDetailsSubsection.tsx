@@ -23,7 +23,7 @@ export default function DtiDetailsSubsection({
           DTI Registration
         </h4>
         <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Input
               label="DTI Registration No."
               value={data.dtiRegistrationNo ?? ""}
@@ -43,7 +43,7 @@ export default function DtiDetailsSubsection({
               onChange={(v) => update({ dtiDateOfExpiration: v })}
             />
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <FileUploadInput
               label="Business Registration Certificate"
               value={data.dtiBusinessRegistrationCertificate}
@@ -69,7 +69,7 @@ export default function DtiDetailsSubsection({
           BMBE Compliance
         </h4>
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="Total Assets"
               value={data.bmbeTotalAssets ?? ""}
@@ -85,7 +85,7 @@ export default function DtiDetailsSubsection({
               placeholder="Enter BMBE no."
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <DateFieldInput
               label="Date of Registration"
               value={data.bmbeDateOfRegistration}

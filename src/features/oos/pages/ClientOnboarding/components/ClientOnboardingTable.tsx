@@ -1,7 +1,9 @@
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, SquarePen } from "lucide-react";
 import { formatDate } from "../../../../../lib/formatters";
-import ClientStatusBadge from "../../../../../components/common/ClientStatusBadge";
+import { ClientStatusBadge, ResponsiveTable } from "../../../../../components/common";
+import type { CardField } from "../../../../../components/common/ResponsiveTable";
 import { useClientOnboarding } from "../context/ClientOnboardingContext";
 import type { ClientOnboardingListItemResponse } from "../../../../../types/client";
 
@@ -56,7 +58,7 @@ function ActionButtons({
           onClick={() =>
             navigate(`/oos/client-snapshot/${clientId}`, { state: reviewState })
           }
-          className="p-1 text-gray-400 hover:text-accent transition-colors"
+          className="p-2 text-gray-400 hover:text-accent transition-colors"
         >
           <Eye className="w-4 h-4" />
         </button>
@@ -73,14 +75,14 @@ function ActionButtons({
             ? navigate(`/oos/client-preview/${taskId}`, { state: reviewState })
             : navigate(`/oos/client-details/${clientId}`, { state: reviewState });
         }}
-        className="p-1 text-gray-400 hover:text-accent transition-colors"
+        className="p-2 text-gray-400 hover:text-accent transition-colors"
       >
         <Eye className="w-4 h-4" />
       </button>
       {!hasActiveTask && (
         <button
           onClick={() => navigate(`/oos/new-client/${clientId}`)}
-          className="p-1 text-gray-400 hover:text-accent transition-colors"
+          className="p-2 text-gray-400 hover:text-accent transition-colors"
         >
           <SquarePen className="w-4 h-4" />
         </button>
@@ -150,6 +152,55 @@ const EmptyState = () => (
 export default function ClientOnboardingTable() {
   const { clients, isFetching, error, refetch } = useClientOnboarding();
 
+  const primaryFields = useCallback(
+    (client: ClientOnboardingListItemResponse): CardField[] => [
+      {
+        label: "Client Name",
+        value: client.name || (
+          <span className="text-gray-400 italic">Unnamed Client</span>
+        ),
+      },
+      {
+        label: "Status",
+        value: <ClientStatusBadge status={client.status} />,
+      },
+      {
+        label: "Date Created",
+        value: formatDate(client.createdAt),
+      },
+    ],
+    [],
+  );
+
+  const secondaryFields = useCallback(
+    (client: ClientOnboardingListItemResponse): CardField[] => [
+      {
+        label: "Email",
+        value: client.email || (
+          <span className="text-gray-400 italic">No email</span>
+        ),
+      },
+      {
+        label: "Last Updated",
+        value: formatDate(client.updatedAt),
+      },
+    ],
+    [],
+  );
+
+  const renderActions = useCallback(
+    (client: ClientOnboardingListItemResponse) => (
+      <ActionButtons
+        clientId={client.id}
+        isHandedOff={client.handedOff}
+        hasActiveTask={client.hasActiveTask}
+        activeTaskId={client.activeTaskId}
+        lastTaskId={client.lastTaskId}
+      />
+    ),
+    [],
+  );
+
   if (error) {
     return (
       <div className="rounded-lg bg-white custom-shadow p-8 text-center">
@@ -165,21 +216,31 @@ export default function ClientOnboardingTable() {
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg bg-white custom-shadow">
-      <table className="w-full table-fixed">
-        <TableHeader />
-        {isFetching ? (
-          <TableSkeleton />
-        ) : clients.length === 0 ? (
-          <EmptyState />
-        ) : (
-          <tbody>
-            {clients.map((client) => (
-              <ClientRow key={client.id} client={client} />
-            ))}
-          </tbody>
-        )}
-      </table>
+    <div className="rounded-lg bg-white custom-shadow">
+      <ResponsiveTable
+        data={clients}
+        keyExtractor={(client) => client.id}
+        primaryFields={primaryFields}
+        secondaryFields={secondaryFields}
+        actions={renderActions}
+        isLoading={isFetching}
+        emptyMessage="No clients found."
+      >
+        <table className="w-full table-fixed">
+          <TableHeader />
+          {isFetching ? (
+            <TableSkeleton />
+          ) : clients.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <tbody>
+              {clients.map((client) => (
+                <ClientRow key={client.id} client={client} />
+              ))}
+            </tbody>
+          )}
+        </table>
+      </ResponsiveTable>
     </div>
   );
 }

@@ -40,7 +40,7 @@ function TaxRecordTaskDetailsContent() {
           <div className="space-y-4">
             {/* Info panel skeleton */}
             <div className="rounded-lg bg-white custom-shadow p-5 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="space-y-1.5">
                     <div className="h-3 w-20 rounded skeleton" />

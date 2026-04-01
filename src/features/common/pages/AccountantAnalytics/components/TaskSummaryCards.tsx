@@ -198,7 +198,7 @@ export default function TaskSummaryCards() {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="skeleton rounded-lg h-28" />
         ))}
@@ -223,7 +223,7 @@ export default function TaskSummaryCards() {
   if (!data) return null;
 
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {buildCards(data).map((card) => (
         <StatCard key={card.label} {...card} />
       ))}

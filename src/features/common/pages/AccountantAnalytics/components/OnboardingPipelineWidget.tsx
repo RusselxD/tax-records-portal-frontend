@@ -69,7 +69,7 @@ function Donut({ data }: { data: OnboardingPipelineResponse }) {
 
 function Legend({ data }: { data: OnboardingPipelineResponse }) {
   return (
-    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
       {SEGMENTS.map((s) => {
         const value = (data[s.key] as number) ?? 0;
         return (

@@ -189,7 +189,7 @@ export default function CreateInvoice() {
           {error && <Alert variant="error">{error}</Alert>}
 
           {/* Row 1: Client + Invoice Number */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Dropdown
               label="Client"
               options={clientOptions}
@@ -218,7 +218,7 @@ export default function CreateInvoice() {
           </div>
 
           {/* Row 2: Invoice Date + Terms + Due Date */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Input
               label="Invoice Date"
               type="date"
@@ -271,7 +271,7 @@ export default function CreateInvoice() {
           </div>
 
           {/* Row 3: Description + Drop Zone (side by side, matched height) */}
-          <div className="grid grid-cols-2 gap-4 min-h-[140px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-[140px]">
             <div className="flex flex-col">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Description <span className="text-gray-400 font-normal">(optional)</span>

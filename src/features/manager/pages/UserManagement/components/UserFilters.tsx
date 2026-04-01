@@ -48,31 +48,34 @@ export default function UserFilters() {
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <SearchInput
             placeholder="Search by name or email..."
             value={search}
             onChange={setSearch}
+            className="w-full sm:w-auto"
           />
-          <Dropdown
-            options={roleOptions}
-            value={roleFilter}
-            onChange={setRoleFilter}
-            className="min-w-[280px]"
-          />
-          <Dropdown
-            options={positionOptions}
-            value={positionFilter}
-            onChange={setPositionFilter}
-          />
-          <Dropdown
-            options={statusOptions}
-            value={statusFilter}
-            onChange={setStatusFilter}
-          />
+          <div className="flex flex-wrap gap-3">
+            <Dropdown
+              options={roleOptions}
+              value={roleFilter}
+              onChange={setRoleFilter}
+              className="min-w-0 sm:min-w-[280px]"
+            />
+            <Dropdown
+              options={positionOptions}
+              value={positionFilter}
+              onChange={setPositionFilter}
+            />
+            <Dropdown
+              options={statusOptions}
+              value={statusFilter}
+              onChange={setStatusFilter}
+            />
+          </div>
         </div>
-        <Button onClick={() => setShowAddModal(true)}>
+        <Button onClick={() => setShowAddModal(true)} className="w-full sm:w-auto shrink-0">
           <Plus className="w-4 h-4" />
           Add User
         </Button>

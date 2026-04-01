@@ -130,7 +130,7 @@ function PaymentRow({
               type="button"
               onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
               title="Edit payment"
-              className="p-1 text-gray-300 hover:text-accent transition-colors"
+              className="p-2 text-gray-300 hover:text-accent transition-colors"
             >
               <Pencil className="h-3 w-3" />
             </button>
@@ -234,7 +234,7 @@ function EditPaymentForm({
 
   return (
     <div className="px-6 py-4 bg-accent/5 border-l-4 border-accent">
-      <div className="grid grid-cols-2 gap-3 mb-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
         <Input
           label="Payment Date"
           type="date"

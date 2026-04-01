@@ -182,7 +182,7 @@ function ClientDetailsContent() {
       >
         {/* Tabs */}
         {showTabs && (
-          <div className="flex items-center gap-2 mb-4 bg-white py-2 px-3 rounded-lg">
+          <div className="flex items-center gap-2 mb-4 bg-white py-2 px-3 rounded-lg overflow-x-auto">
             <button
               onClick={() => setActiveTab("profile")}
               className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${

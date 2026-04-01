@@ -187,7 +187,7 @@ export default function CreateTaxRecordTaskForm({ onCancel, onSuccess }: CreateT
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="space-y-5">
           {/* Row 1: Client + Assigned To */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Dropdown
                 label="Client"
@@ -210,7 +210,7 @@ export default function CreateTaxRecordTaskForm({ onCancel, onSuccess }: CreateT
           </div>
 
           {/* Row 2: Category → Sub Category → Task Name (cascading) */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <LookupField
               label="Category"
               placeholder="Select category"
@@ -249,7 +249,7 @@ export default function CreateTaxRecordTaskForm({ onCancel, onSuccess }: CreateT
           </div>
 
           {/* Row 3: Year + Period + Deadline */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Input
               label="Year"
               type="number"

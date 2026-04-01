@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Ban, CreditCard, Send, Loader2, AlertTriangle } from "lucide-react";
-import { ConfirmActionModal, Button } from "../../../../../components/common";
+import { ConfirmActionModal, Button, ResponsiveTable, KebabMenu, KebabMenuItem } from "../../../../../components/common";
+import type { CardField } from "../../../../../components/common/ResponsiveTable";
 import Dropdown from "../../../../../components/common/Dropdown";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { invoiceAPI } from "../../../../../api/invoice";
@@ -63,8 +64,62 @@ export default function BillingsTable({
     }
   };
 
+  const getPrimaryFields = useCallback((inv: InvoiceListItemResponse): CardField[] => [
+    { label: "Client", value: inv.clientName },
+    { label: "Balance", value: formatCurrency(inv.balance) },
+    { label: "Status", value: <InvoiceStatusBadge status={inv.status} /> },
+  ], []);
+
+  const getSecondaryFields = useCallback((inv: InvoiceListItemResponse): CardField[] => [
+    { label: "Invoice No.", value: inv.invoiceNumber },
+    { label: "Date", value: formatDate(inv.invoiceDate) },
+    { label: "Due Date", value: formatDate(inv.dueDate) },
+  ], []);
+
+  const handleItemClick = useCallback((inv: InvoiceListItemResponse) => {
+    navigate(`/internal-billing/billings/${inv.id}`);
+  }, [navigate]);
+
+  const renderActions = useCallback((inv: InvoiceListItemResponse) => {
+    const isVoid = inv.status === INVOICE_STATUS.VOID;
+    const isFullyPaid = inv.status === INVOICE_STATUS.FULLY_PAID;
+    return (
+      <KebabMenu>
+        {!isVoid && inv.hasEmailRecipients && (
+          <KebabMenuItem onClick={() => handleSendEmail(inv)}>
+            {sendingId === inv.id ? "Sending..." : inv.emailSent ? "Resend Email" : "Send Email"}
+          </KebabMenuItem>
+        )}
+        {!isVoid && !isFullyPaid && (
+          <KebabMenuItem onClick={() => navigate(`/internal-billing/billings/${inv.id}`)}>
+            Receive Payment
+          </KebabMenuItem>
+        )}
+        {!isVoid && (
+          <KebabMenuItem onClick={() => setVoidTarget(inv)}>
+            Void Invoice
+          </KebabMenuItem>
+        )}
+        <KebabMenuItem onClick={() => setDeleteTarget(inv)} variant="danger">
+          Delete Invoice
+        </KebabMenuItem>
+      </KebabMenu>
+    );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sendingId, navigate]);
+
   return (
     <>
+      <ResponsiveTable
+        data={invoices}
+        keyExtractor={(inv) => inv.id}
+        primaryFields={getPrimaryFields}
+        secondaryFields={getSecondaryFields}
+        onItemClick={handleItemClick}
+        actions={renderActions}
+        isLoading={isLoading}
+        emptyMessage="No invoices found."
+      >
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-gray-200">
@@ -197,6 +252,7 @@ export default function BillingsTable({
         </tbody>
         )}
       </table>
+      </ResponsiveTable>
 
       {deleteTarget && (
         <ConfirmActionModal

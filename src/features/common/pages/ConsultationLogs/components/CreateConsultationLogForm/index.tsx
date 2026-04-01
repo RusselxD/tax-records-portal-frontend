@@ -137,7 +137,7 @@ export default function CreateConsultationLogForm({ onCancel, onSuccess }: Creat
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="space-y-5">
           {/* Row 1: Client + Date */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Dropdown
               label="Client"
               options={clientOptions}
@@ -160,7 +160,7 @@ export default function CreateConsultationLogForm({ onCancel, onSuccess }: Creat
           </div>
 
           {/* Row 2: Times + Subject */}
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Input
               label="Start Time"
               type="time"

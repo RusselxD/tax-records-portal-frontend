@@ -73,7 +73,7 @@ export default function ClientInformationSection({
     <div className="space-y-3">
       <CollapsibleSubsection title="General Information">
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="Registered Name"
               value={data.registeredName ?? ""}
@@ -87,7 +87,7 @@ export default function ClientInformationSection({
               placeholder="Enter trade name"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="Number of Branches"
               type="number"

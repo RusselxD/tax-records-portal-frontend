@@ -18,7 +18,7 @@ export default function MainDetailsPreview({
 }: MainDetailsPreviewProps) {
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
         <TextDisplay label="MRE Code" value={data.mreCode} />
         <DateFieldDisplay label="Commencement of Work" value={data.commencementOfWork} />
         <EnumDisplay
@@ -31,7 +31,7 @@ export default function MainDetailsPreview({
       {(assignedCsdOos.length > 0 || assignedQtd.length > 0) && (
         <>
           <SubsectionHeading label="Assigned Accountants" />
-          <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
             {assignedCsdOos.length > 0 && (
               <div>
                 <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">

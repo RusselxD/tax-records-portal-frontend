@@ -20,7 +20,7 @@ function BranchForm({
 }) {
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           label="Business / Trade Name"
           value={entry.businessTradeName ?? ""}
@@ -37,7 +37,7 @@ function BranchForm({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           label="RDO"
           value={entry.rdo ?? ""}
@@ -63,7 +63,7 @@ function BranchForm({
         placeholder="Full registered address"
       />
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Input
           label="Type of Business"
           value={entry.typeOfBusiness ?? ""}
@@ -83,7 +83,7 @@ function BranchForm({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FileUploadInput
           label="BIR Certificate of Registration"
           value={entry.birCertificateOfRegistration}
@@ -95,7 +95,7 @@ function BranchForm({
           onChange={(v) => onChange({ birForm1901: v })}
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FileUploadInput
           label="BIR Form 1921 / ATP"
           value={entry.birForm1921Atp}
@@ -107,7 +107,7 @@ function BranchForm({
           onChange={(v) => onChange({ birForm1905: v })}
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FileUploadInput
           label="Sample Invoice / Receipts"
           value={entry.sampleInvoiceReceipts}
@@ -119,7 +119,7 @@ function BranchForm({
           onChange={(v) => onChange({ niriPoster: v })}
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FileUploadInput
           label="BIR Book of Accounts Stamp"
           value={entry.birBookOfAccountsStamp}

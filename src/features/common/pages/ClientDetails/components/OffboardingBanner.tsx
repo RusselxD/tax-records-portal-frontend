@@ -59,7 +59,7 @@ export default function OffboardingBanner({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         <div>
           <p className="text-xs text-amber-600 font-medium uppercase tracking-wider mb-1">
             Assigned OOS

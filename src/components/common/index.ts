@@ -64,3 +64,6 @@ export { default as CommentPreview } from "./CommentPreview";
 
 export { default as StatusBadge } from "./StatusBadge";
 export type { StatusBadgeProps, StatusBadgeConfig } from "./StatusBadge";
+
+export { default as ResponsiveTable, KebabMenu, KebabMenuItem } from "./ResponsiveTable";
+export type { ResponsiveTableProps, CardField } from "./ResponsiveTable";

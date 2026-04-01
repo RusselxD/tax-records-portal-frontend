@@ -19,7 +19,7 @@ export default function ToolbarButton({
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className={`p-1 rounded transition-colors ${
+      className={`p-2 rounded transition-colors ${
         disabled
           ? "text-gray-300 cursor-not-allowed"
           : isActive

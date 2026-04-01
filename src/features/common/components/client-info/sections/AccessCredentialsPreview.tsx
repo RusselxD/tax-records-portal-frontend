@@ -25,7 +25,7 @@ export default function AccessCredentialsPreview({ data }: { data: AccessCredent
             <span className="text-sm font-semibold text-primary mb-3 block">
               Credential #{i + 1}
             </span>
-            <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
               <TextDisplay label="Platform" value={entry.platform} />
               <LinkDisplay label="Link to Platform" value={entry.linkToPlatform} />
               <TextDisplay label="Username / Email" value={entry.usernameOrEmail} />

@@ -44,7 +44,7 @@ export default function ClientEngagementsPreview({ data }: { data: ScopeOfEngage
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
         <RichTextPreview label="Tax Compliance" value={data.taxCompliance} />
         <EnumDisplay
           label="Book of Accounts"
@@ -93,7 +93,7 @@ export default function ClientEngagementsPreview({ data }: { data: ScopeOfEngage
       )}
 
       {hasMiddleFields && (
-        <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
           <RichTextPreview label="Bookkeeping Process" value={data.bookkeepingProcess} />
           <RichTextPreview label="SSS, PhilHealth, HDMF Engagement" value={data.sssPhilhealthHdmfEngagement} />
           <RichTextPreview label="Payment Assistance" value={data.paymentAssistance} />
@@ -101,7 +101,7 @@ export default function ClientEngagementsPreview({ data }: { data: ScopeOfEngage
       )}
 
       {(data.consultationFreeAllowance || data.consultationExcessRate) && (
-        <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
           <TextDisplay label="Consultation Free Allowance" value={data.consultationFreeAllowance} />
           <TextDisplay label="Consultation Excess Rate" value={data.consultationExcessRate} />
         </div>

@@ -1,9 +1,11 @@
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../../../../lib/formatters";
 import { PROFILE_REVIEW_TYPE } from "../../../../../types/client-profile";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { getRolePrefix } from "../../../../../constants";
-import { Pagination } from "../../../../../components/common";
+import { Pagination, ResponsiveTable } from "../../../../../components/common";
+import type { CardField } from "../../../../../components/common";
 import { useClientProfiles } from "../context/ClientProfilesContext";
 import type {
   ClientProfileReviewListItem,
@@ -159,6 +161,37 @@ const EmptyState = () => (
 
 export default function ClientProfilesTable() {
   const { reviews, isFetching, error, refetch, page, totalPages, totalElements, setPage } = useClientProfiles();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const prefix = getRolePrefix(user?.roleKey ?? "");
+
+  const handleItemClick = useCallback(
+    (review: ClientProfileReviewListItem) => {
+      if (review.type === PROFILE_REVIEW_TYPE.ONBOARDING) {
+        navigate(`${prefix}/client-preview/${review.id}`);
+      } else {
+        navigate(`${prefix}/profile-update-review/${review.id}`);
+      }
+    },
+    [navigate, prefix],
+  );
+
+  const primaryFields = useCallback(
+    (review: ClientProfileReviewListItem): CardField[] => [
+      { label: "Client", value: review.clientName },
+      { label: "Status", value: <StatusBadge status={review.status} /> },
+    ],
+    [],
+  );
+
+  const secondaryFields = useCallback(
+    (review: ClientProfileReviewListItem): CardField[] => [
+      { label: "Type", value: <TypeBadge type={review.type} /> },
+      { label: "Submitted By", value: review.submittedBy },
+      { label: "Submitted", value: formatDate(review.submittedAt) },
+    ],
+    [],
+  );
 
   if (error) {
     return (
@@ -175,21 +208,31 @@ export default function ClientProfilesTable() {
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg bg-white custom-shadow">
-      <table className="w-full table-fixed">
-        <TableHeader />
-        {isFetching ? (
-          <TableSkeleton />
-        ) : reviews.length === 0 ? (
-          <EmptyState />
-        ) : (
-          <tbody>
-            {reviews.map((review) => (
-              <ReviewRow key={review.id} review={review} />
-            ))}
-          </tbody>
-        )}
-      </table>
+    <div className="rounded-lg bg-white custom-shadow">
+      <ResponsiveTable
+        data={reviews}
+        keyExtractor={(review) => review.id}
+        primaryFields={primaryFields}
+        secondaryFields={secondaryFields}
+        onItemClick={handleItemClick}
+        isLoading={isFetching}
+        emptyMessage="No client profiles found."
+      >
+        <table className="w-full table-fixed">
+          <TableHeader />
+          {isFetching ? (
+            <TableSkeleton />
+          ) : reviews.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <tbody>
+              {reviews.map((review) => (
+                <ReviewRow key={review.id} review={review} />
+              ))}
+            </tbody>
+          )}
+        </table>
+      </ResponsiveTable>
       <Pagination
         page={page}
         totalPages={totalPages}

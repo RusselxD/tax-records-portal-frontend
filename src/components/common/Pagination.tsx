@@ -49,36 +49,48 @@ export default function Pagination({
         Showing {start}–{end} of {totalElements}
       </p>
       <div className="flex items-center gap-1">
+        {/* Prev button — larger touch target on mobile */}
         <button
           onClick={() => onPageChange(page - 1)}
           disabled={page === 0}
-          className="p-1.5 rounded-md text-gray-500 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="p-2 sm:p-1.5 rounded-md text-gray-500 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
-        {generatePageNumbers(page, totalPages).map((p, i) =>
-          p === "..." ? (
-            <span key={`ellipsis-${i}`} className="px-2 text-sm text-gray-400">
-              ...
-            </span>
-          ) : (
-            <button
-              key={p}
-              onClick={() => onPageChange(p as number)}
-              className={`min-w-[32px] h-8 rounded-md text-sm font-medium transition-colors ${
-                p === page
-                  ? "bg-accent text-white"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              {(p as number) + 1}
-            </button>
-          ),
-        )}
+
+        {/* Page numbers — hidden on mobile, show simplified on sm, full on md+ */}
+        <div className="hidden sm:flex items-center gap-1">
+          {generatePageNumbers(page, totalPages).map((p, i) =>
+            p === "..." ? (
+              <span key={`ellipsis-${i}`} className="px-2 text-sm text-gray-400">
+                ...
+              </span>
+            ) : (
+              <button
+                key={p}
+                onClick={() => onPageChange(p as number)}
+                className={`min-w-[32px] h-8 rounded-md text-sm font-medium transition-colors ${
+                  p === page
+                    ? "bg-accent text-white"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                {(p as number) + 1}
+              </button>
+            ),
+          )}
+        </div>
+
+        {/* Mobile: show current page / total */}
+        <span className="sm:hidden text-sm text-gray-600 px-2">
+          {page + 1} / {totalPages}
+        </span>
+
+        {/* Next button */}
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages - 1}
-          className="p-1.5 rounded-md text-gray-500 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="p-2 sm:p-1.5 rounded-md text-gray-500 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           <ChevronRight className="w-4 h-4" />
         </button>

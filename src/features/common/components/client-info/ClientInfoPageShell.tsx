@@ -40,12 +40,12 @@ export default function ClientInfoPageShell({
           backTo={backTo}
           headerActions={headerActions}
         />
-        <div className="flex gap-2 items-start">
-          <div className="flex-1 min-w-0 space-y-3">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_21rem] gap-3 items-start">
+          <div className="min-w-0 space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="rounded-lg bg-white custom-shadow p-6">
                 <div className="h-5 w-48 rounded skeleton mb-4" />
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <div className="h-3 w-20 rounded skeleton" />
                     <div className="h-9 w-full rounded skeleton" />
@@ -68,7 +68,7 @@ export default function ClientInfoPageShell({
               </div>
             ))}
           </div>
-          <div className="w-[21rem] flex-shrink-0 hidden lg:block space-y-3">
+          <div className="space-y-3">
             <div className="rounded-lg bg-white custom-shadow p-5 space-y-4">
               <div className="h-4 w-32 rounded skeleton" />
               <div className="space-y-3">
@@ -119,12 +119,12 @@ export default function ClientInfoPageShell({
         {banner}
       </ClientInfoHeader>
 
-      <div className="flex gap-2 items-start">
-        <div className="flex-1 min-w-0 space-y-3">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_21rem] gap-3 items-start">
+        <div className="min-w-0 space-y-3">
           {children}
         </div>
 
-        <div className="w-[21rem] flex-shrink-0 hidden lg:block sticky top-6 self-start space-y-3">
+        <div className="lg:sticky lg:top-6 space-y-3">
           {sidebar}
         </div>
       </div>

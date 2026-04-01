@@ -1,8 +1,10 @@
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../../../../lib/formatters";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { hasPermission, Permission } from "../../../../../constants/permissions";
-import { Pagination } from "../../../../../components/common";
+import { Pagination, ResponsiveTable } from "../../../../../components/common";
+import type { CardField } from "../../../../../components/common/ResponsiveTable";
 import ClientStatusBadge from "../../../../../components/common/ClientStatusBadge";
 import { useClientList } from "../context/ClientListContext";
 import type { ClientListItemResponse } from "../../../../../types/client";
@@ -76,13 +78,55 @@ function ClientRow({
 export default function ClientListTable() {
   const { clients, isFetching, error, refetch, page, totalPages, totalElements, setPage } = useClientList();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const canViewAll = hasPermission(user?.permissions, Permission.CLIENT_VIEW_ALL);
+  const prefix = getRolePrefix(user?.roleKey ?? "");
 
   const visibleHeaders = HEADERS.filter(
     (h) =>
       !h.showWhen ||
       (h.showWhen === "viewAll" && canViewAll) ||
       (h.showWhen === "accountant" && !canViewAll),
+  );
+
+  const handleClientClick = useCallback(
+    (client: ClientListItemResponse) =>
+      navigate(`${prefix}/client-details/${client.id}`),
+    [navigate, prefix],
+  );
+
+  const primaryFields = useCallback(
+    (client: ClientListItemResponse): CardField[] => [
+      { label: "Client Name", value: client.clientName },
+      {
+        label: "Status",
+        value: <ClientStatusBadge status={client.status} />,
+      },
+    ],
+    [],
+  );
+
+  const secondaryFields = useCallback(
+    (client: ClientListItemResponse): CardField[] => {
+      const fields: CardField[] = [
+        { label: "Total Tasks", value: client.totalTasks },
+        { label: "Pending", value: client.pendingTasks },
+        {
+          label: "Overdue",
+          value: (
+            <span className={client.overdueTasks > 0 ? "text-red-600 font-medium" : ""}>
+              {client.overdueTasks}
+            </span>
+          ),
+        },
+        {
+          label: "Nearest Deadline",
+          value: client.nearestDeadline ? formatDate(client.nearestDeadline) : "—",
+        },
+      ];
+      return fields;
+    },
+    [],
   );
 
   if (error) {
@@ -100,55 +144,65 @@ export default function ClientListTable() {
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg bg-white custom-shadow">
-      <table className="w-full table-fixed">
-        <thead>
-          <tr className="border-b border-gray-200">
-            {visibleHeaders.map((header) => (
-              <th
-                key={header.label}
-                className={`th-label ${header.className}`}
-              >
-                {header.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        {isFetching ? (
-          <tbody>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <tr key={i} className="border-b border-gray-100">
-                {Array.from({ length: visibleHeaders.length }).map((_, j) => (
-                  <td key={j} className="px-4 py-4">
-                    <div className="h-4 w-24 rounded skeleton" />
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        ) : clients.length === 0 ? (
-          <tbody>
-            <tr>
-              <td
-                colSpan={visibleHeaders.length}
-                className="px-4 py-12 text-center text-sm text-gray-500"
-              >
-                No clients found.
-              </td>
+    <div className="rounded-lg bg-white custom-shadow">
+      <ResponsiveTable
+        data={clients}
+        keyExtractor={(c) => c.id}
+        primaryFields={primaryFields}
+        secondaryFields={secondaryFields}
+        onItemClick={handleClientClick}
+        isLoading={isFetching}
+        emptyMessage="No clients found."
+      >
+        <table className="w-full table-fixed">
+          <thead>
+            <tr className="border-b border-gray-200">
+              {visibleHeaders.map((header) => (
+                <th
+                  key={header.label}
+                  className={`th-label ${header.className}`}
+                >
+                  {header.label}
+                </th>
+              ))}
             </tr>
-          </tbody>
-        ) : (
-          <tbody>
-            {clients.map((client) => (
-              <ClientRow
-                key={client.id}
-                client={client}
-                canViewAll={canViewAll}
-              />
-            ))}
-          </tbody>
-        )}
-      </table>
+          </thead>
+          {isFetching ? (
+            <tbody>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <tr key={i} className="border-b border-gray-100">
+                  {Array.from({ length: visibleHeaders.length }).map((_, j) => (
+                    <td key={j} className="px-4 py-4">
+                      <div className="h-4 w-24 rounded skeleton" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          ) : clients.length === 0 ? (
+            <tbody>
+              <tr>
+                <td
+                  colSpan={visibleHeaders.length}
+                  className="px-4 py-12 text-center text-sm text-gray-500"
+                >
+                  No clients found.
+                </td>
+              </tr>
+            </tbody>
+          ) : (
+            <tbody>
+              {clients.map((client) => (
+                <ClientRow
+                  key={client.id}
+                  client={client}
+                  canViewAll={canViewAll}
+                />
+              ))}
+            </tbody>
+          )}
+        </table>
+      </ResponsiveTable>
       <Pagination
         page={page}
         totalPages={totalPages}

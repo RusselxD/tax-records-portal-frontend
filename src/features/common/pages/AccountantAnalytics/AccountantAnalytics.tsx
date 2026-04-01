@@ -27,21 +27,17 @@ export function AccountantAnalyticsContent({
     <div className="space-y-4">
       <TaskSummaryCards />
 
-      <div className="flex gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4">
         <TasksByCategoryChart />
-        <div className="flex flex-col gap-4 w-80 shrink-0">
+        <div className="flex flex-col gap-4">
           <OnTimeRateWidget />
           <QualityMetricsWidget />
         </div>
       </div>
 
-      <div className="flex gap-4 items-stretch">
+      <div className={`grid gap-4 ${isOos ? "grid-cols-1 lg:grid-cols-[1fr_320px]" : "grid-cols-1"}`}>
         <MonthlyThroughputChart userId={userId} />
-        {isOos && (
-          <div className="w-80 shrink-0">
-            <OnboardingPipelineWidget />
-          </div>
-        )}
+        {isOos && <OnboardingPipelineWidget />}
       </div>
 
       <ClientPortfolioTable userId={userId} />

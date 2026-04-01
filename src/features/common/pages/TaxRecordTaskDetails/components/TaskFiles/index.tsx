@@ -31,7 +31,7 @@ export default function TaskFiles() {
       <WorkingFilesSection />
 
       <div className="border-t border-gray-100 pt-5">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <SingleFileSlot
             label="Output File / Tax Return"
             icon={<FileOutput className="h-4 w-4 text-indigo-500" />}

@@ -31,7 +31,7 @@ function PermitFields({
   };
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <Input
         label={`${label} — Number`}
         value={value.number ?? ""}
@@ -77,7 +77,7 @@ export default function CityHallEntryForm({
       </div>
 
       <div className="space-y-4">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <Input
             label="Business Permit City"
             value={entry.businessPermitCity ?? ""}
@@ -105,7 +105,7 @@ export default function CityHallEntryForm({
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             label="Renewal Basis"
             value={entry.renewalBasis ?? ""}
@@ -123,7 +123,7 @@ export default function CityHallEntryForm({
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <DateFieldInput
             label="Quarterly Deadline (Q2)"
             value={entry.quarterlyDeadlineQ2}
@@ -165,7 +165,7 @@ export default function CityHallEntryForm({
           onChange={(otherPermit) => onUpdate(index, { otherPermit })}
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FileUploadInput
             label="Mayor's Business Permit"
             value={entry.mayorBusinessPermit}
@@ -177,7 +177,7 @@ export default function CityHallEntryForm({
             onChange={(v) => onUpdate(index, { businessPermitPlate: v })}
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FileUploadInput
             label="Billing Assessment"
             value={entry.billingAssessment}
@@ -189,7 +189,7 @@ export default function CityHallEntryForm({
             onChange={(v) => onUpdate(index, { officialReceiptOfPayment: v })}
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FileUploadInput
             label="Sanitary Permit"
             value={entry.sanitaryPermitFile}
@@ -201,7 +201,7 @@ export default function CityHallEntryForm({
             onChange={(v) => onUpdate(index, { firePermitFile: v })}
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FileUploadInput
             label="Barangay Permit"
             value={entry.barangayPermit}
@@ -213,7 +213,7 @@ export default function CityHallEntryForm({
             onChange={(v) => onUpdate(index, { communityTaxCertificate: v })}
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FileUploadInput
             label="Locational Clearance"
             value={entry.locationalClearance}

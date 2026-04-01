@@ -43,7 +43,7 @@ export default function OnboardingDetailsSection({
     <div className="space-y-3">
       <CollapsibleSubsection title="Group Chat Details">
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="Name of Group Chat"
               value={data.nameOfGroupChat ?? ""}
@@ -61,7 +61,7 @@ export default function OnboardingDetailsSection({
               placeholder="e.g. Viber, Messenger"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="GC Created By"
               value={data.gcCreatedBy ?? ""}

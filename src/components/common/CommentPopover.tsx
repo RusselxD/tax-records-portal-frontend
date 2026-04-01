@@ -8,7 +8,7 @@ interface CommentPopoverProps {
   fetchComment: () => Promise<RichTextContent | null>;
 }
 
-const POPOVER_WIDTH = 320;
+const POPOVER_MAX_WIDTH = 320;
 const GAP = 6;
 const VIEWPORT_PADDING = 8;
 
@@ -30,16 +30,17 @@ export default function CommentPopover({ fetchComment }: CommentPopoverProps) {
     const viewportH = window.innerHeight;
     const viewportW = window.innerWidth;
 
+    // Responsive width: fit viewport on small screens
+    const popoverWidth = Math.min(POPOVER_MAX_WIDTH, viewportW - VIEWPORT_PADDING * 2);
+
     // Vertical: prefer below, flip above if not enough space
     const spaceBelow = viewportH - btnRect.bottom - GAP;
     const spaceAbove = btnRect.top - GAP;
     let top: number;
 
     if (spaceBelow >= popHeight || spaceBelow >= spaceAbove) {
-      // Place below
       top = btnRect.bottom + GAP;
     } else {
-      // Place above
       top = btnRect.top - GAP - popHeight;
     }
 
@@ -47,13 +48,13 @@ export default function CommentPopover({ fetchComment }: CommentPopoverProps) {
     top = Math.max(VIEWPORT_PADDING, Math.min(top, viewportH - popHeight - VIEWPORT_PADDING));
 
     // Horizontal: right-align to button, clamp to viewport
-    let left = btnRect.right - POPOVER_WIDTH;
+    let left = btnRect.right - popoverWidth;
     if (left < VIEWPORT_PADDING) left = VIEWPORT_PADDING;
-    if (left + POPOVER_WIDTH > viewportW - VIEWPORT_PADDING) {
-      left = viewportW - POPOVER_WIDTH - VIEWPORT_PADDING;
+    if (left + popoverWidth > viewportW - VIEWPORT_PADDING) {
+      left = viewportW - popoverWidth - VIEWPORT_PADDING;
     }
 
-    setStyle({ top, left, width: POPOVER_WIDTH });
+    setStyle({ top, left, width: popoverWidth });
   }, []);
 
   // Recompute after popover renders (so we have actual height)

@@ -40,7 +40,7 @@ function CityHallCard({ data, index }: { data: CityHallDetails; index: number })
       <span className="text-sm font-semibold text-primary mb-3 block">
         {data.businessPermitCity || `City #${index + 1}`}
       </span>
-      <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
         <TextDisplay label="Business Permit City" value={data.businessPermitCity} />
         <TextDisplay label="Business Permit Number" value={data.businessPermitNumber} />
         <DateFieldDisplay label="Date of Registration" value={data.dateOfRegistration} />

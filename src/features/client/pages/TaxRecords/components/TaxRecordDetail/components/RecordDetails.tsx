@@ -23,7 +23,7 @@ export default function RecordDetails({ record }: RecordDetailsProps) {
         </h2>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-5">
         <DetailField
           icon={<FolderOpen className="h-3.5 w-3.5 text-violet-500" />}
           label="Category"

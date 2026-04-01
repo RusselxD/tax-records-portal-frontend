@@ -166,7 +166,7 @@ export default function PersonalInfoCard() {
         <div className="flex-1 min-w-0">
           {isEditing ? (
             <div className="flex flex-col gap-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Input id="firstName" label="First Name" value={form.firstName} onChange={set("firstName")} />
                 <Input id="lastName" label="Last Name" value={form.lastName} onChange={set("lastName")} />
               </div>

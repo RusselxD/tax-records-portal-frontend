@@ -18,7 +18,7 @@ export default function ScopeOfEngagementPreview({ data }: { data: ScopeOfEngage
     <div className="space-y-3">
       {showEngagementLetter && (
         <CollapsibleSubsection title="Engagement Letter">
-          <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
             <DateFieldDisplay label="Date of Engagement Letter" value={data.dateOfEngagementLetter} />
             <FileDisplay label="Engagement Letters" value={data.engagementLetters} />
           </div>

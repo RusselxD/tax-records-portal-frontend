@@ -24,7 +24,7 @@ export default function OnboardingDetailsPreview({ data }: { data: OnboardingDet
     <div className="space-y-3">
       {hasGroupChat && (
         <CollapsibleSubsection title="Group Chat Details">
-          <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
             <TextDisplay label="Name of Group Chat" value={data.nameOfGroupChat} />
             <TextDisplay label="Platform Used" value={data.platformUsed} />
             <TextDisplay label="Created By" value={data.gcCreatedBy} />

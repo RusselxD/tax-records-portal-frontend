@@ -17,7 +17,7 @@ export default function LogDetailsCard({ log, onPreviewFile }: LogDetailsCardPro
         <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Subject</p>
         <p className="text-sm font-medium text-primary">{log.subject}</p>
       </div>
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <div>
           <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Client</p>
           <p className="text-sm font-medium text-primary">{log.clientDisplayName}</p>

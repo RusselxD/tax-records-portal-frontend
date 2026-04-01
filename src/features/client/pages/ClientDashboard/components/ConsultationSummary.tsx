@@ -74,7 +74,7 @@ export default function ConsultationSummary() {
           </div>
 
           {/* Breakdown */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div className="rounded-md bg-blue-50 px-3 py-2 text-center">
               <p className="text-xs text-blue-600 font-medium">Included</p>
               <p className="text-sm font-bold text-blue-700">{(summary.billableHours - summary.excessHours).toFixed(1)}h</p>

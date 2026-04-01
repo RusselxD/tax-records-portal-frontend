@@ -11,17 +11,13 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-4">
       <MainMetrics />
-      <div className="flex gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <TaskCompletionTrend />
         <TaskApprovalRate />
       </div>
-      <div className="flex gap-4">
-        <div className="w-2/5 shrink-0">
-          <AccountantWorkload />
-        </div>
-        <div className="flex-1">
-          <TasksByCategory />
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-4">
+        <AccountantWorkload />
+        <TasksByCategory />
       </div>
     </div>
   );

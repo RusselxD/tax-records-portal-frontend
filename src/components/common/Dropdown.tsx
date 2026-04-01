@@ -96,7 +96,7 @@ const FormTrigger = ({
     type="button"
     onClick={onClick}
     disabled={disabled}
-    className={`flex w-full items-center justify-between rounded-md border px-3 py-2.5 text-sm transition-colors focus:outline-none focus:ring-1 min-w-0 ${
+    className={`flex w-full items-center justify-between rounded-md border px-3 py-3 sm:py-2.5 text-sm transition-colors focus:outline-none focus:ring-1 min-w-0 ${
       error
         ? "border-status-rejected focus:border-status-rejected focus:ring-status-rejected"
         : "border-gray-300 focus:border-primary/40 focus:ring-primary/20"

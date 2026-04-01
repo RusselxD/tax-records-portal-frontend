@@ -40,7 +40,7 @@ export default function ClientInformationPreview({ data }: { data: ClientInforma
     <div className="space-y-3">
       {hasHeader && (
         <CollapsibleSubsection title="General Information">
-          <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
             <TextDisplay label="Registered Name" value={data.registeredName} />
             <TextDisplay label="Trade Name" value={data.tradeName} />
             <TextDisplay label="Number of Branches" value={data.numberOfBranches} />

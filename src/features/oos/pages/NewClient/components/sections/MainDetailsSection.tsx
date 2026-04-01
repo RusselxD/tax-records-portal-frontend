@@ -74,7 +74,7 @@ export default function MainDetailsSection({
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           label="MRE Code"
           value={data.mreCode ?? ""}
@@ -89,7 +89,7 @@ export default function MainDetailsSection({
       </div>
 
       {!hideAccountants && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <MultiSelect
             label="CSD / OOS Accountants"
             options={csdOosOptions}

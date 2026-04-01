@@ -54,7 +54,7 @@ export default function LinkPopover({
   return (
     <div
       ref={containerRef}
-      className="absolute left-0 top-full mt-2 z-10 w-80 rounded-lg border border-gray-200 bg-white shadow-lg"
+      className="absolute left-0 top-full mt-2 z-10 w-full sm:w-80 rounded-lg border border-gray-200 bg-white shadow-lg"
     >
       <div className="p-3 space-y-3">
         {needsText && (

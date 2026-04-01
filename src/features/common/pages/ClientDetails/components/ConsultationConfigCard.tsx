@@ -128,7 +128,7 @@ export default function ConsultationConfigCard({ clientId }: ConsultationConfigC
               <p className="text-xs text-gray-400">Included Hours</p>
               <p className="text-sm font-medium text-primary">{includedHours?.toFixed(2)}h / month</p>
             </div>
-            <button onClick={handleStartEdit} className="p-1 text-gray-400 hover:text-accent transition-colors">
+            <button onClick={handleStartEdit} className="p-2 text-gray-400 hover:text-accent transition-colors">
               <Pencil className="w-3.5 h-3.5" />
             </button>
           </div>

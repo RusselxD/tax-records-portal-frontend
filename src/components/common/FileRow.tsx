@@ -20,7 +20,7 @@ export default function FileRow({ name, onClick, onRemove }: FileRowProps) {
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); onRemove(e); }}
-          className="shrink-0 rounded p-1 text-gray-400 hover:text-status-rejected transition-colors"
+          className="shrink-0 rounded p-2 text-gray-400 hover:text-status-rejected transition-colors"
           title="Remove"
         >
           <X className="h-4 w-4" />

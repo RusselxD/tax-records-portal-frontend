@@ -85,7 +85,7 @@ export default function ActivateAccountCard({ clientId, pocEmail, onSuccess }: {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               id="activate-firstName"
               label="First Name"

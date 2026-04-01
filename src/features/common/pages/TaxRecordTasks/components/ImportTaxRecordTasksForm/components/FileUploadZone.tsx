@@ -56,7 +56,7 @@ export default function FileUploadZone({
         {!isSubmitting && (
           <button
             onClick={onRemoveFile}
-            className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>

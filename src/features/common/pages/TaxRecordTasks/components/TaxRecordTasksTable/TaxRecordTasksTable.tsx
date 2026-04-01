@@ -1,16 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { useAuth } from "../../../../../../contexts/AuthContext";
 import { hasPermission, Permission } from "../../../../../../constants/permissions";
 import { getRolePrefix } from "../../../../../../constants/roles";
-import { Pagination } from "../../../../../../components/common";
+import { Pagination, ResponsiveTable } from "../../../../../../components/common";
+import type { CardField } from "../../../../../../components/common/ResponsiveTable";
 import Dropdown from "../../../../../../components/common/Dropdown";
 import { useTaxRecordTasks } from "../../context/TaxRecordTasksContext";
 import { usersAPI } from "../../../../../../api/users";
 import { clientAPI } from "../../../../../../api/client";
 import { taxRecordTaskAPI } from "../../../../../../api/tax-record-task";
-import type { SortBy } from "../../../../../../types/tax-record-task";
+import type { SortBy, TaxRecordTaskListItem } from "../../../../../../types/tax-record-task";
+import { TAX_RECORD_TASK_STATUS } from "../../../../../../types/tax-record-task";
+import {
+  statusStyles,
+  statusDotColors,
+  statusLabels,
+  periodLabels,
+} from "../../../../../../constants/tax-record-task";
+import { formatDate } from "../../../../../../lib/formatters";
 import TaskRow from "./components/TaskRow";
 
 interface HeaderDef {
@@ -226,9 +235,76 @@ export default function TaxRecordTasksTable() {
     }
   }
 
+  const handleTaskClick = useCallback(
+    (task: TaxRecordTaskListItem) =>
+      navigate(`/${prefix}/tax-record-task/${task.id}`),
+    [navigate, prefix],
+  );
+
+  const primaryFields = useCallback(
+    (task: TaxRecordTaskListItem): CardField[] => [
+      { label: "Task", value: task.taskName },
+      { label: "Client", value: task.clientDisplayName },
+      {
+        label: "Status",
+        value: (
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${statusStyles[task.status]}`}
+          >
+            <span className={`h-1.5 w-1.5 rounded-full ${statusDotColors[task.status]}`} />
+            {statusLabels[task.status]}
+          </span>
+        ),
+      },
+      {
+        label: "Deadline",
+        value: (
+          <span className={task.isOverdue ? "text-red-500 font-medium" : ""}>
+            {formatDate(task.deadline)}
+          </span>
+        ),
+      },
+    ],
+    [],
+  );
+
+  const secondaryFields = useCallback(
+    (task: TaxRecordTaskListItem): CardField[] => {
+      const fields: CardField[] = [
+        { label: "Category", value: `${task.categoryName} › ${task.subCategoryName}` },
+        { label: "Period", value: `${task.year} ${periodLabels[task.period] || task.period}` },
+      ];
+      if (showAssignedTo) {
+        fields.push({ label: "Assigned To", value: task.assignedTo.join(", ") || "—" });
+      }
+      if (showCreated) {
+        fields.push({ label: "Created By", value: `${task.createdBy} · ${formatDate(task.createdAt)}` });
+      }
+      return fields;
+    },
+    [showAssignedTo, showCreated],
+  );
+
+  const cardClassName = useCallback(
+    (task: TaxRecordTaskListItem) =>
+      task.isOverdue || task.status === TAX_RECORD_TASK_STATUS.REJECTED
+        ? "border-l-4 border-l-red-400"
+        : "",
+    [],
+  );
+
   return (
     <div className="rounded-lg bg-white custom-shadow">
-      <div>
+      <ResponsiveTable
+        data={tasks}
+        keyExtractor={(t) => t.id}
+        primaryFields={primaryFields}
+        secondaryFields={secondaryFields}
+        onItemClick={handleTaskClick}
+        cardClassName={cardClassName}
+        isLoading={isFetching}
+        emptyMessage="No tasks found."
+      >
         <table className="w-full table-fixed">
           <thead>
             <tr className="border-b border-gray-200">
@@ -246,7 +322,7 @@ export default function TaxRecordTasksTable() {
                           <button
                             type="button"
                             onClick={() => toggleSort(header.sortKey!)}
-                            className="shrink-0 p-1 rounded hover:bg-gray-100 transition-colors"
+                            className="shrink-0 p-2 rounded hover:bg-gray-100 transition-colors"
                             title={`Sort by ${header.label}`}
                           >
                             <SortIcon column={header.sortKey} activeSortBy={sortBy} activeSortDir={sortDirection} />
@@ -292,7 +368,7 @@ export default function TaxRecordTasksTable() {
             </tbody>
           )}
         </table>
-      </div>
+      </ResponsiveTable>
       <Pagination
         page={page}
         totalPages={totalPages}

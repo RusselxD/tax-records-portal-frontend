@@ -24,7 +24,7 @@ function OfficerCard({ officer, index }: { officer: CorporateOfficerDetails; ind
       <span className="text-sm font-semibold text-primary mb-3 block">
         Officer #{index + 1}
       </span>
-      <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
         <TextDisplay label="Full Name" value={officer.name} />
         <TextDisplay label="Position" value={officer.position} />
         <DateFieldDisplay label="Birthday" value={officer.birthday} />
@@ -51,7 +51,7 @@ function PointOfContactCard({ data }: { data: PointOfContactDetails }) {
   if (!contactHasData(data)) return null;
 
   return (
-    <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
       <TextDisplay label="Contact Person" value={data.contactPerson} />
       <TextDisplay label="Contact Number" value={data.contactNumber} />
       <TextDisplay label="Delivery Address" value={data.deliveryAddress} fullWidth />

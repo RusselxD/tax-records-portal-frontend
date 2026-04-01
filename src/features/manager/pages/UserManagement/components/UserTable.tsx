@@ -1,6 +1,13 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { SquarePen, Send, Power } from "lucide-react";
-import { AccountStatus, UserAvatar } from "../../../../../components/common";
+import {
+  AccountStatus,
+  UserAvatar,
+  ResponsiveTable,
+  KebabMenu,
+  KebabMenuItem,
+} from "../../../../../components/common";
+import type { CardField } from "../../../../../components/common/ResponsiveTable";
 import { useUserManagement } from "../context/UserManagementContext";
 import { USER_STATUS, type ManagedUser } from "../../../../../types/user";
 import UserFormModal from "./UserFormModal";
@@ -89,6 +96,44 @@ function UserActions({
         </button>
       )}
     </div>
+  );
+}
+
+function MobileUserActions({
+  user,
+  onOpenModal,
+}: {
+  user: ManagedUser;
+  onOpenModal: (type: ModalType) => void;
+}) {
+  const isPending = user.status === USER_STATUS.PENDING;
+  const isActive = user.status === USER_STATUS.ACTIVE;
+  const isDeactivated = user.status === USER_STATUS.DEACTIVATED;
+
+  const hasActions = isPending || isActive || isDeactivated;
+  if (!hasActions) return null;
+
+  return (
+    <KebabMenu>
+      {isPending && (
+        <KebabMenuItem onClick={() => onOpenModal("resend")}>
+          Resend Activation
+        </KebabMenuItem>
+      )}
+      {(isActive || isDeactivated) && (
+        <KebabMenuItem onClick={() => onOpenModal("edit")}>
+          Edit User
+        </KebabMenuItem>
+      )}
+      {(isActive || isDeactivated) && (
+        <KebabMenuItem
+          onClick={() => onOpenModal("deactivate")}
+          variant={isActive ? "danger" : "default"}
+        >
+          {isActive ? "Deactivate" : "Reactivate"}
+        </KebabMenuItem>
+      )}
+    </KebabMenu>
   );
 }
 
@@ -194,6 +239,38 @@ const EmptyState = () => (
 export default function UserTable() {
   const { users, isFetching, error, refetch } = useUserManagement();
 
+  const keyExtractor = useCallback((user: ManagedUser) => user.id, []);
+
+  const primaryFields = useCallback(
+    (user: ManagedUser): CardField[] => [
+      {
+        label: "Name",
+        value: (
+          <div className="flex items-center gap-2">
+            <UserAvatar name={user.name} profileUrl={user.profileUrl} size="sm" />
+            <span>{user.name}</span>
+          </div>
+        ),
+      },
+      { label: "Role", value: <RoleBadge role={user.roleName} /> },
+      { label: "Status", value: <AccountStatus status={user.status} /> },
+    ],
+    [],
+  );
+
+  const secondaryFields = useCallback(
+    (user: ManagedUser): CardField[] => [
+      { label: "Email", value: user.email },
+      { label: "Position", value: user.position },
+    ],
+    [],
+  );
+
+  const renderActions = useCallback(
+    (user: ManagedUser) => <MobileCardActions user={user} />,
+    [],
+  );
+
   if (error) {
     return (
       <div className="rounded-lg bg-white custom-shadow p-8 text-center">
@@ -209,21 +286,66 @@ export default function UserTable() {
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg bg-white custom-shadow">
-      <table className="w-full">
-        <TableHeader />
-        {isFetching ? (
-          <TableSkeleton />
-        ) : users.length === 0 ? (
-          <EmptyState />
-        ) : (
-          <tbody>
-            {users.map((user) => (
-              <UserRow key={user.id} user={user} />
-            ))}
-          </tbody>
-        )}
-      </table>
+    <div className="rounded-lg bg-white custom-shadow">
+      <ResponsiveTable
+        data={users}
+        keyExtractor={keyExtractor}
+        primaryFields={primaryFields}
+        secondaryFields={secondaryFields}
+        actions={renderActions}
+        isLoading={isFetching}
+        emptyMessage="No users found."
+      >
+        <table className="w-full">
+          <TableHeader />
+          {isFetching ? (
+            <TableSkeleton />
+          ) : users.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <tbody>
+              {users.map((user) => (
+                <UserRow key={user.id} user={user} />
+              ))}
+            </tbody>
+          )}
+        </table>
+      </ResponsiveTable>
     </div>
+  );
+}
+
+/** Wrapper so each mobile card gets its own modal state */
+function MobileCardActions({ user }: { user: ManagedUser }) {
+  const { updateUser, refetch } = useUserManagement();
+  const [activeModal, setActiveModal] = useState<ModalType | null>(null);
+  const closeModal = () => setActiveModal(null);
+
+  return (
+    <>
+      <MobileUserActions user={user} onOpenModal={(type) => setActiveModal(type)} />
+
+      {activeModal === "edit" && (
+        <UserFormModal
+          user={user}
+          setModalOpen={(open) => { if (!open) closeModal(); }}
+          onSuccess={(updated) => updateUser(updated)}
+        />
+      )}
+      {activeModal === "resend" && (
+        <ResendActivationModal
+          user={user}
+          setModalOpen={(open) => { if (!open) closeModal(); }}
+          onSuccess={() => refetch()}
+        />
+      )}
+      {activeModal === "deactivate" && (
+        <DeactivateUserModal
+          user={user}
+          setModalOpen={(open) => { if (!open) closeModal(); }}
+          onSuccess={(updated) => updateUser(updated)}
+        />
+      )}
+    </>
   );
 }

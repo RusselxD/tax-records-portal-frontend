@@ -63,7 +63,7 @@ export default function BirTaxCompliancePreview({ data }: { data: BirTaxComplian
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
         <EnumDisplay
           label="Taxpayer Classification"
           value={data.taxpayerClassification}

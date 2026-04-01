@@ -17,7 +17,7 @@ export default function SecDetailsSubsection({
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <DateFieldInput
           label="Date of Incorporation"
           value={data.dateOfIncorporation}
@@ -33,7 +33,7 @@ export default function SecDetailsSubsection({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <DateFieldInput
           label="Date of Actual Meeting per Bylaws"
           value={data.dateOfActualMeetingPerBylaws}
@@ -58,7 +58,7 @@ export default function SecDetailsSubsection({
         placeholder="Enter primary purpose"
       />
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FileUploadInput
           label="SEC Certificate of Incorporation"
           value={data.secCertificateOfIncorporation}
@@ -70,7 +70,7 @@ export default function SecDetailsSubsection({
           onChange={(v) => update({ articlesOfIncorporation: v })}
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FileUploadInput
           label="Bylaws of Corporation"
           value={data.bylawsOfCorporation}
@@ -82,7 +82,7 @@ export default function SecDetailsSubsection({
           onChange={(v) => update({ certificateOfAuthentication: v })}
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FileUploadInput
           label="Authorize Filer / Secretary Certificate"
           value={data.authorizeFilerSecretaryCertificate}
@@ -94,7 +94,7 @@ export default function SecDetailsSubsection({
           onChange={(v) => update({ secOfficialReceipts: v })}
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FileUploadInput
           label="Latest GIS / Appointment of Officer"
           value={data.latestGisOrAppointmentOfOfficer}
@@ -106,7 +106,7 @@ export default function SecDetailsSubsection({
           onChange={(v) => update({ stockAndTransferBook: v })}
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FileUploadInput
           label="Board Resolutions / Secretary Certificate"
           value={data.boardResolutionsSecretaryCertificate}

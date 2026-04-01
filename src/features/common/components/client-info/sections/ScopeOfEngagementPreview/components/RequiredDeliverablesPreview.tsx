@@ -10,7 +10,7 @@ export default function RequiredDeliverablesPreview({ data }: { data: ScopeOfEng
   if (!hasData) return null;
 
   return (
-    <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
       <RichTextPreview label="Standard Deliverable" value={data.standardDeliverable} />
       <TextDisplay label="Others" value={data.requiredDeliverableOthers} />
     </div>
