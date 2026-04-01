@@ -11,7 +11,7 @@ import InfoField from "../../../../../components/common/InfoField";
 import Input from "../../../../../components/common/Input";
 import Button from "../../../../../components/common/Button";
 import TitlesEditor from "../../../../../components/common/TitlesEditor";
-import type { MyProfileResponse, UserTitle } from "../../../../../types/user";
+import { USER_STATUS, type MyProfileResponse, type UserTitle } from "../../../../../types/user";
 
 interface EditForm {
   firstName: string;
@@ -188,7 +188,7 @@ export default function PersonalInfoCard() {
                   <InfoField label="Role" value={user.role} />
                   <InfoField label="Status">
                     <span className="inline-flex items-center gap-1.5">
-                      <span className={`w-1.5 h-1.5 rounded-full ${user.status === "ACTIVE" ? "bg-green-500" : "bg-yellow-400"}`} />
+                      <span className={`w-1.5 h-1.5 rounded-full ${user.status === USER_STATUS.ACTIVE ? "bg-green-500" : "bg-yellow-400"}`} />
                       <span className="text-sm text-gray-700 capitalize">{user.status.toLowerCase()}</span>
                     </span>
                   </InfoField>

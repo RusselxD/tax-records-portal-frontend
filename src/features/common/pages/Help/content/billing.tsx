@@ -59,7 +59,7 @@ export const billingSections: HelpSection[] = [
           items={[
             "Click Create Invoice.",
             "Select the client, enter the invoice number and amount due.",
-            "Set the invoice date and payment terms — the due date is auto-computed.",
+            "Set the invoice date and payment terms (Due on Receipt, Net 3, Net 5, Net 7, or Net 15) — the due date is auto-computed from the invoice date.",
             "Optionally add a description and file attachments.",
             "Review in the confirmation modal, then confirm.",
           ]}
@@ -68,9 +68,9 @@ export const billingSections: HelpSection[] = [
         <Heading>Invoice Actions</Heading>
         <BulletList
           items={[
-            "Send Email — emails the invoice to the client's portal account(s).",
+            "Send Email — emails the invoice details (number, dates, amount, description) to the client's point-of-contact email and all portal account emails. Any attached files are included in the email.",
             "Receive Payment — records a payment against the invoice.",
-            "Void — marks the invoice as void. No further payments can be applied.",
+            "Void — marks the invoice as void. No further payments can be applied, and voiding cannot be undone. Existing payment records are preserved.",
             "Delete — permanently removes the invoice and all its payment records.",
           ]}
         />

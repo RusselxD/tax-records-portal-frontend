@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import type { LoginRequest, LoginResponse, User } from "../types/auth";
+import { USER_STATUS } from "../types/user";
 import type { UserRoleType } from "../constants";
 import { authAPI } from "../api/auth";
 import { tokenStorage } from "../lib/token-storage";
@@ -103,6 +104,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Initialize auth state from stored token on mount
    */
   useEffect(() => {
+    let cancelled = false;
+
     const initializeAuth = async () => {
       const accessToken = tokenStorage.getAccessToken();
 
@@ -110,19 +113,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const claims = decodeJwt(accessToken);
 
         if (claims && !isTokenExpired(claims.exp)) {
-          if (claims.status === "DEACTIVATED") {
+          if (claims.status === USER_STATUS.DEACTIVATED) {
             handleDeactivated();
-          } else {
+          } else if (!cancelled) {
             setUser(claimsToUser(claims));
           }
         } else if (tokenStorage.getRefreshToken()) {
           // Access token expired but refresh token exists — attempt refresh
           try {
             const tokens = await refreshAccessToken();
+            if (cancelled) return;
             if (tokens) {
               const newClaims = decodeJwt(tokens.accessToken);
               if (newClaims) {
-                if (newClaims.status === "DEACTIVATED") {
+                if (newClaims.status === USER_STATUS.DEACTIVATED) {
                   handleDeactivated();
                 } else {
                   setUser(claimsToUser(newClaims));
@@ -132,6 +136,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
               }
             }
           } catch {
+            if (cancelled) return;
             tokenStorage.clearTokens();
           }
         } else {
@@ -139,10 +144,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
       }
 
-      setIsLoading(false);
+      if (!cancelled) setIsLoading(false);
     };
 
     initializeAuth();
+    return () => { cancelled = true; };
   }, []);
 
   const login = useCallback(

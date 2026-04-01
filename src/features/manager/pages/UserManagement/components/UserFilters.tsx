@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import Button from "../../../../../components/common/Button";
 import Dropdown from "../../../../../components/common/Dropdown";
 import SearchInput from "../../../../../components/common/SearchInput";
+import { USER_STATUS } from "../../../../../types/user";
 import { useUserManagement } from "../context/UserManagementContext";
 import UserFormModal from "./UserFormModal";
 
@@ -17,9 +18,9 @@ const roleOptions = [
 
 const statusOptions = [
   { label: "All Statuses", value: "" },
-  { label: "Pending", value: "PENDING" },
-  { label: "Active", value: "ACTIVE" },
-  { label: "Deactivated", value: "DEACTIVATED" },
+  { label: "Pending", value: USER_STATUS.PENDING },
+  { label: "Active", value: USER_STATUS.ACTIVE },
+  { label: "Deactivated", value: USER_STATUS.DEACTIVATED },
 ];
 
 export default function UserFilters() {

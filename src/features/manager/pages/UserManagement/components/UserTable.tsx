@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SquarePen, Send, Power } from "lucide-react";
 import { AccountStatus, UserAvatar } from "../../../../../components/common";
 import { useUserManagement } from "../context/UserManagementContext";
-import type { ManagedUser } from "../../../../../types/user";
+import { USER_STATUS, type ManagedUser } from "../../../../../types/user";
 import UserFormModal from "./UserFormModal";
 import ResendActivationModal from "./ResendActivationModal";
 import DeactivateUserModal from "./DeactivateUserModal";
@@ -46,9 +46,9 @@ function UserActions({
   user: ManagedUser;
   onOpenModal: (type: ModalType) => void;
 }) {
-  const isPending = user.status === "PENDING";
-  const isActive = user.status === "ACTIVE";
-  const isDeactivated = user.status === "DEACTIVATED";
+  const isPending = user.status === USER_STATUS.PENDING;
+  const isActive = user.status === USER_STATUS.ACTIVE;
+  const isDeactivated = user.status === USER_STATUS.DEACTIVATED;
 
   return (
     <div className="flex items-center gap-1">

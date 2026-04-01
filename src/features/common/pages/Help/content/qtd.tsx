@@ -34,14 +34,15 @@ export const qtdSections: HelpSection[] = [
           items={[
             "Awaiting Review — how many tasks are currently waiting for your review. If new tasks arrived today, a pill shows the count.",
             "Approved Today — how many tasks you've approved today.",
-            "Approval Rate — your approval rate for the current month (percentage of reviews that resulted in approval vs. rejection). Shows \"—\" if you haven't reviewed anything this month yet.",
+            "Approval Rate — your approval rate for the current month. Counts individual review decisions — if you reject and then approve the same task, that's 1 approval and 1 rejection (50%). Shows \"—\" if you haven't reviewed anything this month yet.",
           ]}
         />
         <Heading>Review Queue</Heading>
         <P>
-          The first table shows all tasks currently in "Submitted" status that
-          are waiting for your review. Click any row to open the task details
-          and take action (approve or reject).
+          The first table shows submitted tasks from clients assigned to you
+          that are waiting for your review — not all submitted tasks in the
+          system. Click any row to open the task details and take action
+          (approve or reject).
         </P>
         <Heading>Recently Decided</Heading>
         <P>
@@ -418,8 +419,9 @@ export const qtdSections: HelpSection[] = [
           ]}
         />
         <P>
-          The system automatically assigns Included vs. Excess at approval
-          time based on cumulative approved hours for the month.
+          When a log is approved, the system recomputes all approved logs for
+          that client and month in chronological order. Once cumulative hours
+          exceed the client's included-hours cap, remaining logs become Excess.
         </P>
       </>
     ),
@@ -451,7 +453,7 @@ export const qtdSections: HelpSection[] = [
         />
         <P>
           Click any notification to go directly to the relevant task or client
-          page. Notifications are also sent to your email.
+          page.
         </P>
       </>
     ),

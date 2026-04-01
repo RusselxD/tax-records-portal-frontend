@@ -1,6 +1,12 @@
 import type { UserRoleType } from "../constants";
 
-export type UserStatus = "PENDING" | "ACTIVE" | "DEACTIVATED";
+export const USER_STATUS = {
+  PENDING: "PENDING",
+  ACTIVE: "ACTIVE",
+  DEACTIVATED: "DEACTIVATED",
+} as const;
+
+export type UserStatus = (typeof USER_STATUS)[keyof typeof USER_STATUS];
 
 export interface UserTitle {
   prefix: boolean;

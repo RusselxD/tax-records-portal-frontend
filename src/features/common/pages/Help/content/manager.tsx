@@ -86,7 +86,7 @@ export const managerSections: HelpSection[] = [
         <P>How fast work is getting done across the system.</P>
         <BulletList
           items={[
-            "Avg Completion Time — all-time average days from task creation to completion. Includes every completed task ever, not scoped to a recent period.",
+            "Avg Completion Time — average calendar days from task creation to completion (includes weekends and holidays). Same-day completions show as fractional values. Includes every completed task ever.",
             "On-Time Rate — all-time percentage of completed tasks where the completion happened on or before the deadline.",
           ]}
         />
@@ -95,8 +95,8 @@ export const managerSections: HelpSection[] = [
         <P>How clean submissions are across the system.</P>
         <BulletList
           items={[
-            "First-Attempt Approval Rate — percentage of all ever-submitted tasks that were approved with zero rejections.",
-            "Avg Rejection Cycles — all-time average number of rejections per submitted task, including tasks with zero rejections.",
+            "First-Attempt Approval Rate — percentage of tasks submitted at least once that had zero rejections — not limited to approved tasks, includes any task ever submitted.",
+            "Avg Rejection Cycles — all-time average number of rejections per submitted task, including tasks with zero rejections. This includes zero-rejection tasks in the average, giving an overall quality signal across the system.",
           ]}
         />
 
@@ -108,16 +108,16 @@ export const managerSections: HelpSection[] = [
           items={[
             "Onboarding Clients — same count as Card 1 (clients currently in Onboarding status).",
             "Profiles Pending Review — same count as Card 4's onboarding number.",
-            "Clients Activated This Month — client portal accounts created since the 1st. Counted at the moment the activation email is sent, not when the client sets their password.",
+            "Clients Activated This Month — counts client portal accounts created since the 1st. Each client account is counted once — resending the activation email does not create a new count.",
           ]}
         />
 
         <Heading>Charts</Heading>
         <BulletList
           items={[
-            "Task Completion Trend — line chart showing task completions over time, with a range filter (7 days, 1 month, 3 months).",
-            "Task Approval Rate — donut chart showing the ratio of approved vs. rejected decisions, with a range filter.",
-            "Accountant Workload — top 5 accountants by active task count. Click \"View all\" to go to the Accountant Analytics page.",
+            "Task Completion Trend — line chart showing task completions over time. The 7-day view shows 7 daily points, 1-month shows 30 daily points, and 3-month shows 13 weekly points (Monday-start weeks).",
+            "Task Approval Rate — donut chart showing the ratio of approved vs. rejected review decisions. Counts individual decisions — a task rejected 3 times then approved counts as 4 decisions (3 rejected + 1 approved).",
+            "Accountant Workload — top 5 CSD and OOS accountants by active task count (all statuses except Completed). Click \"View all\" to go to the Accountant Analytics page.",
             "Tasks by Category — stacked bar chart showing task distribution across categories, broken down by status.",
           ]}
         />
@@ -644,7 +644,7 @@ export const managerSections: HelpSection[] = [
           items={[
             "Assigned OOS Accountant — the accountant responsible for the offboarding process.",
             "End of Engagement Date — when the professional engagement formally ends.",
-            "Deactivation Date (optional) — if set, all client portal accounts will be automatically deactivated on this date and the status set to Inactive.",
+            "Deactivation Date (optional) — if set, a daily job at midnight (Asia/Manila timezone) deactivates all client portal accounts and sets the client status to Inactive on this date.",
           ]}
         />
 
@@ -656,7 +656,7 @@ export const managerSections: HelpSection[] = [
         <BulletList
           items={[
             "Send the end-of-engagement letter email using a template.",
-            "Toggle tax records protection — blocks the client from downloading files while still allowing them to browse their records.",
+            "Toggle tax records protection — blocks client portal users from downloading any files (not just tax records) while still allowing them to browse. Internal employee users are unaffected.",
             "Deactivate individual client portal accounts from the Client Accounts card.",
           ]}
         />
@@ -718,8 +718,11 @@ export const managerSections: HelpSection[] = [
           ]}
         />
         <P>
-          Included vs. Excess is automatically computed when the log is
-          approved, based on the client's consultation config.
+          When a log is approved, the system recomputes all approved logs for
+          that client and month in chronological order. Once cumulative hours
+          exceed the client's included-hours cap, remaining logs become Excess.
+          If no consultation config exists for the client, all non-courtesy logs
+          default to Excess.
         </P>
 
         <Heading>Client Details — Consultations Tab</Heading>
@@ -763,7 +766,7 @@ export const managerSections: HelpSection[] = [
         />
         <P>
           Click any notification to navigate directly to the relevant task or
-          client page. Notifications are also sent to your email.
+          client page.
         </P>
       </>
     ),

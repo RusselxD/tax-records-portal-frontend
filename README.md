@@ -1,73 +1,154 @@
-# React + TypeScript + Vite
+<h1 align="center">Tax Records Portal -- Frontend</h1>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Cloudflare_Workers-F38020?logo=cloudflare&logoColor=white" alt="Cloudflare Workers" />
+</p>
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Overview
 
-## React Compiler
+Internal web portal for Upturn Business Solutions PH. Manages client onboarding and offboarding, tax record task workflows, invoicing, consultation logging, and performance analytics across six user roles:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Manager** -- full administrative control
+- **Onboarding, Offboarding & Support (OOS)** -- client setup and support
+- **Quality, Training & Development (QTD)** -- profile review and quality assurance
+- **Client Service Delivery (CSD)** -- day-to-day client servicing
+- **Internal Accounting / Billing** -- invoicing and payment tracking
+- **Client** -- self-service portal access
 
-## Expanding the ESLint configuration
+Built with React 19, TypeScript, and Vite. Styled with Tailwind CSS. Deployed on Cloudflare Workers.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+| Technology | Purpose |
+|---|---|
+| React 19 + TypeScript 5.9 | UI framework |
+| Vite 7 | Build tool and dev server |
+| Tailwind CSS 3 | Utility-first styling |
+| React Router 7 | Client-side routing |
+| Axios | HTTP client |
+| TipTap | Rich text editing |
+| Recharts | Charts and analytics |
+| Lucide React | Icon library |
+| react-pdf + docx-preview | File previews (PDF, DOCX) |
+| xlsx | Bulk import parsing |
+| Cloudflare Workers + Wrangler | Deployment |
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Prerequisites
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js 18+
+- npm
+- Backend API running (default: `http://localhost:8080`)
+
+## Getting Started
+
+```bash
+git clone <repository-url>
+cd tax-records-portal-frontend
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Create a `.env` file in the project root:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+VITE_API_BASE_URL=http://localhost:8080
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+## Available Scripts
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start dev server with HMR |
+| `npm run build` | TypeScript check + Vite production build |
+| `npm run lint` | Run ESLint |
+| `npm run preview` | Build and preview locally via Wrangler |
+| `npm run deploy` | Build and deploy to Cloudflare Workers |
+
+## Project Structure
+
+```
+src/
+  api/            API client modules (axios-based)
+  assets/         Static assets (images, logos)
+  components/     Shared/common UI components
+  constants/      Role keys, permissions, status enums
+  contexts/       Global contexts (Auth, Toast, Notifications)
+  features/       Feature modules by role (manager, oos, qtd, csd,
+                    internal-billing, client, common, shared)
+  guards/         Route guards (AuthGuard, RoleGuard)
+  hooks/          Shared hooks (usePaginatedFetch, useDebounce, useAsyncAction)
+  lib/            Utilities (formatters, api-error, token-storage, file-validation)
+  pages/          Standalone pages (ErrorPage)
+  router/         Route definitions per role
+  types/          TypeScript type definitions
+  styles/         Global CSS and Tailwind config
+```
+
+## Environment Variables
+
+| Variable | Description | Default |
+|---|---|---|
+| `VITE_API_BASE_URL` | Backend API base URL | `http://localhost:8080` |
+
+## Documentation
+
+Detailed documentation is available in [`docs/`](docs/):
+
+**Core**
+
+- [Architecture](docs/architecture.md) -- App structure, patterns, state management
+- [Authentication](docs/authentication.md) -- JWT flow, guards, token refresh
+- [Roles & Permissions](docs/roles-and-permissions.md) -- 6 roles, 33 permissions, route access
+- [Client Lifecycle](docs/client-lifecycle.md) -- Onboarding, Active, Offboarding, Inactive
+- [Task Workflow](docs/task-workflow.md) -- Tax record task statuses, files, review cycle
+- [Code Conventions](docs/conventions.md) -- Component patterns, styling, naming rules
+- [API Contracts](docs/api-contracts.md) -- Key endpoints, request/response shapes
+
+**Features**
+
+- [Dashboard](docs/features/dashboard.md)
+- [Client Info](docs/features/client-info.md)
+- [Billing](docs/features/billing.md)
+- [Consultation Hours](docs/features/consultation-hours.md)
+- [Notifications](docs/features/notifications.md)
+- [Analytics](docs/features/analytics.md)
+
+## Dev Notes
+
+- Task actions (canEdit, canSubmit, canApprove, etc.) are **server-computed** -- the frontend reads `task.actions.*` directly, never derives permissions locally.
+- `FileItem` has `{ id, name }` only -- the `url` field was removed to prevent infrastructure path leaks. `WorkingFileItem` keeps `url` for external links.
+- `isOverdue` on invoices and tasks is **server-computed** -- the frontend does not derive it from the due date.
+- Analytics formulas differ between system-wide (Manager dashboard) and individual (accountant) views -- see [docs/features/analytics.md](docs/features/analytics.md).
+- Email notifications are only sent for invoices and payment receipts -- all other notifications are in-app only.
+- Profile updates are atomic (`@Transactional`) -- all 7 JSONB sections overwrite together or not at all.
+- One pending profile update per client is enforced at the service layer (not a DB constraint) -- theoretically vulnerable to race conditions on simultaneous requests.
+- Consultation duration does not support overnight spans (`endTime` must be after `startTime` within the same day).
+- Invoice void is irreversible -- existing payments are preserved but no new payments can be applied.
+- Outstanding balance is computed in real-time (not denormalized) via native SQL.
+- Tax records protection blocks ALL file downloads for client portal users (not just tax record files). Internal employee users are unaffected.
+- The `SECTIONS` constant in `src/types/client-info.ts` is the single source of truth for section keys and labels -- never define them inline.
+- All context provider values must be wrapped in `useMemo`, callbacks in `useCallback`, and data-fetching `useEffect`s must use a `cancelled` flag with cleanup return.
+- No test framework yet -- Vitest recommended. Highest-value targets: contexts (TaxRecordTaskDetails, ClientDetails, UserManagement, ClientOnboarding).
+
+## License
+
+Private. Not open source.
+
+---
+
+Built for **Upturn Business Solutions PH**
+
+Made by Russel & Claude
+
+Copyright 2026 Upturn Business Solutions PH. All rights reserved.

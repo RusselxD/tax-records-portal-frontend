@@ -2,7 +2,7 @@ import { type Dispatch, type SetStateAction } from "react";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import { ConfirmActionModal } from "../../../../../components/common";
 import { usersAPI } from "../../../../../api/users";
-import type { ManagedUser } from "../../../../../types/user";
+import { USER_STATUS, type ManagedUser } from "../../../../../types/user";
 import { useToast } from "../../../../../contexts/ToastContext";
 
 interface DeactivateUserModalProps {
@@ -16,8 +16,8 @@ export default function DeactivateUserModal({
   setModalOpen,
   onSuccess,
 }: DeactivateUserModalProps) {
-  const isDeactivating = user.status === "ACTIVE";
-  const newStatus = isDeactivating ? "DEACTIVATED" : "ACTIVE";
+  const isDeactivating = user.status === USER_STATUS.ACTIVE;
+  const newStatus = isDeactivating ? USER_STATUS.DEACTIVATED : USER_STATUS.ACTIVE;
   const { toastSuccess } = useToast();
 
   const handleConfirm = async () => {

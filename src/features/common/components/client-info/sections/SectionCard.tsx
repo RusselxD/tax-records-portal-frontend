@@ -27,7 +27,7 @@ export default function SectionCard({
     if (isOpen && onOpen && (!status || status === "idle")) {
       onOpen();
     }
-  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isOpen, onOpen, status]);
 
   const handleToggle = () => {
     setIsOpen((prev) => !prev);

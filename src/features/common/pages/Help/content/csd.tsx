@@ -138,7 +138,7 @@ export const csdSections: HelpSection[] = [
               status: "Completed",
               color: "bg-emerald-50 text-emerald-700",
               description:
-                "All done. The files are merged into the client's permanent tax records. No further action needed.",
+                "All done. Your working files, output file, and proof of filing are merged into the client's permanent tax records. No further action needed.",
             },
           ]}
         />
@@ -293,7 +293,7 @@ export const csdSections: HelpSection[] = [
         <BulletList
           items={[
             "On-Time Rate — percentage of completed tasks where the completion happened on or before the deadline.",
-            "Avg Completion Days — average number of days from task creation to completion, across all tasks you've completed.",
+            "Avg Completion Days — average calendar days from task creation to completion (includes weekends and holidays). Same-day completions show as fractional values.",
           ]}
         />
 
@@ -310,7 +310,7 @@ export const csdSections: HelpSection[] = [
         <P>How quickly you act on assigned work.</P>
         <BulletList
           items={[
-            "Avg Days to First Submit — average days between task creation and your first submission. Measures how quickly you pick up new work.",
+            "Avg Days to First Submit — average days between task creation and your first submission. Only counts tasks you've submitted at least once — tasks never submitted are excluded.",
             "Avg Rejection Turnaround — average days between a reviewer's rejection and your next resubmission. Measures how quickly you address feedback. Recalled-then-resubmitted gaps are excluded since those are voluntary pull-backs, not rejections.",
           ]}
         />
@@ -327,8 +327,9 @@ export const csdSections: HelpSection[] = [
         <Heading>Monthly Trend</Heading>
         <P>
           Month-over-month direction. Compares your completed tasks this month
-          against last month and shows the percentage change. Positive means
-          you're improving, negative means you're slipping.
+          against last month and shows the percentage change. Shows "N/A" if
+          last month had zero completions. Positive means you're improving,
+          negative means you're slipping.
         </P>
 
         <Heading>Charts</Heading>
@@ -400,8 +401,11 @@ export const csdSections: HelpSection[] = [
           ]}
         />
         <P>
-          Included vs. Excess is automatically computed when the log is
-          approved, based on the client's consultation config.
+          When a log is approved, the system recomputes all approved logs for
+          that client and month in chronological order. Once cumulative hours
+          exceed the client's included-hours cap, remaining logs become Excess.
+          If no consultation config exists for the client, all non-courtesy
+          logs default to Excess.
         </P>
 
         <Heading>Client Details — Consultations Tab</Heading>
@@ -442,7 +446,7 @@ export const csdSections: HelpSection[] = [
         />
         <P>
           Click any notification to go directly to the relevant task or client
-          page. Notifications are also sent to your email.
+          page.
         </P>
       </>
     ),

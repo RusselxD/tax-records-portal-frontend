@@ -9,6 +9,7 @@ import { useAuth } from "../../../../../contexts/AuthContext";
 import { hasPermission, Permission } from "../../../../../constants/permissions";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import type { ClientAccountResponse } from "../../../../../types/client";
+import { USER_STATUS } from "../../../../../types/user";
 
 interface ResendResult {
   firstName: string;
@@ -132,7 +133,7 @@ export function AccountRow({
   const [showResendForm, setShowResendForm] = useState(false);
   const [resent, setResent] = useState(false);
   const [showDeactivateConfirm, setShowDeactivateConfirm] = useState(false);
-  const [isDeactivated, setIsDeactivated] = useState(status === "DEACTIVATED");
+  const [isDeactivated, setIsDeactivated] = useState(status === USER_STATUS.DEACTIVATED);
 
   return (
     <>
@@ -159,7 +160,7 @@ export function AccountRow({
         </div>
 
         <div className="flex items-center gap-2">
-          {status === "PENDING" && !showResendForm && (
+          {status === USER_STATUS.PENDING && !showResendForm && (
             resent ? (
               <span className="p-1 text-emerald-500">
                 <Check className="w-4 h-4" />
@@ -174,7 +175,7 @@ export function AccountRow({
               </button>
             )
           )}
-          {canDeactivate && (status === "ACTIVE" || status === "PENDING") && !isDeactivated && (
+          {canDeactivate && (status === USER_STATUS.ACTIVE || status === USER_STATUS.PENDING) && !isDeactivated && (
             <button
               onClick={() => setShowDeactivateConfirm(true)}
               title="Deactivate account"
@@ -183,7 +184,7 @@ export function AccountRow({
               <UserX className="w-4 h-4" />
             </button>
           )}
-          <AccountStatus status={isDeactivated ? "DEACTIVATED" : status} />
+          <AccountStatus status={isDeactivated ? USER_STATUS.DEACTIVATED : status} />
         </div>
       </div>
 
@@ -202,7 +203,7 @@ export function AccountRow({
       {showDeactivateConfirm && (
         <ConfirmActionModal
           setModalOpen={setShowDeactivateConfirm}
-          onConfirm={() => usersAPI.changeUserStatus(clientAccount.id, "DEACTIVATED")}
+          onConfirm={() => usersAPI.changeUserStatus(clientAccount.id, USER_STATUS.DEACTIVATED)}
           title="Deactivate Account?"
           description={`This will deactivate the portal account for ${fullName} (${displayData.email}). They will no longer be able to log in.`}
           confirmLabel="Deactivate"

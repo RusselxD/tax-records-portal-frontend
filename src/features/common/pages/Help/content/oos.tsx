@@ -438,7 +438,7 @@ export const oosSections: HelpSection[] = [
               status: "Completed",
               color: "bg-emerald-50 text-emerald-700",
               description:
-                "All done. The files are merged into the client's permanent tax records. No further action needed.",
+                "All done. Your working files, output file, and proof of filing are merged into the client's permanent tax records. No further action needed.",
             },
           ]}
         />
@@ -593,7 +593,7 @@ export const oosSections: HelpSection[] = [
         <BulletList
           items={[
             "On-Time Rate — percentage of completed tasks where the completion happened on or before the deadline.",
-            "Avg Completion Days — average number of days from task creation to completion, across all tasks you've completed.",
+            "Avg Completion Days — average calendar days from task creation to completion (includes weekends and holidays). Same-day completions show as fractional values.",
           ]}
         />
 
@@ -610,7 +610,7 @@ export const oosSections: HelpSection[] = [
         <P>How quickly you act on assigned work.</P>
         <BulletList
           items={[
-            "Avg Days to First Submit — average days between task creation and your first submission. Measures how quickly you pick up new work.",
+            "Avg Days to First Submit — average days between task creation and your first submission. Only counts tasks you've submitted at least once — tasks never submitted are excluded.",
             "Avg Rejection Turnaround — average days between a reviewer's rejection and your next resubmission. Measures how quickly you address feedback. Recalled-then-resubmitted gaps are excluded since those are voluntary pull-backs, not rejections.",
           ]}
         />
@@ -627,8 +627,9 @@ export const oosSections: HelpSection[] = [
         <Heading>Monthly Trend</Heading>
         <P>
           Month-over-month direction. Compares your completed tasks this month
-          against last month and shows the percentage change. Positive means
-          you're improving, negative means you're slipping.
+          against last month and shows the percentage change. Shows "N/A" if
+          last month had zero completions. Positive means you're improving,
+          negative means you're slipping.
         </P>
 
         <Heading>Charts</Heading>
@@ -690,7 +691,7 @@ export const oosSections: HelpSection[] = [
             "Click \"Send End of Engagement Letter\" to open the template picker.",
             "Select a template from the list, or create a new one using the rich text editor.",
             "Preview the template content, then click Send Letter.",
-            "The letter will be emailed to all the client's registered email addresses.",
+            "The letter will be emailed to all users linked to the client's portal accounts, regardless of account status.",
           ]}
         />
 
@@ -758,8 +759,11 @@ export const oosSections: HelpSection[] = [
           ]}
         />
         <P>
-          Included vs. Excess is automatically computed when the log is
-          approved, based on the client's consultation config.
+          When a log is approved, the system recomputes all approved logs for
+          that client and month in chronological order. Once cumulative hours
+          exceed the client's included-hours cap, remaining logs become Excess.
+          If no consultation config exists for the client, all non-courtesy logs
+          default to Excess.
         </P>
 
         <Heading>Client Details — Consultations Tab</Heading>
@@ -803,7 +807,7 @@ export const oosSections: HelpSection[] = [
         />
         <P>
           Click any notification to go directly to the relevant task or client
-          page. Notifications are also sent to your email.
+          page.
         </P>
       </>
     ),
