@@ -36,8 +36,8 @@ export const csdSections: HelpSection[] = [
         </P>
         <Heading>Needs Attention</Heading>
         <P>
-          Below the stats, you'll find two tables showing tasks that need
-          immediate action:
+          Below the stats, you'll find two collapsible, paginated tables
+          showing tasks that need immediate action:
         </P>
         <BulletList
           items={[

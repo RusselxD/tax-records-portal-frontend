@@ -49,13 +49,14 @@ function TableSkeleton() {
   );
 }
 
-type AccentColor = "navy" | "amber" | "emerald" | "sky";
+type AccentColor = "navy" | "amber" | "emerald" | "sky" | "red";
 
 const accentStyles: Record<AccentColor, { border: string; badge: string; badgeText: string; iconBg: string }> = {
   navy:    { border: "border-l-primary",     badge: "bg-primary/10",      badgeText: "text-primary",       iconBg: "bg-primary/10 text-primary" },
   amber:   { border: "border-l-amber-400",   badge: "bg-amber-50",        badgeText: "text-amber-600",     iconBg: "bg-amber-50 text-amber-600" },
   emerald: { border: "border-l-emerald-400", badge: "bg-emerald-50",      badgeText: "text-emerald-600",   iconBg: "bg-emerald-50 text-emerald-600" },
   sky:     { border: "border-l-sky-400",     badge: "bg-sky-50",          badgeText: "text-sky-600",       iconBg: "bg-sky-50 text-sky-600" },
+  red:     { border: "border-l-red-500",     badge: "bg-red-50",          badgeText: "text-red-700",       iconBg: "bg-red-50 text-red-500" },
 };
 
 interface TaskListProps {

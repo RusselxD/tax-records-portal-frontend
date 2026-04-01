@@ -8,8 +8,8 @@ import type {
   WorkingFileItem,
   TaxRecordTaskLogResponse,
   ClientTaxRecordTaskPageResponse,
-  TaxRecordTaskOverdueItemResponse,
-  TaxRecordTaskRejectedItemResponse,
+  TaxRecordTaskOverduePageResponse,
+  TaxRecordTaskRejectedPageResponse,
   TaxRecordTaskTodoListPageResponse,
   TaxRecordTaskProgressPageResponse,
   ReviewerQueueItemResponse,
@@ -33,13 +33,13 @@ export const taxRecordTaskAPI = {
     return res.data;
   },
 
-  getOverdueTasks: async (): Promise<TaxRecordTaskOverdueItemResponse[]> => {
-    const res = await apiClient.get("/tax-record-tasks/overdue");
+  getOverdueTasks: async (page: number, size: number): Promise<TaxRecordTaskOverduePageResponse> => {
+    const res = await apiClient.get("/tax-record-tasks/overdue", { params: { page, size } });
     return res.data;
   },
 
-  getRejectedTasks: async (): Promise<TaxRecordTaskRejectedItemResponse[]> => {
-    const res = await apiClient.get("/tax-record-tasks/rejected");
+  getRejectedTasks: async (page: number, size: number): Promise<TaxRecordTaskRejectedPageResponse> => {
+    const res = await apiClient.get("/tax-record-tasks/rejected", { params: { page, size } });
     return res.data;
   },
 

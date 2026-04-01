@@ -97,6 +97,8 @@ Four stat cards, two attention tables, and a personal to-do list.
 
 ### Attention Tables
 
+Both tables are collapsible and paginated (10 per page), matching the style of the other task lists on the dashboard.
+
 **Overdue Tasks** — Tasks past their deadline that haven't been submitted yet. Only Open and Rejected status tasks qualify.
 
 **Rejected Tasks** — Tasks sent back for revision. Open to see reviewer comments and make corrections.

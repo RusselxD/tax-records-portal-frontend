@@ -184,8 +184,8 @@ Source: `src/api/tax-record-task.ts`
 | Method | Path | Description | Params | Response |
 |--------|------|-------------|--------|----------|
 | GET | `/tax-record-tasks` | Paginated task list | Query: `TaxRecordTaskFilters` (via `buildParams`) | `TaxRecordTaskPageResponse` |
-| GET | `/tax-record-tasks/overdue` | Overdue tasks | -- | `TaxRecordTaskOverdueItemResponse[]` |
-| GET | `/tax-record-tasks/rejected` | Rejected tasks | -- | `TaxRecordTaskRejectedItemResponse[]` |
+| GET | `/tax-record-tasks/overdue` | Overdue tasks (paginated) | Query: `page`, `size` | `TaxRecordTaskOverduePageResponse` |
+| GET | `/tax-record-tasks/rejected` | Rejected tasks (paginated) | Query: `page`, `size` | `TaxRecordTaskRejectedPageResponse` |
 | GET | `/tax-record-tasks/reviewer-queue` | Reviewer pending queue | -- | `ReviewerQueueItemResponse[]` |
 | GET | `/tax-record-tasks/recently-decided` | Recently decided by reviewer | -- | `ReviewerDecidedItemResponse[]` |
 | GET | `/tax-record-tasks/todo` | Accountant to-do list | Query: `page`, `size` | `TaxRecordTaskTodoListPageResponse` |

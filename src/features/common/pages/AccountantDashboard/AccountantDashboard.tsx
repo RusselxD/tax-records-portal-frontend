@@ -1,14 +1,21 @@
 import { useCallback } from "react";
-import { ClipboardList, Send, FileCheck, FolderCheck } from "lucide-react";
+import { ClipboardList, Send, FileCheck, FolderCheck, Clock, XCircle } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import { taxRecordTaskAPI } from "../../../../api/tax-record-task";
-import NeedsAttention from "./components/NeedsAttention";
 import TaskStats from "./components/TaskStats";
 import TaskList from "./components/TaskList";
 
 export default function Dashboard() {
   usePageTitle("Dashboard");
 
+  const fetchOverdue = useCallback(
+    (page: number, size: number) => taxRecordTaskAPI.getOverdueTasks(page, size),
+    [],
+  );
+  const fetchRejected = useCallback(
+    (page: number, size: number) => taxRecordTaskAPI.getRejectedTasks(page, size),
+    [],
+  );
   const fetchTodo = useCallback(
     (page: number, size: number) => taxRecordTaskAPI.getTodoTasks(page, size),
     [],
@@ -29,7 +36,23 @@ export default function Dashboard() {
   return (
     <div className="space-y-4">
       <TaskStats />
-      <NeedsAttention />
+      <TaskList
+        title="Overdue Tasks"
+        icon={<Clock className="w-4 h-4" />}
+        fetchFn={fetchOverdue}
+        showStatus
+        defaultOpen
+        accent="red"
+        emptyMessage="No overdue tasks — you're on track."
+      />
+      <TaskList
+        title="Rejected Tasks"
+        icon={<XCircle className="w-4 h-4" />}
+        fetchFn={fetchRejected}
+        defaultOpen
+        accent="red"
+        emptyMessage="No rejected tasks right now."
+      />
       <TaskList
         title="To-do List"
         icon={<ClipboardList className="w-4 h-4" />}

@@ -230,6 +230,14 @@ export interface TaxRecordTaskOverdueItemResponse {
   createdBy: string;
 }
 
+export interface TaxRecordTaskOverduePageResponse {
+  content: TaxRecordTaskOverdueItemResponse[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
 export interface TaxRecordTaskRejectedItemResponse {
   id: string;
   clientName: string;
@@ -242,6 +250,14 @@ export interface TaxRecordTaskRejectedItemResponse {
   isOverdue: boolean;
   createdAt: string;
   createdBy: string;
+}
+
+export interface TaxRecordTaskRejectedPageResponse {
+  content: TaxRecordTaskRejectedItemResponse[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
 }
 
 export interface ReviewerQueueItemResponse {
