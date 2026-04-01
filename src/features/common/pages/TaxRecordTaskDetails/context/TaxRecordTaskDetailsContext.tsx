@@ -192,13 +192,13 @@ export function TaxRecordTaskDetailsProvider({
     [taskId, files, refetchTask, handleConflict, toastError],
   );
 
-  // Output/proof file actions — only refetch files (no action flags depend on these)
+  // Output file actions — refetch files + task (canSubmit depends on output file)
   const uploadOutputFile = useCallback(
     async (file: File) => {
       await taxRecordTaskAPI.uploadOutputFile(taskId, file).catch(handleConflict);
-      await refetchFiles();
+      await Promise.all([refetchFiles(), refetchTask()]);
     },
-    [taskId, refetchFiles, handleConflict],
+    [taskId, refetchFiles, refetchTask, handleConflict],
   );
 
   const deleteOutputFile = useCallback(async () => {
@@ -206,12 +206,13 @@ export function TaxRecordTaskDetailsProvider({
     setFiles((f) => f ? { ...f, outputFile: null } : f);
     try {
       await taxRecordTaskAPI.deleteOutputFile(taskId);
+      await refetchTask();
     } catch (err) {
       setFiles(prev);
       if (!isConflictError(err)) toastError(getErrorMessage(err, "Failed to delete file."));
       handleConflict(err);
     }
-  }, [taskId, files, handleConflict, toastError]);
+  }, [taskId, files, refetchTask, handleConflict, toastError]);
 
   const uploadProofOfFiling = useCallback(
     async (file: File) => {
