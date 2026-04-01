@@ -25,6 +25,7 @@ import type {
   InfoSectionKey,
 } from "../types/client-info";
 import type { ProfileReviewPageResponse, ProfileReviewFilters, ProfileUpdateReviewResponse } from "../types/client-profile";
+import type { ClientAccountantResponse } from "../types/client";
 import type { LookupResponse } from "../types/tax-record-task";
 import apiClient from "./axios-config";
 import { buildParams } from "./api-utils";
@@ -160,6 +161,13 @@ export const clientAPI = {
 
   getActiveClients: async (): Promise<LookupResponse[]> => {
     const res = await apiClient.get("/clients/active");
+    return res.data;
+  },
+
+  getClientAccountants: async (
+    clientId: string,
+  ): Promise<ClientAccountantResponse[]> => {
+    const res = await apiClient.get(`/clients/${clientId}/accountants`);
     return res.data;
   },
 

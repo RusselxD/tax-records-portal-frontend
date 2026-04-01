@@ -1,15 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { Button, Dropdown, Input } from "../../../../../../components/common";
+import { Button, Dropdown, Input, MultiSelect } from "../../../../../../components/common";
 import { taxRecordTaskAPI } from "../../../../../../api/tax-record-task";
 import { clientAPI } from "../../../../../../api/client";
-import { usersAPI } from "../../../../../../api/users";
 import { useToast } from "../../../../../../contexts/ToastContext";
 import { getErrorMessage } from "../../../../../../lib/api-error";
 import { PERIOD, type Period } from "../../../../../../types/tax-record-task";
 import type { TaxRecordLookupResponse } from "../../../../../../types/tax-record-task";
 import type { LookupResponse } from "../../../../../../types/tax-record-task";
-import type { AccountantListItemResponse } from "../../../../../../types/user";
+import type { ClientAccountantResponse } from "../../../../../../types/client";
 import LookupField from "./components/LookupField";
 
 const periodOptions = [
@@ -49,30 +48,28 @@ export default function CreateTaxRecordTaskForm({ onCancel, onSuccess }: CreateT
   const [period, setPeriod] = useState("");
   const [deadline, setDeadline] = useState("");
   const [description, setDescription] = useState("");
-  const [assignedToId, setAssignedToId] = useState("");
+  const [assignedToIds, setAssignedToIds] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Lookup data
   const [clients, setClients] = useState<LookupResponse[]>([]);
-  const [accountants, setAccountants] = useState<AccountantListItemResponse[]>([]);
+  const [accountants, setAccountants] = useState<ClientAccountantResponse[]>([]);
   const [categories, setCategories] = useState<TaxRecordLookupResponse[]>([]);
   const [subCategories, setSubCategories] = useState<TaxRecordLookupResponse[]>([]);
   const [taskNames, setTaskNames] = useState<TaxRecordLookupResponse[]>([]);
   const [isLoadingRefs, setIsLoadingRefs] = useState(true);
 
-  // Fetch clients + accountants + categories on mount
+  // Fetch clients + categories on mount
   useEffect(() => {
     let cancelled = false;
     async function fetchRefs() {
       try {
-        const [clientsData, accountantsData, categoriesData] = await Promise.all([
+        const [clientsData, categoriesData] = await Promise.all([
           clientAPI.getActiveClients(),
-          usersAPI.getAccountants("CSD,OOS"),
           taxRecordTaskAPI.getCategories(),
         ]);
         if (!cancelled) {
           setClients(clientsData);
-          setAccountants(accountantsData);
           setCategories(categoriesData);
         }
       } catch {
@@ -84,6 +81,18 @@ export default function CreateTaxRecordTaskForm({ onCancel, onSuccess }: CreateT
     fetchRefs();
     return () => { cancelled = true; };
   }, []);
+
+  // Fetch assigned accountants when client changes
+  useEffect(() => {
+    setAccountants([]);
+    setAssignedToIds([]);
+    if (!clientId) return;
+    let cancelled = false;
+    clientAPI.getClientAccountants(clientId).then((data) => {
+      if (!cancelled) setAccountants(data);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [clientId]);
 
   // Fetch sub-categories when category changes
   useEffect(() => {
@@ -127,7 +136,7 @@ export default function CreateTaxRecordTaskForm({ onCancel, onSuccess }: CreateT
   const accountantOptions = accountants.map((a) => ({ value: a.id, label: a.displayName }));
 
   const canSubmit = clientId && categoryId != null && subCategoryId != null && taskNameId != null
-    && year && period && deadline && assignedToId;
+    && year && period && deadline && assignedToIds.length > 0;
 
   const handleSubmit = useCallback(async () => {
     if (!canSubmit) return;
@@ -142,7 +151,7 @@ export default function CreateTaxRecordTaskForm({ onCancel, onSuccess }: CreateT
         period: period as Period,
         deadline,
         description: description.trim() || null,
-        assignedToId,
+        assignedToIds,
       });
       toastSuccess("Task Created", "The tax record task has been created.");
       onSuccess();
@@ -151,7 +160,7 @@ export default function CreateTaxRecordTaskForm({ onCancel, onSuccess }: CreateT
     } finally {
       setIsSubmitting(false);
     }
-  }, [canSubmit, clientId, categoryId, subCategoryId, taskNameId, year, period, deadline, description, assignedToId, toastSuccess, toastError, onSuccess]);
+  }, [canSubmit, clientId, categoryId, subCategoryId, taskNameId, year, period, deadline, description, assignedToIds, toastSuccess, toastError, onSuccess]);
 
   if (isLoadingRefs) {
     return (
@@ -189,12 +198,13 @@ export default function CreateTaxRecordTaskForm({ onCancel, onSuccess }: CreateT
               />
             </div>
             <div>
-              <Dropdown
+              <MultiSelect
                 label="Assigned To"
                 options={accountantOptions}
-                value={assignedToId}
-                onChange={setAssignedToId}
-                placeholder="Select accountant"
+                value={assignedToIds}
+                onChange={setAssignedToIds}
+                placeholder={clientId ? "Select accountants" : "Select a client first"}
+                disabled={!clientId}
               />
             </div>
           </div>

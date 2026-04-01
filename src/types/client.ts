@@ -170,3 +170,8 @@ export interface ClientSummaryResponse {
   assignedCsdOosAccountants: string[];
   assignedQtdAccountants: string[];
 }
+
+export interface ClientAccountantResponse {
+  id: string;
+  displayName: string;
+}

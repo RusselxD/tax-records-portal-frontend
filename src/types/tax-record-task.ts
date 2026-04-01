@@ -99,7 +99,7 @@ export interface CreateTaxRecordTaskRequest {
   period: Period;
   deadline: string;
   description: string | null;
-  assignedToId: string;
+  assignedToIds: string[];
 }
 
 export interface CreateTaxRecordTaskResponse {
