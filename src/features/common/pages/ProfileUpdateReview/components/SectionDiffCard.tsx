@@ -1,5 +1,6 @@
-import { Plus, Minus, Pencil } from "lucide-react";
-import { FilePreviewButton } from "../../../../../components/common";
+import { useState } from "react";
+import { Plus, Minus, Pencil, FileText } from "lucide-react";
+import { FilePreviewOverlay } from "../../../../../components/common";
 import type {
   DiffSection,
   DiffChange,
@@ -11,14 +12,28 @@ import type {
 
 const CARD_SHADOW = "0 1px 6px rgba(0,0,0,0.08)";
 
-function FileValue({ value, fileId }: { value: string | null; fileId?: string }) {
-  if (!value) return <span>—</span>;
-  if (!fileId) return <span>{value}</span>;
+function DiffFileRow({ fileId, fileName, variant }: { fileId: string; fileName: string; variant: "old" | "new" }) {
+  const [previewOpen, setPreviewOpen] = useState(false);
+
+  const styles = variant === "old"
+    ? "border-red-200 bg-red-50/60 hover:bg-red-100/60 hover:border-red-300"
+    : "border-green-200 bg-green-50/60 hover:bg-green-100/60 hover:border-green-300";
+
   return (
-    <span className="flex items-center gap-2 flex-wrap">
-      <span className="break-words">{value}</span>
-      <FilePreviewButton fileId={fileId} fileName={value} />
-    </span>
+    <>
+      <div
+        onClick={() => setPreviewOpen(true)}
+        className={`flex items-center gap-2.5 rounded-md border px-3 py-2 cursor-pointer transition-colors ${styles}`}
+      >
+        <FileText className="h-4 w-4 text-gray-400 shrink-0" />
+        <span className="flex-1 truncate text-sm font-medium text-primary" title={fileName}>
+          {fileName}
+        </span>
+      </div>
+      {previewOpen && (
+        <FilePreviewOverlay fileId={fileId} fileName={fileName} setModalOpen={setPreviewOpen} />
+      )}
+    </>
   );
 }
 
@@ -26,12 +41,24 @@ function FieldRow({ change }: { change: DiffFieldChange }) {
   return (
     <div className="grid grid-cols-[2fr_1.5fr_1.5fr] gap-4 px-5 py-3 items-start">
       <span className="text-sm text-gray-500 leading-relaxed">{change.field}</span>
-      <span className="text-sm text-gray-500 bg-red-50 rounded px-2.5 py-1.5 leading-relaxed break-words">
-        <FileValue value={change.old} fileId={change.oldFileId} />
-      </span>
-      <span className="text-sm text-primary bg-green-50 rounded px-2.5 py-1.5 leading-relaxed break-words">
-        <FileValue value={change.new} fileId={change.newFileId} />
-      </span>
+      <div>
+        {change.oldFileId && change.old ? (
+          <DiffFileRow fileId={change.oldFileId} fileName={change.old} variant="old" />
+        ) : (
+          <span className="text-sm text-gray-500 bg-red-50 rounded px-2.5 py-1.5 leading-relaxed break-words inline-block">
+            {change.old ?? "—"}
+          </span>
+        )}
+      </div>
+      <div>
+        {change.newFileId && change.new ? (
+          <DiffFileRow fileId={change.newFileId} fileName={change.new} variant="new" />
+        ) : (
+          <span className="text-sm text-primary bg-green-50 rounded px-2.5 py-1.5 leading-relaxed break-words inline-block">
+            {change.new ?? "—"}
+          </span>
+        )}
+      </div>
     </div>
   );
 }
@@ -49,12 +76,24 @@ function ModifiedItem({ change }: { change: DiffModifiedChange }) {
       {change.fields.map((f, i) => (
         <div key={i} className="grid grid-cols-[2fr_1.5fr_1.5fr] gap-4 px-5 py-2.5 pl-10 items-start">
           <span className="text-sm text-gray-500 leading-relaxed">{f.field}</span>
-          <span className="text-sm text-gray-500 bg-red-50 rounded px-2.5 py-1.5 leading-relaxed break-words">
-            <FileValue value={f.old} fileId={f.oldFileId} />
-          </span>
-          <span className="text-sm text-primary bg-green-50 rounded px-2.5 py-1.5 leading-relaxed break-words">
-            <FileValue value={f.new} fileId={f.newFileId} />
-          </span>
+          <div>
+            {f.oldFileId && f.old ? (
+              <DiffFileRow fileId={f.oldFileId} fileName={f.old} variant="old" />
+            ) : (
+              <span className="text-sm text-gray-500 bg-red-50 rounded px-2.5 py-1.5 leading-relaxed break-words inline-block">
+                {f.old}
+              </span>
+            )}
+          </div>
+          <div>
+            {f.newFileId && f.new ? (
+              <DiffFileRow fileId={f.newFileId} fileName={f.new} variant="new" />
+            ) : (
+              <span className="text-sm text-primary bg-green-50 rounded px-2.5 py-1.5 leading-relaxed break-words inline-block">
+                {f.new}
+              </span>
+            )}
+          </div>
         </div>
       ))}
     </>
@@ -74,9 +113,15 @@ function AddedItem({ change }: { change: DiffAddedChange }) {
       {change.fields.map((f, i) => (
         <div key={i} className="grid grid-cols-[2fr_3fr] gap-4 px-5 py-2.5 pl-10 items-start">
           <span className="text-sm text-gray-500 leading-relaxed">{f.field}</span>
-          <span className="text-sm text-primary bg-green-50 rounded px-2.5 py-1.5 leading-relaxed break-words">
-            <FileValue value={f.value} fileId={f.newFileId} />
-          </span>
+          <div>
+            {f.newFileId && f.value ? (
+              <DiffFileRow fileId={f.newFileId} fileName={f.value} variant="new" />
+            ) : (
+              <span className="text-sm text-primary bg-green-50 rounded px-2.5 py-1.5 leading-relaxed break-words inline-block">
+                {f.value}
+              </span>
+            )}
+          </div>
         </div>
       ))}
     </>
