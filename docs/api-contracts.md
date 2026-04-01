@@ -80,7 +80,8 @@ Source: `src/api/client.ts`
 | Method | Path | Description | Params / Body | Response |
 |--------|------|-------------|---------------|----------|
 | GET | `/clients` | Paginated client list | Query: `page`, `size`, `search` | `ClientPageResponse` |
-| GET | `/clients/active` | Active clients lookup | -- | `LookupResponse[]` |
+| GET | `/clients/active` | Active clients lookup (Manager: all; QTD/OOS/CSD: assigned only) | -- | `LookupResponse[]` |
+| GET | `/clients/{clientId}/accountants` | Accountants assigned to a client | -- | `ClientAccountantResponse[]` |
 | GET | `/clients/assigned` | Current user's assigned clients | Query: `page`, `size` | `AssignedClientsResponse` |
 | POST | `/clients` | Create new client (OOS) | -- | `CreateClientResponse` (201) |
 | DELETE | `/clients/{clientId}` | Delete client draft | -- | void (204) |
@@ -197,7 +198,7 @@ Source: `src/api/tax-record-task.ts`
 
 | Method | Path | Description | Body | Response |
 |--------|------|-------------|------|----------|
-| POST | `/tax-record-tasks` | Create single task | `CreateTaxRecordTaskRequest` | `CreateTaxRecordTaskResponse` (201) |
+| POST | `/tax-record-tasks` | Create single task | `CreateTaxRecordTaskRequest` (`assignedToIds: UUID[]`) | `CreateTaxRecordTaskResponse` (201) |
 | POST | `/tax-record-tasks/bulk` | Bulk import tasks | `BulkImportItem[]` | `BulkImportResponse` |
 | GET | `/tax-record-tasks/bulk-template` | Download bulk template | -- | blob (xlsx) |
 | GET | `/tax-record-tasks/{id}` | Get task detail | -- | `TaxRecordTaskDetailResponse` |
