@@ -65,7 +65,6 @@ interface TaskListProps {
   fetchFn: (page: number, size: number) => Promise<PageResponse<TaskItem>>;
   showStatus?: boolean;
   emptyMessage?: string;
-  defaultOpen?: boolean;
   accent?: AccentColor;
 }
 
@@ -75,12 +74,11 @@ export default function TaskList({
   fetchFn,
   showStatus = false,
   emptyMessage = "No tasks here right now.",
-  defaultOpen = false,
   accent = "navy",
 }: TaskListProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useState(false);
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);

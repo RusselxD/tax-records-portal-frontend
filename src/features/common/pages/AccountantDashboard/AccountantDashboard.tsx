@@ -41,7 +41,6 @@ export default function Dashboard() {
         icon={<Clock className="w-4 h-4" />}
         fetchFn={fetchOverdue}
         showStatus
-        defaultOpen
         accent="red"
         emptyMessage="No overdue tasks — you're on track."
       />
@@ -49,7 +48,6 @@ export default function Dashboard() {
         title="Rejected Tasks"
         icon={<XCircle className="w-4 h-4" />}
         fetchFn={fetchRejected}
-        defaultOpen
         accent="red"
         emptyMessage="No rejected tasks right now."
       />
@@ -58,7 +56,6 @@ export default function Dashboard() {
         icon={<ClipboardList className="w-4 h-4" />}
         fetchFn={fetchTodo}
         showStatus
-        defaultOpen
         accent="navy"
         emptyMessage="You're all caught up — no tasks to do right now."
       />
