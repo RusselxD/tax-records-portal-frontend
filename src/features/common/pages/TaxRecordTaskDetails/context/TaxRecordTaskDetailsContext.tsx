@@ -156,21 +156,21 @@ export function TaxRecordTaskDetailsProvider({
   const canMarkCompleted = actions?.canMarkCompleted ?? false;
   const canEditProof = actions?.canUploadProof ?? false;
 
-  // Working file actions — only refetch files
+  // Working file actions — refetch files + task (canSubmit depends on working files)
   const uploadWorkingFile = useCallback(
     async (file: File) => {
       await taxRecordTaskAPI.uploadWorkingFile(taskId, file).catch(handleConflict);
-      await refetchFiles();
+      await Promise.all([refetchFiles(), refetchTask()]);
     },
-    [taskId, refetchFiles, handleConflict],
+    [taskId, refetchFiles, refetchTask, handleConflict],
   );
 
   const addWorkingLink = useCallback(
     async (url: string, label: string) => {
       await taxRecordTaskAPI.addWorkingLink(taskId, url, label).catch(handleConflict);
-      await refetchFiles();
+      await Promise.all([refetchFiles(), refetchTask()]);
     },
-    [taskId, refetchFiles, handleConflict],
+    [taskId, refetchFiles, refetchTask, handleConflict],
   );
 
   const deleteWorkingFile = useCallback(
@@ -182,22 +182,23 @@ export function TaxRecordTaskDetailsProvider({
       } : f);
       try {
         await taxRecordTaskAPI.deleteWorkingFile(taskId, workingFileId);
+        await refetchTask();
       } catch (err) {
         setFiles(prev);
         if (!isConflictError(err)) toastError(getErrorMessage(err, "Failed to delete file."));
         handleConflict(err);
       }
     },
-    [taskId, files, handleConflict, toastError],
+    [taskId, files, refetchTask, handleConflict, toastError],
   );
 
-  // Single file actions — refetch files + task (action flags may change)
+  // Output/proof file actions — only refetch files (no action flags depend on these)
   const uploadOutputFile = useCallback(
     async (file: File) => {
       await taxRecordTaskAPI.uploadOutputFile(taskId, file).catch(handleConflict);
-      await Promise.all([refetchFiles(), refetchTask()]);
+      await refetchFiles();
     },
-    [taskId, refetchFiles, refetchTask, handleConflict],
+    [taskId, refetchFiles, handleConflict],
   );
 
   const deleteOutputFile = useCallback(async () => {
@@ -205,20 +206,19 @@ export function TaxRecordTaskDetailsProvider({
     setFiles((f) => f ? { ...f, outputFile: null } : f);
     try {
       await taxRecordTaskAPI.deleteOutputFile(taskId);
-      await refetchTask();
     } catch (err) {
       setFiles(prev);
       if (!isConflictError(err)) toastError(getErrorMessage(err, "Failed to delete file."));
       handleConflict(err);
     }
-  }, [taskId, files, refetchTask, handleConflict, toastError]);
+  }, [taskId, files, handleConflict, toastError]);
 
   const uploadProofOfFiling = useCallback(
     async (file: File) => {
       await taxRecordTaskAPI.uploadProofOfFiling(taskId, file).catch(handleConflict);
-      await Promise.all([refetchFiles(), refetchTask()]);
+      await refetchFiles();
     },
-    [taskId, refetchFiles, refetchTask, handleConflict],
+    [taskId, refetchFiles, handleConflict],
   );
 
   const deleteProofOfFiling = useCallback(async () => {
@@ -226,13 +226,12 @@ export function TaxRecordTaskDetailsProvider({
     setFiles((f) => f ? { ...f, proofOfFilingFile: null } : f);
     try {
       await taxRecordTaskAPI.deleteProofOfFiling(taskId);
-      await refetchTask();
     } catch (err) {
       setFiles(prev);
       if (!isConflictError(err)) toastError(getErrorMessage(err, "Failed to delete file."));
       handleConflict(err);
     }
-  }, [taskId, files, refetchTask, handleConflict, toastError]);
+  }, [taskId, files, handleConflict, toastError]);
 
   // Workflow actions — full refetch so server-recomputed `actions` flags update the UI
   const submitTask = useCallback(
