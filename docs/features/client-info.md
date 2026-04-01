@@ -119,6 +119,10 @@ Used for creating and editing client profiles.
 
 Profile updates do NOT change the client's status.
 
+### File Previews in Diff
+
+For file fields (scanned IDs, engagement letters, etc.), the diff includes `oldFileId` and `newFileId` alongside the filename strings. The reviewer can preview both the current and proposed files directly from the diff view using `FilePreviewButton`, which opens a `FilePreviewOverlay` modal. Non-file fields show plain text as before.
+
 ## ClientInfoPageShell
 
 Shared layout component used by client info pages. Accepts `headerActions?: ReactNode` for role-specific actions in the header area (e.g., Manager's "Change Status" button).

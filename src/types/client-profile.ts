@@ -72,18 +72,20 @@ export interface DiffFieldChange {
   field: string;
   old: string | null;
   new: string | null;
+  oldFileId?: string;
+  newFileId?: string;
 }
 
 export interface DiffModifiedChange {
   type: "modified";
   itemLabel: string;
-  fields: { field: string; old: string; new: string }[];
+  fields: { field: string; old: string; new: string; oldFileId?: string; newFileId?: string }[];
 }
 
 export interface DiffAddedChange {
   type: "added";
   itemLabel: string;
-  fields: { field: string; value: string }[];
+  fields: { field: string; value: string; newFileId?: string }[];
 }
 
 export interface DiffRemovedChange {

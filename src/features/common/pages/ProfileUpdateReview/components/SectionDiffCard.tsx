@@ -1,4 +1,5 @@
 import { Plus, Minus, Pencil } from "lucide-react";
+import { FilePreviewButton } from "../../../../../components/common";
 import type {
   DiffSection,
   DiffChange,
@@ -10,15 +11,26 @@ import type {
 
 const CARD_SHADOW = "0 1px 6px rgba(0,0,0,0.08)";
 
+function FileValue({ value, fileId }: { value: string | null; fileId?: string }) {
+  if (!value) return <span>—</span>;
+  if (!fileId) return <span>{value}</span>;
+  return (
+    <span className="flex items-center gap-2 flex-wrap">
+      <span className="break-words">{value}</span>
+      <FilePreviewButton fileId={fileId} fileName={value} />
+    </span>
+  );
+}
+
 function FieldRow({ change }: { change: DiffFieldChange }) {
   return (
     <div className="grid grid-cols-[2fr_1.5fr_1.5fr] gap-4 px-5 py-3 items-start">
       <span className="text-sm text-gray-500 leading-relaxed">{change.field}</span>
       <span className="text-sm text-gray-500 bg-red-50 rounded px-2.5 py-1.5 leading-relaxed break-words">
-        {change.old ?? "—"}
+        <FileValue value={change.old} fileId={change.oldFileId} />
       </span>
       <span className="text-sm text-primary bg-green-50 rounded px-2.5 py-1.5 leading-relaxed break-words">
-        {change.new ?? "—"}
+        <FileValue value={change.new} fileId={change.newFileId} />
       </span>
     </div>
   );
@@ -38,10 +50,10 @@ function ModifiedItem({ change }: { change: DiffModifiedChange }) {
         <div key={i} className="grid grid-cols-[2fr_1.5fr_1.5fr] gap-4 px-5 py-2.5 pl-10 items-start">
           <span className="text-sm text-gray-500 leading-relaxed">{f.field}</span>
           <span className="text-sm text-gray-500 bg-red-50 rounded px-2.5 py-1.5 leading-relaxed break-words">
-            {f.old}
+            <FileValue value={f.old} fileId={f.oldFileId} />
           </span>
           <span className="text-sm text-primary bg-green-50 rounded px-2.5 py-1.5 leading-relaxed break-words">
-            {f.new}
+            <FileValue value={f.new} fileId={f.newFileId} />
           </span>
         </div>
       ))}
@@ -63,7 +75,7 @@ function AddedItem({ change }: { change: DiffAddedChange }) {
         <div key={i} className="grid grid-cols-[2fr_3fr] gap-4 px-5 py-2.5 pl-10 items-start">
           <span className="text-sm text-gray-500 leading-relaxed">{f.field}</span>
           <span className="text-sm text-primary bg-green-50 rounded px-2.5 py-1.5 leading-relaxed break-words">
-            {f.value}
+            <FileValue value={f.value} fileId={f.newFileId} />
           </span>
         </div>
       ))}
