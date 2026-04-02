@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { getRolePrefix } from "../../../../../constants/roles";
@@ -9,6 +9,7 @@ import { taxRecordTaskAPI } from "../../../../../api/tax-record-task";
 import { TAX_RECORD_TASK_STATUS } from "../../../../../types/tax-record-task";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import { ConfirmActionModal } from "../../../../../components/common";
+import BreadcrumbNav from "../../../../../components/common/BreadcrumbNav";
 import {
   statusStyles,
   statusDotColors,
@@ -29,16 +30,13 @@ export default function TaskHeader() {
 
   return (
     <div>
-      <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-3">
-        <button
-          onClick={() => navigate(`/${prefix}/tasks`)}
-          className="hover:text-primary transition-colors"
-        >
-          Tasks
-        </button>
-        <ChevronRight className="w-3.5 h-3.5" />
-        <span className="text-primary font-medium truncate">{task.taskName}</span>
-      </nav>
+      <BreadcrumbNav
+        items={[
+          { label: "Tasks", onClick: () => navigate(`/${prefix}/tasks`) },
+          { label: task.taskName },
+        ]}
+        className="mb-3"
+      />
 
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-primary truncate">

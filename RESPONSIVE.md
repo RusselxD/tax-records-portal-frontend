@@ -62,7 +62,9 @@ Wraps any `<table>` to provide card-stack view on mobile. The existing desktop t
 - `cardClassName` — Extra classes per card (e.g. red border for overdue)
 - `children` — The desktop `<table>`, wrapped in `overflow-x-auto` on `sm+`
 
-**Hook:** `useIsMobile()` from `src/hooks/useMediaQuery.ts` — returns `true` below 640px.
+**Hook:** `useIsCompact()` from `src/hooks/useMediaQuery.ts` — returns `true` below 768px (md). Tables switch to card-stack at `md` because 5-6 column tables are unusable between 640-768px.
+
+**Note:** `useIsMobile()` (640px/sm) is available for other components like modals and layout shifts. `useIsCompact()` (768px/md) is specifically for data tables.
 
 ### Modal
 
@@ -109,6 +111,17 @@ Inner content: `flex flex-col sm:flex-row ... px-4 sm:px-8`
 - **Preferred:** 44px+ for primary actions
 - **Input/Button height:** `py-3 sm:py-2.5` — 48px on mobile, 40px on desktop
 - **Dropdown triggers:** Same `py-3 sm:py-2.5` pattern
+
+## Viewport Units
+
+Always use `dvh` (dynamic viewport height) instead of `vh`. On mobile browsers, `100vh` includes the area behind the URL bar, causing content to be hidden. `100dvh` adapts to the actual visible viewport.
+
+- `h-dvh` instead of `h-screen` — Sidebar, splash screens
+- `min-h-dvh` instead of `min-h-screen` — Page layouts, error pages
+- `max-h-[90dvh]` instead of `max-h-[90vh]` — Modal max height
+- `calc(100dvh - X)` instead of `calc(100vh - X)` — Scrollable panels
+
+Tailwind 3.4+ provides native `h-dvh`, `min-h-dvh`, `max-h-dvh` utilities.
 
 ## Safe Area Insets
 

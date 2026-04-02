@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import type { ReviewerDecidedItemResponse } from "../../../../../../../types/tax-record-task";
+import { TAX_RECORD_TASK_STATUS, type ReviewerDecidedItemResponse } from "../../../../../../../types/tax-record-task";
 import { formatDate } from "../../../../../../../lib/formatters";
 import { periodLabels } from "../../../../../../../constants/tax-record-task";
 import { ResponsiveTable } from "../../../../../../../components/common";
@@ -7,7 +7,7 @@ import type { CardField } from "../../../../../../../components/common/Responsiv
 import { CheckCheck } from "lucide-react";
 
 function DecisionBadge({ decision }: { decision: ReviewerDecidedItemResponse["decision"] }) {
-  if (decision === "APPROVED_FOR_FILING") {
+  if (decision === TAX_RECORD_TASK_STATUS.APPROVED_FOR_FILING) {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium border bg-emerald-50 text-emerald-700 border-emerald-200">
         Approved

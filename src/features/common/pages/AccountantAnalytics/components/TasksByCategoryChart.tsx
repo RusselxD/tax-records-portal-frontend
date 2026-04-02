@@ -51,7 +51,7 @@ export default function TasksByCategoryChart() {
           data.data.length === 0 ? (
             <EmptyState />
           ) : (
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
               <BarChart
                 data={data.data.map((d) => ({
                   category: d.category,
@@ -75,8 +75,8 @@ export default function TasksByCategoryChart() {
                   dataKey="category"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: "#374151" }}
-                  width={160}
+                  tick={{ fontSize: 11, fill: "#374151" }}
+                  width={100}
                 />
                 <Tooltip
                   contentStyle={{

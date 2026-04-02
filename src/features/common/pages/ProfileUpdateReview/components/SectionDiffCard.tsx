@@ -10,7 +10,6 @@ import type {
   DiffRemovedChange,
 } from "../../../../../types/client-profile";
 
-const CARD_SHADOW = "0 1px 6px rgba(0,0,0,0.08)";
 
 function DiffFileRow({ fileId, fileName, variant }: { fileId: string; fileName: string; variant: "old" | "new" }) {
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -161,7 +160,7 @@ export default function SectionDiffCard({ section }: { section: DiffSection }) {
   );
 
   return (
-    <div className="rounded-lg bg-white border border-gray-200" style={{ boxShadow: CARD_SHADOW }}>
+    <div className="rounded-lg bg-white border border-gray-200 custom-shadow">
       <div className="px-5 py-3.5 border-b border-gray-100">
         <h3 className="text-sm font-semibold text-primary">{section.sectionLabel}</h3>
       </div>

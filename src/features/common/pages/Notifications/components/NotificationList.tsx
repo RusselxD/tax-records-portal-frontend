@@ -73,7 +73,7 @@ function NotificationItem({
   return (
     <div
       onClick={handleClick}
-      className={`group relative flex cursor-pointer gap-3 rounded-lg border p-4 transition-colors hover:bg-gray-50 ${
+      className={`group relative flex cursor-pointer gap-3 rounded-lg border p-2 md:p-4 transition-colors hover:bg-gray-50 ${
         notification.isRead
           ? "border-gray-200 bg-white"
           : "border-blue-200 bg-blue-50/30"

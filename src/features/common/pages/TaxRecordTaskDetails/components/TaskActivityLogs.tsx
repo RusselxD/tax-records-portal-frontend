@@ -100,7 +100,7 @@ export default function TaskActivityLogs() {
           <p className="text-sm text-gray-400">No activity yet</p>
         </div>
       ) : (
-        <div className="px-4 py-4 max-h-[calc(100vh-120px)] overflow-y-auto">
+        <div className="px-4 py-4 max-h-[calc(100dvh-120px)] overflow-y-auto">
           {logs.map((log, i) => (
             <LogEntry
               key={log.id}

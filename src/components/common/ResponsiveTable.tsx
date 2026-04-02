@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { ChevronDown, MoreVertical } from "lucide-react";
-import { useIsMobile } from "../../hooks/useMediaQuery";
+import { useIsCompact } from "../../hooks/useMediaQuery";
 
 /* ── Types ─────────────────────────────────────────────── */
 
@@ -30,6 +30,8 @@ export interface ResponsiveTableProps<T> {
   loadingCount?: number;
   /** Message when data is empty */
   emptyMessage?: string;
+  /** Filters to show above card-stack on mobile (for table-header filters that are hidden) */
+  mobileFilters?: ReactNode;
   /** The desktop table — rendered as-is on sm+ */
   children: ReactNode;
 }
@@ -173,9 +175,10 @@ export default function ResponsiveTable<T>({
   isLoading,
   loadingCount = 5,
   emptyMessage = "No results found.",
+  mobileFilters,
   children,
 }: ResponsiveTableProps<T>) {
-  const isMobile = useIsMobile();
+  const isMobile = useIsCompact();
 
   if (!isMobile) {
     // Desktop: render the table children inside a horizontal scroll wrapper
@@ -183,37 +186,33 @@ export default function ResponsiveTable<T>({
   }
 
   // Mobile: card-stack view
-  if (isLoading) {
-    return (
-      <div className="space-y-3">
-        {Array.from({ length: loadingCount }).map((_, i) => (
-          <SkeletonCard key={i} />
-        ))}
-      </div>
-    );
-  }
-
-  if (data.length === 0) {
-    return (
-      <div className="bg-white border border-gray-200 rounded-lg px-4 py-12 text-center text-sm text-gray-500">
-        {emptyMessage}
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-3">
-      {data.map((item) => (
-        <MobileCard
-          key={keyExtractor(item)}
-          item={item}
-          primaryFields={primaryFields}
-          secondaryFields={secondaryFields}
-          onItemClick={onItemClick}
-          actions={actions}
-          cardClassName={cardClassName}
-        />
-      ))}
+      {mobileFilters && (
+        <div className="flex flex-wrap gap-2">{mobileFilters}</div>
+      )}
+
+      {isLoading ? (
+        Array.from({ length: loadingCount }).map((_, i) => (
+          <SkeletonCard key={i} />
+        ))
+      ) : data.length === 0 ? (
+        <div className="bg-white border border-gray-200 rounded-lg px-4 py-12 text-center text-sm text-gray-500">
+          {emptyMessage}
+        </div>
+      ) : (
+        data.map((item) => (
+          <MobileCard
+            key={keyExtractor(item)}
+            item={item}
+            primaryFields={primaryFields}
+            secondaryFields={secondaryFields}
+            onItemClick={onItemClick}
+            actions={actions}
+            cardClassName={cardClassName}
+          />
+        ))
+      )}
     </div>
   );
 }

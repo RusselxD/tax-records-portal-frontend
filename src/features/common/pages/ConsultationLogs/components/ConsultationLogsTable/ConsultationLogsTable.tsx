@@ -148,6 +148,31 @@ export default function ConsultationLogsTable() {
         onItemClick={handleItemClick}
         isLoading={isFetching}
         emptyMessage="No consultation logs found."
+        mobileFilters={
+          <>
+            <Dropdown
+              options={clientOptions}
+              value={filters.clientId || ""}
+              onChange={setClientFilter}
+              placeholder="Client"
+              className="flex-1 min-w-0"
+            />
+            <Dropdown
+              options={billableOptions}
+              value={(filters.billableType as string) || ""}
+              onChange={setBillableFilter}
+              placeholder="Type"
+              className="flex-1 min-w-0"
+            />
+            <Dropdown
+              options={statusOptions}
+              value={(filters.status as string) || ""}
+              onChange={setStatusFilter}
+              placeholder="Status"
+              className="flex-1 min-w-0"
+            />
+          </>
+        }
       >
         <table className="w-full table-fixed">
           <thead>

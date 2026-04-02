@@ -9,7 +9,7 @@ const AuthFooter = () => (
 
 export default function AuthLayout() {
   return (
-    <div className="flex min-h-screen items-start justify-center bg-sidebar-bg pt-[12vh]">
+    <div className="flex min-h-dvh items-start justify-center bg-sidebar-bg pt-[12dvh]">
       <div className="w-full max-w-[420px]">
         <Outlet />
         <AuthFooter />

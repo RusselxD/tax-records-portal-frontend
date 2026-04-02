@@ -95,7 +95,7 @@ export default function ReviewActions() {
 
   return (
     <>
-      <div className="rounded-lg bg-white border border-gray-200 p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }}>
+      <div className="rounded-lg bg-white border border-gray-200 p-5 custom-shadow">
         <div className="mb-4">
           <label className="block text-xs font-medium text-gray-500 mb-1">
             Review Comments / Rejection Reason <span className="font-normal text-gray-400">(optional)</span>

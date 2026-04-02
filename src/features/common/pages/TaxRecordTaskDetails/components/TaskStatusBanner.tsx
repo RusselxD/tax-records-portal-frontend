@@ -9,7 +9,7 @@ import {
 import { hasPermission, Permission } from "../../../../../constants/permissions";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { useTaxRecordTaskDetails } from "../context/TaxRecordTaskDetailsContext";
-import type { TaxRecordTaskStatus } from "../../../../../types/tax-record-task";
+import { TAX_RECORD_TASK_STATUS, type TaxRecordTaskStatus } from "../../../../../types/tax-record-task";
 
 interface BannerConfig {
   icon: LucideIcon;
@@ -33,34 +33,34 @@ function resolveBanner(
 ): BannerConfig {
   if (isAccountant) {
     switch (status) {
-      case "OPEN":
+      case TAX_RECORD_TASK_STATUS.OPEN:
         return { icon: Upload, message: "Upload files and submit when ready.", variant: "amber" };
-      case "SUBMITTED":
+      case TAX_RECORD_TASK_STATUS.SUBMITTED:
         return { icon: Clock, message: "Submitted for review. Waiting for approval.", variant: "blue" };
-      case "REJECTED":
+      case TAX_RECORD_TASK_STATUS.REJECTED:
         return { icon: AlertCircle, message: "Task was rejected. Review feedback and re-submit.", variant: "red" };
-      case "APPROVED_FOR_FILING":
+      case TAX_RECORD_TASK_STATUS.APPROVED_FOR_FILING:
         return { icon: FileText, message: "Approved for filing. Mark as filed when done.", variant: "green" };
-      case "FILED":
+      case TAX_RECORD_TASK_STATUS.FILED:
         return { icon: FileText, message: "Filed. Mark as completed when done.", variant: "indigo" };
-      case "COMPLETED":
+      case TAX_RECORD_TASK_STATUS.COMPLETED:
         return { icon: CheckCircle2, message: "Task completed.", variant: "emerald" };
     }
   }
 
   // Manager/QTD
   switch (status) {
-    case "OPEN":
+    case TAX_RECORD_TASK_STATUS.OPEN:
       return { icon: Clock, message: "Waiting for accountant to submit.", variant: "gray" };
-    case "SUBMITTED":
+    case TAX_RECORD_TASK_STATUS.SUBMITTED:
       return { icon: FileText, message: "Ready for review.", variant: "blue" };
-    case "REJECTED":
+    case TAX_RECORD_TASK_STATUS.REJECTED:
       return { icon: AlertCircle, message: "You rejected this task.", variant: "gray" };
-    case "APPROVED_FOR_FILING":
+    case TAX_RECORD_TASK_STATUS.APPROVED_FOR_FILING:
       return { icon: CheckCircle2, message: "Approved for filing.", variant: "green" };
-    case "FILED":
+    case TAX_RECORD_TASK_STATUS.FILED:
       return { icon: FileText, message: "Filed. Waiting for completion.", variant: "indigo" };
-    case "COMPLETED":
+    case TAX_RECORD_TASK_STATUS.COMPLETED:
       return { icon: CheckCircle2, message: "Task completed.", variant: "emerald" };
   }
 }

@@ -21,7 +21,7 @@ export default function Modal({
     <ModalContainer setModalOpen={setModalOpen}>
       <div
         className={`bg-white w-full ${maxWidth} flex flex-col custom-shadow
-          h-full sm:h-auto sm:rounded-lg sm:mx-4 sm:max-h-[90vh]`}
+          h-full sm:h-auto sm:rounded-lg sm:mx-4 sm:max-h-[90dvh]`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header — fixed */}

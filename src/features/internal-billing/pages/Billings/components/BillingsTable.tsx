@@ -119,6 +119,24 @@ export default function BillingsTable({
         actions={renderActions}
         isLoading={isLoading}
         emptyMessage="No invoices found."
+        mobileFilters={
+          <>
+            <Dropdown
+              options={clientOptions}
+              value={clientFilter}
+              onChange={onClientFilterChange}
+              placeholder="Client"
+              className="flex-1 min-w-0"
+            />
+            <Dropdown
+              options={STATUS_OPTIONS}
+              value={statusFilter}
+              onChange={onStatusFilterChange}
+              placeholder="Status"
+              className="flex-1 min-w-0"
+            />
+          </>
+        }
       >
       <table className="w-full text-sm">
         <thead>

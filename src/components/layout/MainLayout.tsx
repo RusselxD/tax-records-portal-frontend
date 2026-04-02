@@ -34,14 +34,14 @@ export default function MainLayout({
   const handleCloseSidebar = () => setSidebarOpen(false);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-dvh bg-gray-100">
       <Sidebar
         navItems={navItems}
         isOpen={sidebarOpen}
         onClose={handleCloseSidebar}
         bottomAction={sidebarBottomAction}
       />
-      <main className="min-h-screen lg:ml-60 transition-[margin] duration-300">
+      <main className="min-h-dvh lg:ml-60 transition-[margin] duration-300">
         <TopNav pageTitle={pageTitle} onMenuClick={handleToggleSidebar} />
         <ContentContainer>{children}</ContentContainer>
       </main>

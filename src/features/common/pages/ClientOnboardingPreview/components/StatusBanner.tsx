@@ -3,7 +3,7 @@ import { Clock, Eye, XCircle, Pencil, type LucideIcon } from "lucide-react";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { getRolePrefix } from "../../../../../constants";
 import { CLIENT_STATUS, type ClientStatus } from "../../../../../types/client";
-import type { ProfileReviewStatus } from "../../../../../types/client-profile";
+import { PROFILE_REVIEW_STATUS, type ProfileReviewStatus } from "../../../../../types/client-profile";
 
 type BannerVariant = "emerald" | "blue" | "amber" | "red";
 
@@ -69,7 +69,7 @@ function resolveBanner(
         };
   }
 
-  if (status === CLIENT_STATUS.ONBOARDING && lastReviewStatus === "REJECTED" && !isReviewer) {
+  if (status === CLIENT_STATUS.ONBOARDING && lastReviewStatus === PROFILE_REVIEW_STATUS.REJECTED && !isReviewer) {
     return {
       variant: "red",
       icon: XCircle,

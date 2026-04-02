@@ -67,3 +67,6 @@ export type { StatusBadgeProps, StatusBadgeConfig } from "./StatusBadge";
 
 export { default as ResponsiveTable, KebabMenu, KebabMenuItem } from "./ResponsiveTable";
 export type { ResponsiveTableProps, CardField } from "./ResponsiveTable";
+
+export { default as BreadcrumbNav } from "./BreadcrumbNav";
+export type { BreadcrumbItem } from "./BreadcrumbNav";

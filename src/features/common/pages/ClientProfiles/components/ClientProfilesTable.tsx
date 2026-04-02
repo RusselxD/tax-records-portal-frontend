@@ -5,6 +5,7 @@ import { PROFILE_REVIEW_TYPE } from "../../../../../types/client-profile";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { getRolePrefix } from "../../../../../constants";
 import { Pagination, ResponsiveTable } from "../../../../../components/common";
+import Dropdown from "../../../../../components/common/Dropdown";
 import type { CardField } from "../../../../../components/common";
 import { useClientProfiles } from "../context/ClientProfilesContext";
 import type {
@@ -12,6 +13,19 @@ import type {
   ProfileReviewType,
   ProfileReviewStatus,
 } from "../../../../../types/client-profile";
+
+const typeOptions = [
+  { label: "All Types", value: "" },
+  { label: "Onboarding", value: "ONBOARDING" },
+  { label: "Profile Update", value: "PROFILE_UPDATE" },
+];
+
+const statusOptions = [
+  { label: "All Statuses", value: "" },
+  { label: "Submitted", value: "SUBMITTED" },
+  { label: "Approved", value: "APPROVED" },
+  { label: "Rejected", value: "REJECTED" },
+];
 
 const HEADERS = [
   { label: "Client", className: "w-[26%] min-w-[180px]" },
@@ -76,20 +90,40 @@ function StatusBadge({ status }: { status: ProfileReviewStatus }) {
   );
 }
 
-const TableHeader = () => (
-  <thead>
-    <tr className="border-b border-gray-200">
-      {HEADERS.map((header) => (
-        <th
-          key={header.label}
-          className={`th-label ${header.className}`}
-        >
-          {header.label}
+function TableHeader() {
+  const { typeFilter, statusFilter, setTypeFilter, setStatusFilter } =
+    useClientProfiles();
+
+  return (
+    <thead>
+      <tr className="border-b border-gray-200">
+        <th className={`th-label ${HEADERS[0].className}`}>Client</th>
+        <th className={`th-label ${HEADERS[1].className}`}>
+          <Dropdown
+            headerStyle
+            portal
+            options={typeOptions}
+            value={typeFilter}
+            onChange={setTypeFilter}
+            placeholder="Type"
+          />
         </th>
-      ))}
-    </tr>
-  </thead>
-);
+        <th className={`th-label ${HEADERS[2].className}`}>
+          <Dropdown
+            headerStyle
+            portal
+            options={statusOptions}
+            value={statusFilter}
+            onChange={setStatusFilter}
+            placeholder="Status"
+          />
+        </th>
+        <th className={`th-label ${HEADERS[3].className}`}>Submitted By</th>
+        <th className={`th-label ${HEADERS[4].className}`}>Submitted</th>
+      </tr>
+    </thead>
+  );
+}
 
 function ReviewRow({ review }: { review: ClientProfileReviewListItem }) {
   const navigate = useNavigate();
@@ -160,7 +194,7 @@ const EmptyState = () => (
 );
 
 export default function ClientProfilesTable() {
-  const { reviews, isFetching, error, refetch, page, totalPages, totalElements, setPage } = useClientProfiles();
+  const { reviews, isFetching, error, refetch, page, totalPages, totalElements, setPage, typeFilter, statusFilter, setTypeFilter, setStatusFilter } = useClientProfiles();
   const navigate = useNavigate();
   const { user } = useAuth();
   const prefix = getRolePrefix(user?.roleKey ?? "");
@@ -217,6 +251,24 @@ export default function ClientProfilesTable() {
         onItemClick={handleItemClick}
         isLoading={isFetching}
         emptyMessage="No client profiles found."
+        mobileFilters={
+          <>
+            <Dropdown
+              options={typeOptions}
+              value={typeFilter}
+              onChange={setTypeFilter}
+              placeholder="Type"
+              className="flex-1 min-w-0"
+            />
+            <Dropdown
+              options={statusOptions}
+              value={statusFilter}
+              onChange={setStatusFilter}
+              placeholder="Status"
+              className="flex-1 min-w-0"
+            />
+          </>
+        }
       >
         <table className="w-full table-fixed">
           <TableHeader />

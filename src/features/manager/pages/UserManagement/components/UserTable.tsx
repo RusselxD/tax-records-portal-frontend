@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { SquarePen, Send, Power } from "lucide-react";
 import {
   AccountStatus,
@@ -7,6 +7,7 @@ import {
   KebabMenu,
   KebabMenuItem,
 } from "../../../../../components/common";
+import Dropdown from "../../../../../components/common/Dropdown";
 import type { CardField } from "../../../../../components/common/ResponsiveTable";
 import { useUserManagement } from "../context/UserManagementContext";
 import { USER_STATUS, type ManagedUser } from "../../../../../types/user";
@@ -30,19 +31,81 @@ const RoleBadge = ({ role }: { role: string }) => (
   </span>
 );
 
-const COLUMNS = ["Name", "Email", "Role", "Position", "Status", "Actions"];
+const roleOptions = [
+  { label: "All Roles", value: "" },
+  { label: "Manager", value: "MANAGER" },
+  { label: "Onboarding, Offboarding & Support", value: "OOS" },
+  { label: "Quality, Training & Development", value: "QTD" },
+  { label: "Client Service Delivery", value: "CSD" },
+  { label: "Internal Accounting / Billing", value: "BILLING" },
+];
 
-const TableHeader = () => (
-  <thead>
-    <tr className="border-b border-gray-200">
-      {COLUMNS.map((header) => (
-        <th key={header} className="th-label">
-          {header}
+const statusOptions = [
+  { label: "All Statuses", value: "" },
+  { label: "Pending", value: USER_STATUS.PENDING },
+  { label: "Active", value: USER_STATUS.ACTIVE },
+  { label: "Deactivated", value: USER_STATUS.DEACTIVATED },
+];
+
+function TableHeader() {
+  const {
+    roleFilter,
+    statusFilter,
+    positionFilter,
+    positions,
+    setRoleFilter,
+    setStatusFilter,
+    setPositionFilter,
+  } = useUserManagement();
+
+  const positionOptions = useMemo(
+    () => [
+      { label: "All Positions", value: "" },
+      ...positions.map((p) => ({ label: p, value: p })),
+    ],
+    [positions],
+  );
+
+  return (
+    <thead>
+      <tr className="border-b border-gray-200">
+        <th className="th-label">Name</th>
+        <th className="th-label">Email</th>
+        <th className="th-label">
+          <Dropdown
+            headerStyle
+            portal
+            options={roleOptions}
+            value={roleFilter}
+            onChange={setRoleFilter}
+            placeholder="Role"
+          />
         </th>
-      ))}
-    </tr>
-  </thead>
-);
+        <th className="th-label">
+          <Dropdown
+            headerStyle
+            portal
+            options={positionOptions}
+            value={positionFilter}
+            onChange={setPositionFilter}
+            placeholder="Position"
+          />
+        </th>
+        <th className="th-label">
+          <Dropdown
+            headerStyle
+            portal
+            options={statusOptions}
+            value={statusFilter}
+            onChange={setStatusFilter}
+            placeholder="Status"
+          />
+        </th>
+        <th className="th-label">Actions</th>
+      </tr>
+    </thead>
+  );
+}
 
 type ModalType = "edit" | "resend" | "deactivate";
 
@@ -237,7 +300,27 @@ const EmptyState = () => (
 );
 
 export default function UserTable() {
-  const { users, isFetching, error, refetch } = useUserManagement();
+  const {
+    users,
+    isFetching,
+    error,
+    refetch,
+    roleFilter,
+    statusFilter,
+    positionFilter,
+    positions,
+    setRoleFilter,
+    setStatusFilter,
+    setPositionFilter,
+  } = useUserManagement();
+
+  const positionOptions = useMemo(
+    () => [
+      { label: "All Positions", value: "" },
+      ...positions.map((p) => ({ label: p, value: p })),
+    ],
+    [positions],
+  );
 
   const keyExtractor = useCallback((user: ManagedUser) => user.id, []);
 
@@ -295,6 +378,31 @@ export default function UserTable() {
         actions={renderActions}
         isLoading={isFetching}
         emptyMessage="No users found."
+        mobileFilters={
+          <>
+            <Dropdown
+              options={roleOptions}
+              value={roleFilter}
+              onChange={setRoleFilter}
+              placeholder="Role"
+              className="flex-1 min-w-0"
+            />
+            <Dropdown
+              options={positionOptions}
+              value={positionFilter}
+              onChange={setPositionFilter}
+              placeholder="Position"
+              className="flex-1 min-w-0"
+            />
+            <Dropdown
+              options={statusOptions}
+              value={statusFilter}
+              onChange={setStatusFilter}
+              placeholder="Status"
+              className="flex-1 min-w-0"
+            />
+          </>
+        }
       >
         <table className="w-full">
           <TableHeader />

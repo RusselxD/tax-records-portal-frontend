@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { Loader2, Check, AlertTriangle, ChevronRight } from "lucide-react";
+import { Loader2, Check, AlertTriangle } from "lucide-react";
 import { useNewClient } from "../context/NewClientContext";
 import type { SaveStatus } from "../../../../../types/client";
 import { deriveClientDisplayName } from "../../../../../lib/formatters";
 import ClientStatusBadge from "../../../../../components/common/ClientStatusBadge";
+import BreadcrumbNav from "../../../../../components/common/BreadcrumbNav";
 
 function GlobalSaveIndicator({ status }: { status: SaveStatus }) {
   if (status === "saving") {
@@ -51,16 +52,13 @@ export default function NewClientHeader() {
 
   return (
     <div className="mb-8">
-      <div className="flex items-center gap-1.5 text-sm text-gray-400 mb-2">
-        <button
-          onClick={() => navigate("/oos/client-onboarding")}
-          className="hover:text-accent transition-colors"
-        >
-          Client Onboarding
-        </button>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-gray-600">{clientName || title}</span>
-      </div>
+      <BreadcrumbNav
+        items={[
+          { label: "Client Onboarding", onClick: () => navigate("/oos/client-onboarding") },
+          { label: clientName || title },
+        ]}
+        className="mb-2"
+      />
 
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-primary">

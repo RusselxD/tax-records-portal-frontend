@@ -4,7 +4,7 @@ interface SubsectionHeadingProps {
 
 export default function SubsectionHeading({ label }: SubsectionHeadingProps) {
   return (
-    <div className="col-span-2 flex items-center gap-3 mt-2 first:mt-0">
+    <div className="sm:col-span-2 flex items-center gap-3 mt-2 first:mt-0">
       <span className="text-sm font-semibold text-gray-500 whitespace-nowrap">
         {label}
       </span>

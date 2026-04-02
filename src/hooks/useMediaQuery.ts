@@ -25,3 +25,8 @@ export function useMediaQuery(query: string): boolean {
 export function useIsMobile(): boolean {
   return !useMediaQuery("(min-width: 640px)");
 }
+
+/** True when viewport is below the md breakpoint (768px) — used by ResponsiveTable */
+export function useIsCompact(): boolean {
+  return !useMediaQuery("(min-width: 768px)");
+}

@@ -6,7 +6,8 @@ import { getErrorMessage } from "../../../../../lib/api-error";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { getRolePrefix } from "../../../../../constants/roles";
 import { formatDate } from "../../../../../lib/formatters";
-import ClientStatusBadge from "../../../../../components/common/ClientStatusBadge";
+import { ClientStatusBadge, ResponsiveTable } from "../../../../../components/common";
+import type { CardField } from "../../../../../components/common/ResponsiveTable";
 import type { ClientPortfolioItem, ClientPortfolioResponse } from "../../../../../types/analytics";
 import type { ClientStatus } from "../../../../../types/client";
 
@@ -100,6 +101,43 @@ export default function ClientPortfolioTable({ userId }: { userId?: string }) {
   const totalPages = result?.totalPages ?? 1;
   const totalElements = result?.totalElements ?? 0;
 
+  const keyExtractor = useCallback((item: ClientPortfolioItem) => item.clientId, []);
+
+  const primaryFields = useCallback(
+    (item: ClientPortfolioItem): CardField[] => [
+      { label: "Client", value: item.clientName },
+      { label: "Status", value: <ClientStatusBadge status={item.status as ClientStatus} /> },
+    ],
+    [],
+  );
+
+  const secondaryFields = useCallback(
+    (item: ClientPortfolioItem): CardField[] => [
+      { label: "Total Tasks", value: item.totalTasks.toLocaleString() },
+      { label: "Pending", value: item.pendingTasks.toLocaleString() },
+      {
+        label: "Overdue",
+        value: (
+          <span className={item.overdueTasks > 0 ? "text-status-rejected font-medium" : ""}>
+            {item.overdueTasks.toLocaleString()}
+          </span>
+        ),
+      },
+      {
+        label: "Nearest Deadline",
+        value: item.nearestDeadline ? formatDate(item.nearestDeadline) : "—",
+      },
+    ],
+    [],
+  );
+
+  const handleItemClick = useCallback(
+    (item: ClientPortfolioItem) => {
+      navigate(`/${rolePrefix}/client-details/${item.clientId}`);
+    },
+    [navigate, rolePrefix],
+  );
+
   return (
     <div className="rounded-lg bg-white custom-shadow overflow-hidden">
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
@@ -125,34 +163,44 @@ export default function ClientPortfolioTable({ userId }: { userId?: string }) {
       )}
 
       {!error && (
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-gray-100">
-              {["Client", "Status", "Total Tasks", "Pending", "Overdue", "Nearest Deadline"].map(
-                (h) => (
-                  <th
-                    key={h}
-                    className="py-2.5 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider"
-                  >
-                    {h}
-                  </th>
-                ),
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {loading && <TableSkeleton />}
-            {!loading && result?.content.length === 0 && <EmptyRow />}
-            {!loading &&
-              result?.content.map((item) => (
-                <TableRow
-                  key={item.clientId}
-                  item={item}
-                  onClick={() => navigate(`/${rolePrefix}/client-details/${item.clientId}`)}
-                />
-              ))}
-          </tbody>
-        </table>
+        <ResponsiveTable
+          data={result?.content ?? []}
+          keyExtractor={keyExtractor}
+          primaryFields={primaryFields}
+          secondaryFields={secondaryFields}
+          onItemClick={handleItemClick}
+          isLoading={loading}
+          emptyMessage="No clients in your portfolio yet."
+        >
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-100">
+                {["Client", "Status", "Total Tasks", "Pending", "Overdue", "Nearest Deadline"].map(
+                  (h) => (
+                    <th
+                      key={h}
+                      className="py-2.5 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider"
+                    >
+                      {h}
+                    </th>
+                  ),
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {loading && <TableSkeleton />}
+              {!loading && result?.content.length === 0 && <EmptyRow />}
+              {!loading &&
+                result?.content.map((item) => (
+                  <TableRow
+                    key={item.clientId}
+                    item={item}
+                    onClick={() => navigate(`/${rolePrefix}/client-details/${item.clientId}`)}
+                  />
+                ))}
+            </tbody>
+          </table>
+        </ResponsiveTable>
       )}
 
       {!error && !loading && totalPages > 1 && (

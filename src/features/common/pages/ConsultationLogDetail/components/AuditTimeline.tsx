@@ -31,7 +31,7 @@ export default function AuditTimeline({ logId, audits }: AuditTimelineProps) {
           <p className="text-sm text-gray-400">No activity yet</p>
         </div>
       ) : (
-        <div className="px-4 py-4 max-h-[calc(100vh-120px)] overflow-y-auto">
+        <div className="px-4 py-4 max-h-[calc(100dvh-120px)] overflow-y-auto">
           {audits.map((audit, i) => {
             const displayName = audit.performedByName === currentUserName ? "You" : audit.performedByName;
             const config = auditConfig[audit.action] ?? auditConfig.CREATED;

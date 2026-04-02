@@ -114,7 +114,7 @@ export default function Sidebar({
     <>
       <Overlay isOpen={isOpen} onClick={onClose} />
       <aside
-        className={`fixed left-0 top-0 h-screen w-60 bg-sidebar-bg flex flex-col z-40 transition-transform duration-300 lg:translate-x-0 ${
+        className={`fixed left-0 top-0 h-dvh w-60 bg-sidebar-bg flex flex-col z-40 transition-transform duration-300 lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

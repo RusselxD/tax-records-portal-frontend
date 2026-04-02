@@ -8,7 +8,7 @@ interface DisplayFieldProps {
 
 export default function DisplayField({ label, children, fullWidth }: DisplayFieldProps) {
   return (
-    <div className={fullWidth ? "col-span-2" : undefined}>
+    <div className={fullWidth ? "sm:col-span-2" : undefined}>
       <span className="block text-xs font-medium text-gray-400 uppercase tracking-wider">
         {label}
       </span>

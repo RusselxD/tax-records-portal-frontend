@@ -10,7 +10,7 @@ export default function ImagePreview({ fileUrl, fileName }: ImagePreviewProps) {
         <img
           src={fileUrl}
           alt={fileName}
-          className="max-w-full max-h-[calc(100vh-8rem)] object-contain rounded-lg shadow-lg"
+          className="max-w-full max-h-[calc(100dvh-8rem)] object-contain rounded-lg shadow-lg"
         />
       </div>
     </div>

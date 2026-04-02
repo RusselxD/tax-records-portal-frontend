@@ -173,7 +173,7 @@ export default function CreateConsultationLogForm({ onCancel, onSuccess }: Creat
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
             />
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <Input
                 label="Subject"
                 value={subject}

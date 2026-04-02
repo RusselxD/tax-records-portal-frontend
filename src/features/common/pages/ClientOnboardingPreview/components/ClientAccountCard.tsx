@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { UserCircle, Send, Check, UserX } from "lucide-react";
-import { AccountStatus, Input, Button, ConfirmActionModal } from "../../../../../components/common";
-import { getAvatarColor } from "../../../../../lib/avatar-colors";
-import { getInitials, resolveAssetUrl } from "../../../../../lib/formatters";
+import { AccountStatus, Input, Button, ConfirmActionModal, UserAvatar } from "../../../../../components/common";
 import { usersAPI } from "../../../../../api/users";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { useAuth } from "../../../../../contexts/AuthContext";
@@ -138,19 +136,7 @@ export function AccountRow({
   return (
     <>
       <div className="flex items-center gap-4 px-6 py-4">
-        {profileUrl ? (
-          <img
-            src={resolveAssetUrl(profileUrl) ?? profileUrl}
-            alt={fullName}
-            className="w-10 h-10 rounded-full object-cover"
-          />
-        ) : (
-          <div className={`w-10 h-10 ${getAvatarColor(fullName).bg} rounded-full flex items-center justify-center`}>
-            <span className={`text-sm ${getAvatarColor(fullName).text} font-medium`}>
-              {getInitials(`${displayData.firstName} ${displayData.lastName}`)}
-            </span>
-          </div>
-        )}
+        <UserAvatar name={fullName} profileUrl={profileUrl} size="lg" />
 
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-primary truncate">

@@ -45,7 +45,7 @@ export default function AccountantCard({ accountant: a }: AccountantCardProps) {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-gray-100">
+      <div className="grid grid-cols-3 gap-3 pt-3 border-t border-gray-100">
         <div className="text-center">
           <p className="text-lg font-bold text-primary">{a.activeTasks}</p>
           <p className="text-xs text-gray-400 mt-0.5">Active Tasks</p>

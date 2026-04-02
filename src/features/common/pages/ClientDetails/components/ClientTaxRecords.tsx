@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { Loader2, AlertTriangle, FolderOpen, ChevronRight } from "lucide-react";
+import { Loader2, AlertTriangle, FolderOpen } from "lucide-react";
+import Breadcrumbs from "../../../../client/pages/TaxRecords/components/Breadcrumbs";
 import { taxRecordAPI } from "../../../../../api/tax-record";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import { Button } from "../../../../../components/common";
@@ -87,32 +88,7 @@ export default function ClientTaxRecords({ clientId }: { clientId: string }) {
 
   return (
     <div>
-      {/* Breadcrumbs */}
-      {selections.length > 0 && (
-        <div className="flex items-center gap-1.5 text-sm mb-4 flex-wrap">
-          <button
-            onClick={() => handleBreadcrumbClick(0)}
-            className="text-gray-400 hover:text-accent transition-colors"
-          >
-            All Records
-          </button>
-          {selections.map((sel, i) => (
-            <span key={i} className="flex items-center gap-1.5">
-              <ChevronRight className="h-3.5 w-3.5 text-gray-300" />
-              {i < selections.length - 1 ? (
-                <button
-                  onClick={() => handleBreadcrumbClick(i + 1)}
-                  className="text-gray-400 hover:text-accent transition-colors"
-                >
-                  {sel.label}
-                </button>
-              ) : (
-                <span className="text-primary font-medium">{sel.label}</span>
-              )}
-            </span>
-          ))}
-        </div>
-      )}
+      <Breadcrumbs selections={selections} onNavigate={handleBreadcrumbClick} />
 
       {isLoading && (
         <div className="flex items-center justify-center py-16">

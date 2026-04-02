@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronRight, AlertTriangle, Clock, Pencil, CheckCircle2 } from "lucide-react";
+import { AlertTriangle, Clock, Pencil, CheckCircle2 } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import { Button, CommentPreview, CollapsibleSubsection } from "../../../../components/common";
 import NotFound from "../../../../pages/NotFound";
@@ -12,6 +12,7 @@ import {
   ProfileUpdateReviewProvider,
   useProfileUpdateReview,
 } from "./context/ProfileUpdateReviewContext";
+import BreadcrumbNav from "../../../../components/common/BreadcrumbNav";
 import SectionDiffCard from "./components/SectionDiffCard";
 import ReviewActions from "./components/ReviewActions";
 
@@ -53,12 +54,12 @@ function ProfileUpdateReviewContent() {
         <div className="h-8 w-72 rounded skeleton mb-8" />
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_21rem] gap-3 items-start">
           <div className="min-w-0 space-y-3">
-            <div className="rounded-lg bg-white p-5 space-y-3" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }}>
+            <div className="rounded-lg bg-white p-5 space-y-3 custom-shadow">
               <div className="h-4 w-64 rounded skeleton" />
               <div className="h-3 w-48 rounded skeleton" />
             </div>
             {Array.from({ length: 2 }).map((_, i) => (
-              <div key={i} className="rounded-lg bg-white p-5 space-y-3" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }}>
+              <div key={i} className="rounded-lg bg-white p-5 space-y-3 custom-shadow">
                 <div className="h-4 w-40 rounded skeleton" />
                 <div className="h-10 w-full rounded skeleton" />
                 <div className="h-10 w-full rounded skeleton" />
@@ -66,7 +67,7 @@ function ProfileUpdateReviewContent() {
             ))}
           </div>
           <div>
-            <div className="rounded-lg bg-white p-5 space-y-3" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }}>
+            <div className="rounded-lg bg-white p-5 space-y-3 custom-shadow">
               <div className="h-4 w-32 rounded skeleton" />
               <div className="h-3 w-full rounded skeleton" />
               <div className="h-3 w-3/4 rounded skeleton" />
@@ -94,23 +95,20 @@ function ProfileUpdateReviewContent() {
   return (
     <div className="max-w-[1440px] mx-auto pb-12">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-1.5 text-sm text-gray-400 mb-5">
-        <button onClick={() => navigate(`/${prefix}/clients`)} className="hover:text-accent transition-colors">
-          Client List
-        </button>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <button onClick={() => navigate(`/${prefix}/client-details/${clientId}`)} className="hover:text-accent transition-colors">
-          {review.clientName}
-        </button>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-gray-600">Profile Update Review</span>
-      </div>
+      <BreadcrumbNav
+        items={[
+          { label: "Client List", onClick: () => navigate(`/${prefix}/clients`) },
+          { label: review.clientName, onClick: () => navigate(`/${prefix}/client-details/${clientId}`) },
+          { label: "Profile Update Review" },
+        ]}
+        className="mb-5"
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_21rem] gap-3 items-start">
         {/* Main content */}
         <div className="min-w-0 space-y-3">
           {/* Submission info */}
-          <div className="rounded-lg bg-white border border-gray-200 p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }}>
+          <div className="rounded-lg bg-white border border-gray-200 p-5 custom-shadow">
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
               <Clock className="w-3.5 h-3.5 text-gray-400" />
               <span>Submitted by <span className="font-medium text-primary">{review.submittedBy.name}</span></span>
@@ -160,7 +158,7 @@ function ProfileUpdateReviewContent() {
 
           {/* Changed sections */}
           {review.sections.length === 0 ? (
-            <div className="rounded-lg bg-white border border-gray-200 p-8 text-center" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }}>
+            <div className="rounded-lg bg-white border border-gray-200 p-8 text-center custom-shadow">
               <p className="text-sm text-gray-400">No differences found.</p>
             </div>
           ) : (

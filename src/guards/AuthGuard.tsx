@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 
 function SplashScreen() {
   return (
-    <div className="flex h-screen flex-col items-center justify-center bg-primary gap-5">
+    <div className="flex h-dvh flex-col items-center justify-center bg-primary gap-5">
       <div className="flex flex-col items-center gap-4">
         <img src="/upturn.svg" alt="Upturn" className="w-32 h-32" />
         <div className="text-center">

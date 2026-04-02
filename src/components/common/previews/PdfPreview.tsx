@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -17,6 +17,21 @@ interface PdfPreviewProps {
 export default function PdfPreview({ fileUrl }: PdfPreviewProps) {
   const [numPages, setNumPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [pageWidth, setPageWidth] = useState(800);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        // Fit to container, cap at 800px for desktop readability
+        setPageWidth(Math.min(containerRef.current.clientWidth, 800));
+      }
+    };
+
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
 
   const onLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
@@ -33,7 +48,7 @@ export default function PdfPreview({ fileUrl }: PdfPreviewProps) {
   );
 
   return (
-    <div className="relative flex flex-col items-center flex-1 overflow-auto pb-16 scrollbar-dark">
+    <div ref={containerRef} className="relative flex flex-col items-center flex-1 overflow-auto pb-16 scrollbar-dark">
       <div data-preview-content>
         <Document
           file={fileUrl}
@@ -43,7 +58,7 @@ export default function PdfPreview({ fileUrl }: PdfPreviewProps) {
             <p className="text-sm text-red-400">Failed to load PDF document.</p>
           }
         >
-          <Page pageNumber={currentPage} width={800} loading={null} />
+          <Page pageNumber={currentPage} width={pageWidth} loading={null} />
         </Document>
       </div>
 

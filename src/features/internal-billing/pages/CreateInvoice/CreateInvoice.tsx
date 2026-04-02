@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef, type FormEvent } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronRight, Upload, Loader2 } from "lucide-react";
+import { Upload, Loader2 } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import { Input, Dropdown, Button, Alert, FilePreviewOverlay, ConfirmActionModal } from "../../../../components/common";
 import { useToast } from "../../../../contexts/ToastContext";
@@ -9,6 +9,7 @@ import { invoiceAPI } from "../../../../api/invoice";
 import { clientAPI } from "../../../../api/client";
 import { fileAPI } from "../../../../api/file";
 import { getErrorMessage, isConflictError } from "../../../../lib/api-error";
+import BreadcrumbNav from "../../../../components/common/BreadcrumbNav";
 import { validateDocumentFile } from "../../../../lib/file-validation";
 import { formatDate, formatCurrency } from "../../../../lib/formatters";
 import type { InvoiceTermResponse, FileItemResponse } from "../../../../types/invoice";
@@ -176,13 +177,13 @@ export default function CreateInvoice() {
   return (
     <div className="pb-12">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-gray-400 mb-4">
-        <button onClick={() => navigate("/internal-billing/billings")} className="hover:text-accent transition-colors">
-          Billings
-        </button>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-primary font-medium">Create Invoice</span>
-      </nav>
+      <BreadcrumbNav
+        items={[
+          { label: "Billings", onClick: () => navigate("/internal-billing/billings") },
+          { label: "Create Invoice" },
+        ]}
+        className="mb-4"
+      />
 
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <form onSubmit={handleSubmitClick} className="space-y-5">

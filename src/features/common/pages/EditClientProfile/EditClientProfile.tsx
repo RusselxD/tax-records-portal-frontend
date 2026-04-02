@@ -22,7 +22,7 @@ function EditClientProfileContent() {
         <div className="h-4 w-32 rounded skeleton mb-8" />
         <div className="space-y-3">
           {Array.from({ length: 7 }).map((_, i) => (
-            <div key={i} className="rounded-lg bg-white h-14" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.1)" }}>
+            <div key={i} className="rounded-lg bg-white h-14 custom-shadow">
               <div className="px-5 h-full flex items-center">
                 <div className="h-4 w-48 rounded skeleton" />
               </div>

@@ -304,6 +304,31 @@ export default function TaxRecordTasksTable() {
         cardClassName={cardClassName}
         isLoading={isFetching}
         emptyMessage="No tasks found."
+        mobileFilters={
+          <>
+            <Dropdown
+              options={clientOptions}
+              value={filters.clientId || ""}
+              onChange={setClientFilter}
+              placeholder="Client"
+              className="flex-1 min-w-0"
+            />
+            <Dropdown
+              options={statusOptions}
+              value={(filters.status as string) || ""}
+              onChange={setStatusFilter}
+              placeholder="Status"
+              className="flex-1 min-w-0"
+            />
+            <Dropdown
+              options={periodOptions}
+              value={(filters.period as string) || ""}
+              onChange={setPeriodFilter}
+              placeholder="Period"
+              className="flex-1 min-w-0"
+            />
+          </>
+        }
       >
         <table className="w-full table-fixed">
           <thead>

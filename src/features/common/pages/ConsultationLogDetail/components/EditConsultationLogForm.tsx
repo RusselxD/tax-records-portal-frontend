@@ -9,7 +9,7 @@ import { useToast } from "../../../../../contexts/ToastContext";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import { validateDocumentFile } from "../../../../../lib/file-validation";
 import type { RichTextContent } from "../../../../../types/client-info";
-import type { ConsultationLogDetail } from "../../../../../types/consultation";
+import { BILLABLE_TYPE, type ConsultationLogDetail } from "../../../../../types/consultation";
 
 const EMPTY_DOC: RichTextContent = { type: "doc", content: [] };
 
@@ -28,7 +28,7 @@ export default function EditConsultationLogForm({ log, onCancel, onSuccess }: Ed
   const [platform, setPlatform] = useState(log.platform);
   const [subject, setSubject] = useState(log.subject);
   const [notes, setNotes] = useState<RichTextContent>(log.notes || EMPTY_DOC);
-  const [isCourtesy, setIsCourtesy] = useState(log.billableType === "COURTESY");
+  const [isCourtesy, setIsCourtesy] = useState(log.billableType === BILLABLE_TYPE.COURTESY);
   const [attachments, setAttachments] = useState<{ id: string; name: string }[]>([...log.attachments]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -84,7 +84,7 @@ export default function EditConsultationLogForm({ log, onCancel, onSuccess }: Ed
         subject: subject.trim(),
         notes: hasNotes(notes) ? notes : null,
         attachments,
-        billableType: isCourtesy ? "COURTESY" : null,
+        billableType: isCourtesy ? BILLABLE_TYPE.COURTESY : null,
       });
       toastSuccess("Updated", "Consultation log has been updated.");
       onSuccess();
@@ -145,7 +145,7 @@ export default function EditConsultationLogForm({ log, onCancel, onSuccess }: Ed
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
             />
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <Input
                 label="Subject"
                 value={subject}

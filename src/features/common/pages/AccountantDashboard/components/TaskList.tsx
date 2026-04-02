@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import type { TaxRecordTaskStatus, Period } from "../../../../../types/tax-record-task";
@@ -7,9 +7,12 @@ import { formatDate } from "../../../../../lib/formatters";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { getRolePrefix } from "../../../../../constants/roles";
+import { ResponsiveTable } from "../../../../../components/common";
+import type { CardField } from "../../../../../components/common/ResponsiveTable";
 import {
   statusLabels,
   statusStyles,
+  statusDotColors,
   rowBgColors,
   periodLabels,
 } from "../../../../../constants/tax-record-task";
@@ -110,10 +113,64 @@ export default function TaskList({
     return () => { cancelled = true; };
   }, [page, fetchFn]);
 
+  const prefix = getRolePrefix(user?.roleKey ?? "");
+
   const handleRowClick = (id: string) => {
-    const prefix = getRolePrefix(user?.roleKey ?? "");
     navigate(`/${prefix}/tax-record-task/${id}`);
   };
+
+  const handleCardClick = useCallback(
+    (task: TaskItem) => navigate(`/${prefix}/tax-record-task/${task.id}`),
+    [navigate, prefix],
+  );
+
+  const primaryFields = useCallback(
+    (task: TaskItem): CardField[] => {
+      const fields: CardField[] = [
+        { label: "Task", value: task.taskName },
+        { label: "Client", value: task.clientName },
+        {
+          label: "Deadline",
+          value: (
+            <span className={task.isOverdue ? "text-red-500 font-medium" : ""}>
+              {formatDate(task.deadline)}
+            </span>
+          ),
+        },
+      ];
+      if (showStatus && task.status) {
+        fields.splice(2, 0, {
+          label: "Status",
+          value: (
+            <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${statusStyles[task.status]}`}>
+              <span className={`h-1.5 w-1.5 rounded-full ${statusDotColors[task.status]}`} />
+              {statusLabels[task.status]}
+            </span>
+          ),
+        });
+      }
+      return fields;
+    },
+    [showStatus],
+  );
+
+  const secondaryFields = useCallback(
+    (task: TaskItem): CardField[] => [
+      { label: "Category", value: `${task.categoryName} › ${task.subCategoryName}` },
+      { label: "Period", value: `${task.year} ${periodLabels[task.period] || task.period}` },
+      { label: "Created By", value: `${task.createdBy} · ${formatDate(task.createdAt)}` },
+    ],
+    [],
+  );
+
+  const cardClassName = useCallback(
+    (task: TaskItem) => {
+      const isOverdue = task.isOverdue ?? false;
+      const isRejected = task.status === TAX_RECORD_TASK_STATUS.REJECTED;
+      return isOverdue || isRejected ? "border-l-4 border-l-red-400" : "";
+    },
+    [],
+  );
 
   const colCount = showStatus ? 6 : 5;
   const startItem = totalElements === 0 ? 0 : page * PAGE_SIZE + 1;
@@ -162,6 +219,16 @@ export default function TaskList({
             </div>
           ) : (
             <div>
+              <ResponsiveTable
+                data={tasks}
+                keyExtractor={(t) => t.id}
+                primaryFields={primaryFields}
+                secondaryFields={secondaryFields}
+                onItemClick={handleCardClick}
+                cardClassName={cardClassName}
+                isLoading={false}
+                emptyMessage={emptyMessage}
+              >
               <table className="w-full table-fixed">
                 <thead>
                   <tr className="border-b border-gray-200">
@@ -257,6 +324,7 @@ export default function TaskList({
                   )}
                 </tbody>
               </table>
+              </ResponsiveTable>
 
               {totalPages > 1 && (
                 <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  ChevronRight, AlertTriangle, Loader2,
+  AlertTriangle, Loader2,
   Trash2, Pencil,
   Clock, FileCheck, AlertCircle,
   type LucideIcon,
@@ -23,6 +23,7 @@ import EditConsultationLogForm from "./components/EditConsultationLogForm";
 import AuditTimeline from "./components/AuditTimeline";
 import LogDetailsCard from "./components/LogDetailsCard";
 import ActionSection from "./components/ActionSection";
+import BreadcrumbNav from "../../../../components/common/BreadcrumbNav";
 
 const EMPTY_DOC: RichTextContent = { type: "doc", content: [] };
 
@@ -145,13 +146,12 @@ export default function ConsultationLogDetail() {
   return (
     <div className="pb-12">
       <div className="flex items-center justify-between gap-4 mb-5">
-        <nav className="flex items-center gap-1.5 text-sm text-gray-400 min-w-0">
-          <button onClick={() => navigate(`/${prefix}/consultation-logs`)} className="hover:text-accent transition-colors shrink-0">
-            Consultation Logs
-          </button>
-          <ChevronRight className="h-3.5 w-3.5 shrink-0" />
-          <span className="text-primary font-medium truncate">{log.subject}</span>
-        </nav>
+        <BreadcrumbNav
+          items={[
+            { label: "Consultation Logs", onClick: () => navigate(`/${prefix}/consultation-logs`) },
+            { label: log.subject },
+          ]}
+        />
 
         <div className="flex items-center gap-3 shrink-0">
         {canDelete && (

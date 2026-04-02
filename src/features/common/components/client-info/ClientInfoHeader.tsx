@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
 import type { ClientStatus } from "../../../../types/client";
 import ClientStatusBadge from "../../../../components/common/ClientStatusBadge";
+import BreadcrumbNav from "../../../../components/common/BreadcrumbNav";
 
 interface ClientInfoHeaderProps {
   clientName: string;
@@ -25,16 +25,13 @@ export default function ClientInfoHeader({
   return (
     <div className="mb-4">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-1.5 text-sm text-gray-400 mb-2">
-        <button
-          onClick={() => navigate(backTo)}
-          className="hover:text-accent transition-colors"
-        >
-          {backLabel}
-        </button>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-gray-600">{clientName || "Client Details"}</span>
-      </div>
+      <BreadcrumbNav
+        items={[
+          { label: backLabel, onClick: () => navigate(backTo) },
+          { label: clientName || "Client Details" },
+        ]}
+        className="mb-2"
+      />
 
       {/* Title + Status */}
       <div className="flex items-center justify-between">

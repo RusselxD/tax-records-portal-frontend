@@ -1,80 +1,23 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Plus } from "lucide-react";
 import Button from "../../../../../components/common/Button";
-import Dropdown from "../../../../../components/common/Dropdown";
 import SearchInput from "../../../../../components/common/SearchInput";
-import { USER_STATUS } from "../../../../../types/user";
 import { useUserManagement } from "../context/UserManagementContext";
 import UserFormModal from "./UserFormModal";
 
-const roleOptions = [
-  { label: "All Roles", value: "" },
-  { label: "Manager", value: "MANAGER" },
-  { label: "Onboarding, Offboarding & Support", value: "OOS" },
-  { label: "Quality, Training & Development", value: "QTD" },
-  { label: "Client Service Delivery", value: "CSD" },
-  { label: "Internal Accounting / Billing", value: "BILLING" },
-];
-
-const statusOptions = [
-  { label: "All Statuses", value: "" },
-  { label: "Pending", value: USER_STATUS.PENDING },
-  { label: "Active", value: USER_STATUS.ACTIVE },
-  { label: "Deactivated", value: USER_STATUS.DEACTIVATED },
-];
-
 export default function UserFilters() {
   const [showAddModal, setShowAddModal] = useState(false);
-  const {
-    search,
-    roleFilter,
-    statusFilter,
-    positionFilter,
-    positions,
-    setSearch,
-    setRoleFilter,
-    setStatusFilter,
-    setPositionFilter,
-    addUser,
-  } = useUserManagement();
-
-  const positionOptions = useMemo(
-    () => [
-      { label: "All Positions", value: "" },
-      ...positions.map((p) => ({ label: p, value: p })),
-    ],
-    [positions],
-  );
+  const { search, setSearch, addUser } = useUserManagement();
 
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-          <SearchInput
-            placeholder="Search by name or email..."
-            value={search}
-            onChange={setSearch}
-            className="w-full sm:w-auto"
-          />
-          <div className="flex flex-wrap gap-3">
-            <Dropdown
-              options={roleOptions}
-              value={roleFilter}
-              onChange={setRoleFilter}
-              className="min-w-0 sm:min-w-[280px]"
-            />
-            <Dropdown
-              options={positionOptions}
-              value={positionFilter}
-              onChange={setPositionFilter}
-            />
-            <Dropdown
-              options={statusOptions}
-              value={statusFilter}
-              onChange={setStatusFilter}
-            />
-          </div>
-        </div>
+        <SearchInput
+          placeholder="Search by name or email..."
+          value={search}
+          onChange={setSearch}
+          className="w-full sm:w-auto"
+        />
         <Button onClick={() => setShowAddModal(true)} className="w-full sm:w-auto shrink-0">
           <Plus className="w-4 h-4" />
           Add User

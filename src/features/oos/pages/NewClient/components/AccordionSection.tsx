@@ -172,8 +172,7 @@ export default function AccordionSection({ section }: AccordionSectionProps) {
   return (
     <div
       ref={sectionRef as React.RefObject<HTMLDivElement>}
-      className="rounded-lg bg-white"
-      style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.1)" }}
+      className="rounded-lg bg-white custom-shadow"
     >
       <button
         onClick={() => toggleSection(section.key)}

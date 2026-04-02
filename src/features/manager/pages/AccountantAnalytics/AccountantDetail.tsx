@@ -1,8 +1,8 @@
-import { useParams, useLocation, Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import { AccountantAnalyticsProvider } from "../../../common/pages/AccountantAnalytics/context/AccountantAnalyticsContext";
 import { AccountantAnalyticsContent } from "../../../common/pages/AccountantAnalytics/AccountantAnalytics";
+import BreadcrumbNav from "../../../../components/common/BreadcrumbNav";
 
 interface LocationState {
   roleKey?: string;
@@ -12,6 +12,7 @@ interface LocationState {
 export default function AccountantDetail() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
+  const navigate = useNavigate();
   const state = location.state as LocationState | null;
   usePageTitle("Accountant Analytics");
 
@@ -19,18 +20,12 @@ export default function AccountantDetail() {
 
   return (
     <div className="space-y-5">
-      <nav className="flex items-center gap-1.5 text-sm text-gray-500">
-        <Link
-          to="/manager/analytics"
-          className="hover:text-primary transition-colors"
-        >
-          Accountant Analytics
-        </Link>
-        <ChevronRight className="w-3.5 h-3.5" />
-        <span className="text-primary font-medium">
-          {state?.name ?? "Performance"}
-        </span>
-      </nav>
+      <BreadcrumbNav
+        items={[
+          { label: "Accountant Analytics", onClick: () => navigate("/manager/analytics") },
+          { label: state?.name ?? "Performance" },
+        ]}
+      />
 
       <AccountantAnalyticsProvider userId={id}>
         <AccountantAnalyticsContent userId={id} roleKey={state?.roleKey} />

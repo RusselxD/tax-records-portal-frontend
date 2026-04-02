@@ -15,7 +15,7 @@ export default function ErrorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
+    <div className="min-h-dvh bg-gray-50 flex flex-col items-center justify-center p-6">
       <div className="flex items-center gap-3 mb-10">
         <img src="/upturn.svg" alt="Upturn" className="w-8 h-auto" />
         <div>
