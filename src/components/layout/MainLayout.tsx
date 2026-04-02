@@ -12,7 +12,7 @@ interface MainLayoutProps {
 }
 
 const ContentContainer = ({ children }: { children: ReactNode }) => (
-  <div className="px-4 py-5 md:px-8 md:py-7">
+  <div className="px-4 py-5 md:px-6 md:py-6 lg:px-8 lg:py-7">
     <div className="mx-auto">{children}</div>
   </div>
 );

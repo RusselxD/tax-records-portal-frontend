@@ -40,8 +40,8 @@ const TableRow = ({
     onClick={onClick}
     className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
   >
-    <td className="py-3 px-4">
-      <span className="text-sm font-medium text-primary">
+    <td className="py-3 px-4 max-w-0">
+      <span className="block truncate text-sm font-medium text-primary" title={item.clientName}>
         {item.clientName}
       </span>
     </td>
@@ -105,7 +105,7 @@ export default function ClientPortfolioTable({ userId }: { userId?: string }) {
 
   const primaryFields = useCallback(
     (item: ClientPortfolioItem): CardField[] => [
-      { label: "Client", value: item.clientName },
+      { label: "Client", value: item.clientName, stacked: true },
       { label: "Status", value: <ClientStatusBadge status={item.status as ClientStatus} /> },
     ],
     [],
@@ -172,19 +172,15 @@ export default function ClientPortfolioTable({ userId }: { userId?: string }) {
           isLoading={loading}
           emptyMessage="No clients in your portfolio yet."
         >
-          <table className="w-full">
+          <table className="w-full table-fixed">
             <thead>
               <tr className="border-b border-gray-100">
-                {["Client", "Status", "Total Tasks", "Pending", "Overdue", "Nearest Deadline"].map(
-                  (h) => (
-                    <th
-                      key={h}
-                      className="py-2.5 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider"
-                    >
-                      {h}
-                    </th>
-                  ),
-                )}
+                <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-[25%]">Client</th>
+                <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-[18%]">Status</th>
+                <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-[12%]">Total Tasks</th>
+                <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-[12%]">Pending</th>
+                <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-[12%]">Overdue</th>
+                <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-[21%]">Nearest Deadline</th>
               </tr>
             </thead>
             <tbody>

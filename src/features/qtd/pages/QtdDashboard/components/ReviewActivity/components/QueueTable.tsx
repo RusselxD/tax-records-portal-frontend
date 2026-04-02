@@ -17,7 +17,7 @@ export default function QueueTable({
 
   const primaryFields = useCallback(
     (t: ReviewerQueueItemResponse): CardField[] => [
-      { label: "Client", value: t.clientName },
+      { label: "Client", value: t.clientName, stacked: true },
       {
         label: "Task",
         value: (

@@ -212,7 +212,7 @@ export default function ClientProfilesTable() {
 
   const primaryFields = useCallback(
     (review: ClientProfileReviewListItem): CardField[] => [
-      { label: "Client", value: review.clientName },
+      { label: "Client", value: review.clientName, stacked: true },
       { label: "Status", value: <StatusBadge status={review.status} /> },
     ],
     [],

@@ -77,13 +77,13 @@ export default function ConsultationLogsTable() {
     }).catch(() => {});
   }, []);
 
-  const colCount = canViewAll ? 8 : 7;
+  const colCount = canViewAll ? 7 : 6;
 
   const keyExtractor = useCallback((log: ConsultationLogListItem) => log.id, []);
 
   const primaryFields = useCallback(
     (log: ConsultationLogListItem): CardField[] => [
-      { label: "Client", value: log.clientDisplayName },
+      { label: "Client", value: log.clientDisplayName, stacked: true },
       { label: "Date", value: formatDate(log.date) },
       {
         label: "Status",
@@ -100,7 +100,6 @@ export default function ConsultationLogsTable() {
   const secondaryFields = useCallback(
     (log: ConsultationLogListItem): CardField[] => {
       const fields: CardField[] = [
-        { label: "Time", value: `${log.startTime} – ${log.endTime}` },
         { label: "Hours", value: `${log.hours.toFixed(2)}h` },
         { label: "Subject", value: log.subject },
         {
@@ -190,13 +189,10 @@ export default function ConsultationLogsTable() {
               <th className="th-label w-[12%]">
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Date</span>
               </th>
-              <th className="th-label w-[10%]">
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Time</span>
-              </th>
-              <th className="th-label w-[7%]">
+              <th className="th-label w-[8%]">
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Hours</span>
               </th>
-              <th className="th-label w-[18%]">
+              <th className="th-label w-[25%]">
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Subject</span>
               </th>
               <th className="th-label w-[10%]">

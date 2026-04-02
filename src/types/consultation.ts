@@ -28,8 +28,6 @@ export interface ConsultationLogListItem {
   clientId: string;
   clientDisplayName: string;
   date: string;
-  startTime: string;
-  endTime: string;
   hours: number;
   platform: string;
   subject: string;

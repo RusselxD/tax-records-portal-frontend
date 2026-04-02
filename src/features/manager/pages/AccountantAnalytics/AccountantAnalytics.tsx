@@ -41,17 +41,11 @@ export default function AccountantAnalytics() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
-        <p className="text-sm text-gray-500">
-          Select an accountant to view their performance metrics.
-        </p>
-        <SearchInput
-          placeholder="Search by name or position..."
-          value={search}
-          onChange={setSearch}
-          className="w-full sm:w-auto"
-        />
-      </div>
+      <SearchInput
+        placeholder="Search by name or position..."
+        value={search}
+        onChange={setSearch}
+      />
 
       {loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

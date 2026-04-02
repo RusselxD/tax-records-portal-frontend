@@ -36,7 +36,7 @@ function CityHallCard({ data, index }: { data: CityHallDetails; index: number })
   if (!cityHasData(data)) return null;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
+    <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-3 sm:p-4">
       <span className="text-sm font-semibold text-primary mb-3 block">
         {data.businessPermitCity || `City #${index + 1}`}
       </span>

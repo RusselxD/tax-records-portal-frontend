@@ -20,7 +20,7 @@ export default function AccessCredentialsPreview({ data }: { data: AccessCredent
         {filled.map((entry, i) => (
           <div
             key={i}
-            className="rounded-lg border border-gray-200 bg-gray-50/50 p-4"
+            className="rounded-lg border border-gray-200 bg-gray-50/50 p-3 sm:p-4"
           >
             <span className="text-sm font-semibold text-primary mb-3 block">
               Credential #{i + 1}

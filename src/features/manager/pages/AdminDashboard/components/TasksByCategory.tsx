@@ -69,17 +69,17 @@ export default function TasksByCategory() {
       {!isFetching && error && <ErrorState message={error} onRetry={fetchData} />}
       {!isFetching && !error && data && (
         data.length === 0 ? <EmptyState /> : (
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
+          <ResponsiveContainer width="100%" height={340}>
+            <BarChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 60 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
               <XAxis
                 dataKey="category"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 10, fill: "#6B7280" }}
-                tickFormatter={(v: string) => v.length > 10 ? `${v.slice(0, 10)}…` : v}
+                tick={{ fontSize: 11, fill: "#6B7280" }}
                 interval={0}
-                minTickGap={8}
+                angle={-35}
+                textAnchor="end"
               />
               <YAxis
                 axisLine={false}

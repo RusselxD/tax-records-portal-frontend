@@ -34,11 +34,11 @@ export default function ClientInfoHeader({
       />
 
       {/* Title + Status */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-primary">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <h1 className="text-xl sm:text-2xl font-bold text-primary">
           {clientName || "Client Details"}
         </h1>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           {headerActions}
           {status && <ClientStatusBadge status={status} />}
         </div>

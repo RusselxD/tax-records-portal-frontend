@@ -65,7 +65,7 @@ export default function BillingsTable({
   };
 
   const getPrimaryFields = useCallback((inv: InvoiceListItemResponse): CardField[] => [
-    { label: "Client", value: inv.clientName },
+    { label: "Client", value: inv.clientName, stacked: true },
     { label: "Balance", value: formatCurrency(inv.balance) },
     { label: "Status", value: <InvoiceStatusBadge status={inv.status} /> },
   ], []);
@@ -138,7 +138,7 @@ export default function BillingsTable({
           </>
         }
       >
-      <table className="w-full text-sm">
+      <table className="w-full table-fixed text-sm">
         <thead>
           <tr className="border-b border-gray-200">
             <th className="text-left px-4 py-3 w-[22%]">

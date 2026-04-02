@@ -45,7 +45,7 @@ export default function SectionCard({
         tabIndex={0}
         onClick={handleToggle}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleToggle(); } }}
-        className="w-full flex items-center justify-between px-6 py-4 text-left border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+        className="w-full flex items-center justify-between px-4 sm:px-6 py-4 text-left border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
       >
         <h2 className="font-bold text-primary">{title}</h2>
         <div className="flex items-center gap-3">
@@ -62,7 +62,7 @@ export default function SectionCard({
         </div>
       </div>
       {isOpen && (
-        <div className="px-6 py-5">
+        <div className="px-3 sm:px-6 py-4 sm:py-5">
           {isLoading && (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-5 w-5 animate-spin text-gray-400" />

@@ -182,10 +182,10 @@ function ClientDetailsContent() {
       >
         {/* Tabs */}
         {showTabs && (
-          <div className="flex items-center gap-2 mb-4 bg-white py-2 px-3 rounded-lg overflow-x-auto">
+          <div className="flex items-center gap-2 mb-4 bg-white py-2 px-3 rounded-lg overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab("profile")}
-              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap shrink-0 ${
                 activeTab === "profile"
                   ? "bg-accent text-white"
                   : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
@@ -196,7 +196,7 @@ function ClientDetailsContent() {
             </button>
             <button
               onClick={() => { setActiveTab("tax-records"); setTaxRecordsMounted(true); }}
-              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap shrink-0 ${
                 activeTab === "tax-records"
                   ? "bg-accent text-white"
                   : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
@@ -207,7 +207,7 @@ function ClientDetailsContent() {
             </button>
             <button
               onClick={() => { setActiveTab("consultations"); setConsultationsMounted(true); }}
-              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap shrink-0 ${
                 activeTab === "consultations"
                   ? "bg-accent text-white"
                   : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"

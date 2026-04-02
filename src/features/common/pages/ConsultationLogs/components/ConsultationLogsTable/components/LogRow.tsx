@@ -29,9 +29,6 @@ export default function LogRow({
       <td className="px-4 py-3.5 text-sm text-gray-600 whitespace-nowrap">
         {formatDate(log.date)}
       </td>
-      <td className="px-4 py-3.5 text-sm text-gray-600 whitespace-nowrap">
-        {log.startTime} – {log.endTime}
-      </td>
       <td className="px-4 py-3.5 text-sm font-medium text-primary whitespace-nowrap">
         {log.hours.toFixed(2)}h
       </td>

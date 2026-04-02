@@ -19,7 +19,7 @@ export default function CollapsibleSubsection({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+        className="flex items-center justify-between w-full px-3 sm:px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
       >
         <span className="text-sm font-semibold text-primary">{title}</span>
         <ChevronDown
@@ -27,7 +27,7 @@ export default function CollapsibleSubsection({
         />
       </button>
       {isOpen && (
-        <div className="px-4 py-4">
+        <div className="px-3 sm:px-4 py-3 sm:py-4">
           {children}
         </div>
       )}

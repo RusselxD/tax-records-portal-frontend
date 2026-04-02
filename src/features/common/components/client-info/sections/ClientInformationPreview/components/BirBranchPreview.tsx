@@ -32,7 +32,7 @@ export default function BirBranchPreview({ data, label }: BirBranchPreviewProps)
   if (!branchHasData(data)) return null;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
+    <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-3 sm:p-4">
       <span className="text-sm font-semibold text-primary mb-3 block">{label}</span>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
         <TextDisplay label="Business / Trade Name" value={data.businessTradeName} />

@@ -69,9 +69,9 @@ function TableHeader() {
   return (
     <thead>
       <tr className="border-b border-gray-200">
-        <th className="th-label">Name</th>
-        <th className="th-label">Email</th>
-        <th className="th-label">
+        <th className="th-label w-[18%]">Name</th>
+        <th className="th-label w-[22%]">Email</th>
+        <th className="th-label w-[20%]">
           <Dropdown
             headerStyle
             portal
@@ -81,7 +81,7 @@ function TableHeader() {
             placeholder="Role"
           />
         </th>
-        <th className="th-label">
+        <th className="th-label w-[18%]">
           <Dropdown
             headerStyle
             portal
@@ -91,7 +91,7 @@ function TableHeader() {
             placeholder="Position"
           />
         </th>
-        <th className="th-label">
+        <th className="th-label w-[12%]">
           <Dropdown
             headerStyle
             portal
@@ -101,7 +101,7 @@ function TableHeader() {
             placeholder="Status"
           />
         </th>
-        <th className="th-label">Actions</th>
+        <th className="th-label w-[10%]">Actions</th>
       </tr>
     </thead>
   );
@@ -209,19 +209,23 @@ function UserRow({ user }: { user: ManagedUser }) {
   return (
     <>
       <tr className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50/50 transition-colors">
-        <td className="px-4 py-4">
-          <div className="flex items-center gap-3">
+        <td className="px-4 py-4 max-w-0">
+          <div className="flex items-center gap-3 min-w-0">
             <UserAvatar name={user.name} profileUrl={user.profileUrl} />
-            <span className="text-sm font-medium text-primary">
+            <span className="block truncate text-sm font-medium text-primary" title={user.name}>
               {user.name}
             </span>
           </div>
         </td>
-        <td className="px-4 py-4 text-sm text-gray-600">{user.email}</td>
+        <td className="px-4 py-4 text-sm text-gray-600 max-w-0">
+          <span className="block truncate" title={user.email}>{user.email}</span>
+        </td>
         <td className="px-4 py-4">
           <RoleBadge role={user.roleName} />
         </td>
-        <td className="px-4 py-4 text-sm text-gray-600">{user.position}</td>
+        <td className="px-4 py-4 text-sm text-gray-600 max-w-0">
+          <span className="block truncate" title={user.position}>{user.position}</span>
+        </td>
         <td className="px-4 py-4">
           <AccountStatus status={user.status} />
         </td>
@@ -404,7 +408,7 @@ export default function UserTable() {
           </>
         }
       >
-        <table className="w-full">
+        <table className="w-full table-fixed">
           <TableHeader />
           {isFetching ? (
             <TableSkeleton />

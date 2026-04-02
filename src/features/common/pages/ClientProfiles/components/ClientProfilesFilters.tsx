@@ -10,7 +10,7 @@ export default function ClientProfilesFilters() {
         placeholder="Search by client or submitter..."
         value={search}
         onChange={setSearch}
-        className="w-full sm:w-auto"
+        className="w-full sm:w-72"
       />
     </div>
   );

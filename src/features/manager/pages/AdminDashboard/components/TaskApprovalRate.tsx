@@ -167,7 +167,7 @@ export default function TaskApprovalRate() {
   return (
     <ChartContainer
       title="Task Approval Rate"
-      className="w-96"
+      className=""
       action={<Dropdown options={rangeOptions} value={range} onChange={setRange} size="sm" />}
     >
       {isFetching && <ChartSkeleton />}

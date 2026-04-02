@@ -32,7 +32,7 @@ export default function DecidedTable({
 
   const primaryFields = useCallback(
     (t: ReviewerDecidedItemResponse): CardField[] => [
-      { label: "Client", value: t.clientName },
+      { label: "Client", value: t.clientName, stacked: true },
       {
         label: "Task",
         value: (

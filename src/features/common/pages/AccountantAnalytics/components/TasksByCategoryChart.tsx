@@ -10,14 +10,15 @@ import {
 } from "recharts";
 import { ChartContainer } from "../../../../../components/common";
 import { useAccountantAnalytics } from "../context/AccountantAnalyticsContext";
-const CHART_HEIGHT = 300;
+const MIN_CHART_HEIGHT = 200;
+const ROW_HEIGHT = 50; // height per category row
 
-const Skeleton = () => <div className="skeleton rounded-lg" style={{ height: CHART_HEIGHT }} />;
+const Skeleton = () => <div className="skeleton rounded-lg" style={{ height: MIN_CHART_HEIGHT }} />;
 
 const EmptyState = () => (
   <div
     className="flex items-center justify-center text-sm text-gray-400"
-    style={{ height: CHART_HEIGHT }}
+    style={{ height: MIN_CHART_HEIGHT }}
   >
     No task data available yet.
   </div>
@@ -35,7 +36,7 @@ export default function TasksByCategoryChart() {
         {!loading && error && (
           <div
             className="flex items-center justify-center text-sm text-status-rejected"
-            style={{ height: CHART_HEIGHT }}
+            style={{ height: MIN_CHART_HEIGHT }}
           >
             <span>{error}</span>
             <button
@@ -51,7 +52,7 @@ export default function TasksByCategoryChart() {
           data.data.length === 0 ? (
             <EmptyState />
           ) : (
-            <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
+            <ResponsiveContainer width="100%" height={Math.max(MIN_CHART_HEIGHT, data.data.length * ROW_HEIGHT + 40)}>
               <BarChart
                 data={data.data.map((d) => ({
                   category: d.category,

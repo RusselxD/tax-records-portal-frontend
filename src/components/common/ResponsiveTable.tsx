@@ -7,6 +7,8 @@ import { useIsCompact } from "../../hooks/useMediaQuery";
 export interface CardField {
   label: string;
   value: ReactNode;
+  /** Render value below label instead of side-by-side (for long text like client names) */
+  stacked?: boolean;
 }
 
 export interface ResponsiveTableProps<T> {
@@ -112,6 +114,15 @@ function MobileCard<T>({
                   </div>
                 )}
               </>
+            ) : field.stacked ? (
+              <div className="min-w-0 w-full">
+                <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  {field.label}
+                </span>
+                <div className="text-sm text-gray-700 mt-0.5">
+                  {field.value}
+                </div>
+              </div>
             ) : (
               <>
                 <span className="text-xs font-medium text-gray-400 uppercase tracking-wider shrink-0">
@@ -145,11 +156,11 @@ function MobileCard<T>({
           {expanded && (
             <div className="px-4 pb-4 space-y-2 border-t border-gray-100 pt-3">
               {secondary!.map((field, i) => (
-                <div key={i} className="flex items-center justify-between gap-3">
+                <div key={i} className={field.stacked ? "" : "flex items-center justify-between gap-3"}>
                   <span className="text-xs font-medium text-gray-400 uppercase tracking-wider shrink-0">
                     {field.label}
                   </span>
-                  <div className="text-sm text-gray-700 text-right min-w-0">
+                  <div className={`text-sm text-gray-700 ${field.stacked ? "mt-0.5" : "text-right min-w-0"}`}>
                     {field.value}
                   </div>
                 </div>

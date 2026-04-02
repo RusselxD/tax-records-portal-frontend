@@ -81,12 +81,6 @@ export default function Help() {
 
   return (
     <div className="space-y-3">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-primary">Help & Guides</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Learn how to use the portal and get the most out of its features.
-        </p>
-      </div>
       {sections.map((section) => (
         <SectionAccordion key={section.id} section={section} />
       ))}

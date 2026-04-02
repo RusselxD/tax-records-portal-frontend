@@ -244,7 +244,7 @@ export default function TaxRecordTasksTable() {
   const primaryFields = useCallback(
     (task: TaxRecordTaskListItem): CardField[] => [
       { label: "Task", value: task.taskName },
-      { label: "Client", value: task.clientDisplayName },
+      { label: "Client", value: task.clientDisplayName, stacked: true },
       {
         label: "Status",
         value: (
@@ -327,6 +327,15 @@ export default function TaxRecordTasksTable() {
               placeholder="Period"
               className="flex-1 min-w-0"
             />
+            {showAssignedTo && (
+              <Dropdown
+                options={accountantOptions}
+                value={filters.accountantId || ""}
+                onChange={setAccountantFilter}
+                placeholder="Assigned To"
+                className="flex-1 min-w-0"
+              />
+            )}
           </>
         }
       >

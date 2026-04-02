@@ -128,7 +128,7 @@ export default function TaskList({
     (task: TaskItem): CardField[] => {
       const fields: CardField[] = [
         { label: "Task", value: task.taskName },
-        { label: "Client", value: task.clientName },
+        { label: "Client", value: task.clientName, stacked: true },
         {
           label: "Deadline",
           value: (
