@@ -128,6 +128,25 @@ Tailwind 3.4+ provides native `h-dvh`, `min-h-dvh`, `max-h-dvh` utilities.
 `viewport-fit=cover` is set in `index.html`. Use `env(safe-area-inset-bottom)` on:
 - Modal action footers
 - Sticky action bars (NewClient, EditClientProfile)
+- Toast container (mobile bottom positioning)
+
+### Toasts
+
+- **Desktop (sm+):** Top-right, 360px fixed width
+- **Mobile (< sm):** Bottom of screen, 12px side margins, safe-area-inset-bottom
+- CSS overrides in `src/styles/global.css` reposition react-toastify container on mobile
+
+### Navigation Patterns
+
+- **2-segment breadcrumbs** → Use `BackButton` (`← Parent Page`)
+- **3+ segment breadcrumbs** → Use `BreadcrumbNav` (auto-collapses middle segments at all screen sizes)
+
+### Detail Page Layout
+
+- **Short-value fields** (dates, names, numbers, badges): `grid-cols-2` always — don't stack to 1-column on mobile
+- **Long-value fields** (addresses, descriptions): `grid-cols-1 sm:grid-cols-2` — stack on mobile
+- **Form inputs**: `grid-cols-1 sm:grid-cols-2` — need full width for touch targets
+- **Action button rows**: Add `flex-wrap` so buttons wrap on narrow screens
 
 ## Conventions for New Components
 

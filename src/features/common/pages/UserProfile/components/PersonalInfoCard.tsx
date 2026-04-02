@@ -122,7 +122,7 @@ export default function PersonalInfoCard() {
         )}
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col sm:flex-row gap-6">
         {/* Avatar */}
         <div className="flex flex-col items-center gap-2 shrink-0">
           <div className="relative group">
@@ -179,7 +179,7 @@ export default function PersonalInfoCard() {
               </div>
             </div>
           ) : (
-            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
               <InfoField label="Full Name" value={user.name} />
               <InfoField label="Email" value={user.email} />
               {!isClient && (

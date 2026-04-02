@@ -9,128 +9,62 @@ interface ToastContextValue {
 
 const ToastContext = createContext<ToastContextValue | undefined>(undefined);
 
+function ToastBody({
+  icon,
+  iconBg,
+  iconColor,
+  borderColor,
+  title,
+  message,
+}: {
+  icon: React.ReactNode;
+  iconBg: string;
+  iconColor: string;
+  borderColor: string;
+  title: string;
+  message?: string;
+}) {
+  return (
+    <div className={`flex items-start gap-3 bg-white rounded-lg border-l-4 ${borderColor} px-3.5 py-3 shadow-lg`}>
+      <div className={`flex-shrink-0 mt-0.5 w-5 h-5 rounded-full ${iconBg} flex items-center justify-center`}>
+        <span className={iconColor}>{icon}</span>
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-[13.5px] font-semibold text-primary leading-snug">{title}</p>
+        {message && (
+          <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{message}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const toastSuccess = useCallback((title: string, message?: string) => {
     toast(
-      <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 mt-0.5">
-          <div
-            style={{
-              width: 20,
-              height: 20,
-              borderRadius: "50%",
-              background: "#DCFCE7",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <CheckCircle
-              style={{ width: 13, height: 13, color: "#16A34A" }}
-              strokeWidth={2.5}
-            />
-          </div>
-        </div>
-        <div className="flex-1">
-          <strong
-            style={{
-              color: "#1E2A3A",
-              fontWeight: 600,
-              fontSize: 13.5,
-              display: "block",
-              lineHeight: 1.3,
-              fontFamily: "DM Sans, Inter, sans-serif",
-            }}
-          >
-            {title}
-          </strong>
-          {message && (
-            <p
-              style={{
-                color: "#6B7280",
-                fontSize: 12.5,
-                marginTop: 2,
-                lineHeight: 1.45,
-                fontFamily: "DM Sans, Inter, sans-serif",
-              }}
-            >
-              {message}
-            </p>
-          )}
-        </div>
-      </div>,
-      {
-        style: {
-          background: "#ffffff",
-          borderLeft: "4px solid #16A34A",
-          borderRadius: "0 7px 7px 0",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
-          padding: "13px 14px",
-        },
-        icon: false,
-      },
+      <ToastBody
+        icon={<CheckCircle className="w-[13px] h-[13px]" strokeWidth={2.5} />}
+        iconBg="bg-green-100"
+        iconColor="text-green-600"
+        borderColor="border-l-green-500"
+        title={title}
+        message={message}
+      />,
+      { icon: false, className: "!bg-transparent !shadow-none !p-0 !min-h-0" },
     );
   }, []);
 
   const toastError = useCallback((title: string, message?: string) => {
     toast(
-      <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 mt-0.5">
-          <div
-            style={{
-              width: 20,
-              height: 20,
-              borderRadius: "50%",
-              background: "#FEE2E2",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <XCircle
-              style={{ width: 13, height: 13, color: "#DC2626" }}
-              strokeWidth={2.5}
-            />
-          </div>
-        </div>
-        <div className="flex-1">
-          <strong
-            style={{
-              color: "#1E2A3A",
-              fontWeight: 600,
-              fontSize: 13.5,
-              display: "block",
-              lineHeight: 1.3,
-              fontFamily: "DM Sans, Inter, sans-serif",
-            }}
-          >
-            {title}
-          </strong>
-          {message && (
-            <p
-              style={{
-                color: "#6B7280",
-                fontSize: 12.5,
-                marginTop: 2,
-                lineHeight: 1.45,
-                fontFamily: "DM Sans, Inter, sans-serif",
-              }}
-            >
-              {message}
-            </p>
-          )}
-        </div>
-      </div>,
-      {
-        style: {
-          background: "#ffffff",
-          borderLeft: "4px solid #DC2626",
-          borderRadius: "0 7px 7px 0",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
-          padding: "13px 14px",
-        },
-        icon: false,
-      },
+      <ToastBody
+        icon={<XCircle className="w-[13px] h-[13px]" strokeWidth={2.5} />}
+        iconBg="bg-red-100"
+        iconColor="text-red-600"
+        borderColor="border-l-red-500"
+        title={title}
+        message={message}
+      />,
+      { icon: false, className: "!bg-transparent !shadow-none !p-0 !min-h-0" },
     );
   }, []);
 

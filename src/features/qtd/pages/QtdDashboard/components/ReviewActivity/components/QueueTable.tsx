@@ -1,10 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import type { ReviewerQueueItemResponse } from "../../../../../../../types/tax-record-task";
 import { formatDate } from "../../../../../../../lib/formatters";
 import { periodLabels } from "../../../../../../../constants/tax-record-task";
 import { ResponsiveTable } from "../../../../../../../components/common";
 import type { CardField } from "../../../../../../../components/common/ResponsiveTable";
-import { ClipboardList } from "lucide-react";
+import { ChevronDown, ClipboardList } from "lucide-react";
 
 export default function QueueTable({
   tasks,
@@ -13,6 +13,8 @@ export default function QueueTable({
   tasks: ReviewerQueueItemResponse[];
   onRowClick: (id: string) => void;
 }) {
+  const [open, setOpen] = useState(false);
+
   const keyExtractor = useCallback((t: ReviewerQueueItemResponse) => t.id, []);
 
   const primaryFields = useCallback(
@@ -64,22 +66,35 @@ export default function QueueTable({
   );
 
   return (
-    <div>
-      <div className="flex items-center gap-2 font-semibold bg-white border border-b-0 border-gray-200 rounded-t-lg px-4 py-3 custom-shadow w-1/2">
-        <ClipboardList className="w-5 h-5 text-primary" />
-        <span>Awaiting Review</span>
-        <span className="text-gray-400">({tasks.length})</span>
-      </div>
-      <ResponsiveTable
-        data={tasks}
-        keyExtractor={keyExtractor}
-        primaryFields={primaryFields}
-        secondaryFields={secondaryFields}
-        onItemClick={handleItemClick}
-        cardClassName={cardClassName}
-        emptyMessage="No tasks awaiting review."
+    <div className="bg-white rounded-lg custom-shadow border border-gray-200 border-l-[3px] border-l-amber-400 overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center text-sm gap-3 font-medium px-4 py-3.5 transition-colors hover:bg-gray-50"
       >
-        <div className="bg-white rounded-tr-lg rounded-b-lg border border-gray-200 custom-shadow overflow-hidden">
+        <span className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0 bg-amber-50 text-amber-600">
+          <ClipboardList className="w-4 h-4" />
+        </span>
+        <span className="text-primary">Awaiting Review</span>
+        {tasks.length > 0 ? (
+          <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full text-xs font-semibold bg-amber-50 text-amber-600">
+            {tasks.length}
+          </span>
+        ) : (
+          <span className="text-xs text-gray-400">(0)</span>
+        )}
+        <ChevronDown className={`w-4 h-4 text-gray-400 ml-auto transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <ResponsiveTable
+          data={tasks}
+          keyExtractor={keyExtractor}
+          primaryFields={primaryFields}
+          secondaryFields={secondaryFields}
+          onItemClick={handleItemClick}
+          cardClassName={cardClassName}
+          emptyMessage="No tasks awaiting review."
+        >
           <table className="w-full table-fixed">
             <thead>
               <tr className="border-b border-gray-200">
@@ -140,8 +155,8 @@ export default function QueueTable({
               )}
             </tbody>
           </table>
-        </div>
-      </ResponsiveTable>
+        </ResponsiveTable>
+      )}
     </div>
   );
 }

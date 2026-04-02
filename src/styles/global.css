@@ -82,6 +82,24 @@
   }
 }
 
+/* Toast overrides — mobile: bottom-center with margins, desktop: top-right */
+@media (max-width: 639px) {
+  .Toastify__toast-container {
+    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    top: auto !important;
+    left: 12px !important;
+    right: 12px !important;
+    padding: 0 !important;
+    transform: none !important;
+    width: auto !important;
+  }
+
+  .Toastify__toast-container--top-right {
+    top: auto !important;
+    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
 @keyframes shimmer {
   100% {
     transform: translateX(100%);

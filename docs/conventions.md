@@ -97,6 +97,23 @@ Tailwind CSS only -- no CSS modules, no styled-components, no inline style objec
 
 ---
 
+## Toast Pattern
+
+Toasts use react-toastify via `useToast()` from `src/contexts/ToastContext.tsx`.
+
+```typescript
+const { toastSuccess, toastError } = useToast();
+toastSuccess("Saved", "Client profile has been updated.");
+toastError("Failed to save changes.");
+```
+
+- **Desktop**: top-right, 360px fixed width.
+- **Mobile**: bottom of screen with 12px side margins + safe-area-inset.
+- All toast styling uses Tailwind classes (no inline styles).
+- `ToastBody` is a shared internal component -- do not render custom toast JSX elsewhere.
+
+---
+
 ## Modal Pattern
 
 Modals accept two props:
