@@ -209,7 +209,7 @@ export default function TaskList({
             </div>
           ) : error ? (
             <div className="p-8 text-center border-t border-gray-100">
-              <p className="text-sm text-red-500">{error}</p>
+              <p className="text-sm text-status-rejected">{error}</p>
               <button
                 onClick={() => setPage(0)}
                 className="mt-2 text-sm text-primary hover:underline"

@@ -152,7 +152,7 @@ export const clientAPI = {
   },
 
   getClients: async (
-    params: { page?: number; size?: number; search?: string } = {},
+    params: { page?: number; size?: number; search?: string; sortBy?: string; sortDirection?: string } = {},
   ): Promise<ClientPageResponse> => {
     const query = buildParams(params);
     const res = await apiClient.get("/clients", { params: query });

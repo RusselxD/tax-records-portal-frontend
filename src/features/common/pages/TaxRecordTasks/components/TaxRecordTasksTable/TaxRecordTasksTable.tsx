@@ -28,16 +28,18 @@ interface HeaderDef {
   showWhen?: "canViewAllOrReview" | "notReviewOnly";
   filter?: "client" | "taskName" | "status" | "period" | "accountant";
   sortKey?: SortBy;
+  /** Hide this column below xl breakpoint (1280px) */
+  hideBeforeXl?: boolean;
 }
 
 const HEADERS: HeaderDef[] = [
   { label: "Client Name", className: "w-[18%] min-w-[160px]", filter: "client", sortKey: "clientDisplayName" },
   { label: "Task", className: "w-[25%] min-w-[220px]", filter: "taskName", sortKey: "taskName" },
-  { label: "Period", className: "w-[7%] min-w-[80px]", filter: "period", sortKey: "period" },
-  { label: "Status", className: "w-[14%] min-w-[150px]", filter: "status", sortKey: "status" },
+  { label: "Period", className: "w-[7%] min-w-[80px]", filter: "period" },
+  { label: "Status", className: "w-[14%] min-w-[150px]", filter: "status" },
   { label: "Deadline", className: "w-[10%] min-w-[100px]", sortKey: "deadline" },
-  { label: "Assigned To", className: "w-[12%] min-w-[120px]", showWhen: "canViewAllOrReview", filter: "accountant" },
-  { label: "Created", className: "w-[14%] min-w-[150px]", showWhen: "notReviewOnly", sortKey: "createdAt" },
+  { label: "Assigned To", className: "w-[12%] min-w-[120px]", showWhen: "canViewAllOrReview", filter: "accountant", hideBeforeXl: true },
+  { label: "Created", className: "w-[14%] min-w-[150px]", showWhen: "notReviewOnly", sortKey: "createdAt", hideBeforeXl: true },
 ];
 
 const statusOptions = [
@@ -344,10 +346,11 @@ export default function TaxRecordTasksTable() {
             <tr className="border-b border-gray-200">
               {visibleHeaders.map((header) => {
                 const filter = renderFilter(header);
+                const hiddenClass = header.hideBeforeXl ? "hidden xl:table-cell" : "";
                 return (
                   <th
                     key={header.label}
-                    className={`${header.className} px-4 py-3 text-left align-middle`}
+                    className={`${header.className} ${hiddenClass} px-4 py-3 text-left align-middle`}
                   >
                     {filter ? (
                       <div className="flex items-center gap-1.5">

@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { formatDate } from "../../../../../lib/formatters";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { hasPermission, Permission } from "../../../../../constants/permissions";
@@ -76,7 +77,7 @@ function ClientRow({
 }
 
 export default function ClientListTable() {
-  const { clients, isFetching, error, refetch, page, totalPages, totalElements, setPage } = useClientList();
+  const { clients, isFetching, error, refetch, page, totalPages, totalElements, setPage, sortBy, sortDirection, toggleSort } = useClientList();
   const { user } = useAuth();
   const navigate = useNavigate();
   const canViewAll = hasPermission(user?.permissions, Permission.CLIENT_VIEW_ALL);
@@ -162,7 +163,28 @@ export default function ClientListTable() {
                   key={header.label}
                   className={`th-label ${header.className}`}
                 >
-                  {header.label}
+                  {header.label === "Client Name" ? (
+                    <button
+                      type="button"
+                      onClick={() => toggleSort("displayName")}
+                      className="flex items-center gap-1.5 group"
+                    >
+                      <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        {header.label}
+                      </span>
+                      {sortBy === "displayName" ? (
+                        sortDirection === "ASC" ? (
+                          <ArrowUp className="w-3 h-3 text-accent" />
+                        ) : (
+                          <ArrowDown className="w-3 h-3 text-accent" />
+                        )
+                      ) : (
+                        <ArrowUpDown className="w-3 h-3 text-gray-300" />
+                      )}
+                    </button>
+                  ) : (
+                    header.label
+                  )}
                 </th>
               ))}
             </tr>

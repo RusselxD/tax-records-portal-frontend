@@ -61,14 +61,14 @@ export default function TaskRow({
         {formatDate(task.deadline)}
       </td>
       {showAssignedTo && (
-        <td className="px-4 py-3.5 text-sm text-gray-600 max-w-0">
+        <td className="px-4 py-3.5 text-sm text-gray-600 max-w-0 hidden xl:table-cell">
           <span className="block truncate" title={task.assignedTo.join(", ")}>
             {task.assignedTo.join(", ")}
           </span>
         </td>
       )}
       {showCreated && (
-        <td className="px-4 py-3.5 max-w-0">
+        <td className="px-4 py-3.5 max-w-0 hidden xl:table-cell">
           <span className="block truncate text-sm text-gray-600" title={task.createdBy}>
             {task.createdBy}
           </span>

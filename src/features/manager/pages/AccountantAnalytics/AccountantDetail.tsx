@@ -2,7 +2,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import { AccountantAnalyticsProvider } from "../../../common/pages/AccountantAnalytics/context/AccountantAnalyticsContext";
 import { AccountantAnalyticsContent } from "../../../common/pages/AccountantAnalytics/AccountantAnalytics";
-import BreadcrumbNav from "../../../../components/common/BreadcrumbNav";
+import BackButton from "../../../../components/common/BackButton";
 
 interface LocationState {
   roleKey?: string;
@@ -20,12 +20,7 @@ export default function AccountantDetail() {
 
   return (
     <div className="space-y-5">
-      <BreadcrumbNav
-        items={[
-          { label: "Accountant Analytics", onClick: () => navigate("/manager/analytics") },
-          { label: state?.name ?? "Performance" },
-        ]}
-      />
+      <BackButton label="Accountant Analytics" onClick={() => navigate("/manager/analytics")} />
 
       <AccountantAnalyticsProvider userId={id}>
         <AccountantAnalyticsContent userId={id} roleKey={state?.roleKey} />

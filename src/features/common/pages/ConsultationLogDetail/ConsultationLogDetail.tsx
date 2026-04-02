@@ -23,7 +23,7 @@ import EditConsultationLogForm from "./components/EditConsultationLogForm";
 import AuditTimeline from "./components/AuditTimeline";
 import LogDetailsCard from "./components/LogDetailsCard";
 import ActionSection from "./components/ActionSection";
-import BreadcrumbNav from "../../../../components/common/BreadcrumbNav";
+import BackButton from "../../../../components/common/BackButton";
 
 const EMPTY_DOC: RichTextContent = { type: "doc", content: [] };
 
@@ -146,12 +146,7 @@ export default function ConsultationLogDetail() {
   return (
     <div className="pb-12">
       <div className="flex items-center justify-between gap-4 mb-5">
-        <BreadcrumbNav
-          items={[
-            { label: "Consultation Logs", onClick: () => navigate(`/${prefix}/consultation-logs`) },
-            { label: log.subject },
-          ]}
-        />
+        <BackButton label="Consultation Logs" onClick={() => navigate(`/${prefix}/consultation-logs`)} />
 
         <div className="flex items-center gap-3 shrink-0">
         {canDelete && (

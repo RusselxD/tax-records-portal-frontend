@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import type { ClientStatus } from "../../../../types/client";
 import ClientStatusBadge from "../../../../components/common/ClientStatusBadge";
-import BreadcrumbNav from "../../../../components/common/BreadcrumbNav";
+import BackButton from "../../../../components/common/BackButton";
 
 interface ClientInfoHeaderProps {
   clientName: string;
@@ -24,14 +24,7 @@ export default function ClientInfoHeader({
 
   return (
     <div className="mb-4">
-      {/* Breadcrumb */}
-      <BreadcrumbNav
-        items={[
-          { label: backLabel, onClick: () => navigate(backTo) },
-          { label: clientName || "Client Details" },
-        ]}
-        className="mb-2"
-      />
+      <BackButton label={backLabel} onClick={() => navigate(backTo)} className="mb-2" />
 
       {/* Title + Status */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">

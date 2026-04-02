@@ -191,7 +191,7 @@ function ClientDetailsContent() {
                   : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
               }`}
             >
-              <User className="w-4 h-4" />
+              <User className="w-4 h-4 hidden sm:block" />
               Profile
             </button>
             <button
@@ -202,7 +202,7 @@ function ClientDetailsContent() {
                   : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
               }`}
             >
-              <FileText className="w-4 h-4" />
+              <FileText className="w-4 h-4 hidden sm:block" />
               Tax Records
             </button>
             <button
@@ -213,7 +213,7 @@ function ClientDetailsContent() {
                   : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
               }`}
             >
-              <MessageSquareText className="w-4 h-4" />
+              <MessageSquareText className="w-4 h-4 hidden sm:block" />
               Consultations
             </button>
           </div>

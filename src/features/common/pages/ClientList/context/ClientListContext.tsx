@@ -10,6 +10,8 @@ import { clientAPI } from "../../../../../api/client";
 import usePaginatedFetch from "../../../../../hooks/usePaginatedFetch";
 import type { ClientListItemResponse } from "../../../../../types/client";
 
+type SortDirection = "ASC" | "DESC";
+
 interface ClientListContextType {
   clients: ClientListItemResponse[];
   isFetching: boolean;
@@ -18,8 +20,11 @@ interface ClientListContextType {
   totalPages: number;
   totalElements: number;
   search: string;
+  sortBy: string | undefined;
+  sortDirection: SortDirection | undefined;
   setSearch: (value: string) => void;
   setPage: (page: number) => void;
+  toggleSort: (column: string) => void;
   refetch: () => void;
 }
 
@@ -27,11 +32,30 @@ const ClientListContext = createContext<ClientListContextType | null>(null);
 
 export function ClientListProvider({ children }: { children: ReactNode }) {
   const [search, setSearchState] = useState("");
+  const [sortBy, setSortBy] = useState<string | undefined>(undefined);
+  const [sortDirection, setSortDirection] = useState<SortDirection | undefined>(undefined);
   const setSearch = useCallback((v: string) => setSearchState(v), []);
 
+  const toggleSort = useCallback((column: string) => {
+    setSortBy((prev) => {
+      if (prev !== column) {
+        setSortDirection("ASC");
+        return column;
+      }
+      setSortDirection((d) => (d === "ASC" ? "DESC" : "ASC"));
+      return column;
+    });
+  }, []);
+
   const params = useMemo(
-    () => (search ? { search } : {}),
-    [search],
+    () => {
+      const p: Record<string, string> = {};
+      if (search) p.search = search;
+      if (sortBy) p.sortBy = sortBy;
+      if (sortDirection) p.sortDirection = sortDirection;
+      return p;
+    },
+    [search, sortBy, sortDirection],
   );
 
   const { items: clients, isFetching, error, page, totalPages, totalElements, setPage, refetch } =
@@ -40,9 +64,10 @@ export function ClientListProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
       clients, isFetching, error, page, totalPages, totalElements, search,
-      setSearch, setPage, refetch,
+      sortBy, sortDirection,
+      setSearch, setPage, toggleSort, refetch,
     }),
-    [clients, isFetching, error, page, totalPages, totalElements, search, setSearch, setPage, refetch],
+    [clients, isFetching, error, page, totalPages, totalElements, search, sortBy, sortDirection, setSearch, setPage, toggleSort, refetch],
   );
 
   return (

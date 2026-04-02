@@ -9,7 +9,7 @@ import { invoiceAPI } from "../../../../api/invoice";
 import { clientAPI } from "../../../../api/client";
 import { fileAPI } from "../../../../api/file";
 import { getErrorMessage, isConflictError } from "../../../../lib/api-error";
-import BreadcrumbNav from "../../../../components/common/BreadcrumbNav";
+import BackButton from "../../../../components/common/BackButton";
 import { validateDocumentFile } from "../../../../lib/file-validation";
 import { formatDate, formatCurrency } from "../../../../lib/formatters";
 import type { InvoiceTermResponse, FileItemResponse } from "../../../../types/invoice";
@@ -176,14 +176,7 @@ export default function CreateInvoice() {
 
   return (
     <div className="pb-12">
-      {/* Breadcrumb */}
-      <BreadcrumbNav
-        items={[
-          { label: "Billings", onClick: () => navigate("/internal-billing/billings") },
-          { label: "Create Invoice" },
-        ]}
-        className="mb-4"
-      />
+      <BackButton label="Billings" onClick={() => navigate("/internal-billing/billings")} className="mb-4" />
 
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <form onSubmit={handleSubmitClick} className="space-y-5">

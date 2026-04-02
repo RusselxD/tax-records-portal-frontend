@@ -112,7 +112,7 @@ export default function InvoiceDetail() {
 
       {/* Actions — billing only */}
       {canManage && (
-        <div className="flex items-center justify-end gap-2 mb-5">
+        <div className="flex flex-wrap items-center justify-end gap-2 mb-5">
           {!isVoid && invoice.hasEmailRecipients && (
             <Button variant="secondary" onClick={handleSendEmail} disabled={isSendingEmail}>
               {isSendingEmail ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <Send className="h-4 w-4 mr-1.5" />}
@@ -155,6 +155,7 @@ export default function InvoiceDetail() {
           clientId={invoice.clientId}
           payments={invoice.payments}
           hasEmailRecipients={canManage && invoice.hasEmailRecipients}
+          canManage={canManage}
           onRefresh={fetchInvoice}
         />
       </div>

@@ -36,29 +36,38 @@ function DiffFileRow({ fileId, fileName, variant }: { fileId: string; fileName: 
   );
 }
 
+function DiffValue({ fileId, fileName, text, variant }: { fileId?: string | null; fileName?: string | null; text?: string | null; variant: "old" | "new" }) {
+  if (fileId && fileName) {
+    return <DiffFileRow fileId={fileId} fileName={fileName} variant={variant} />;
+  }
+  const style = variant === "old"
+    ? "text-sm text-gray-500 bg-red-50 rounded px-2.5 py-1.5 leading-relaxed break-words inline-block"
+    : "text-sm text-primary bg-green-50 rounded px-2.5 py-1.5 leading-relaxed break-words inline-block";
+  return <span className={style}>{text ?? "—"}</span>;
+}
+
 function FieldRow({ change }: { change: DiffFieldChange }) {
   return (
-    <div className="grid grid-cols-[2fr_1.5fr_1.5fr] gap-4 px-5 py-3 items-start">
-      <span className="text-sm text-gray-500 leading-relaxed">{change.field}</span>
-      <div>
-        {change.oldFileId && change.old ? (
-          <DiffFileRow fileId={change.oldFileId} fileName={change.old} variant="old" />
-        ) : (
-          <span className="text-sm text-gray-500 bg-red-50 rounded px-2.5 py-1.5 leading-relaxed break-words inline-block">
-            {change.old ?? "—"}
-          </span>
-        )}
+    <>
+      {/* Desktop: 3-column grid */}
+      <div className="hidden sm:grid grid-cols-[2fr_1.5fr_1.5fr] gap-4 px-5 py-3 items-start">
+        <span className="text-sm text-gray-500 leading-relaxed">{change.field}</span>
+        <div><DiffValue fileId={change.oldFileId} fileName={change.old} text={change.old} variant="old" /></div>
+        <div><DiffValue fileId={change.newFileId} fileName={change.new} text={change.new} variant="new" /></div>
       </div>
-      <div>
-        {change.newFileId && change.new ? (
-          <DiffFileRow fileId={change.newFileId} fileName={change.new} variant="new" />
-        ) : (
-          <span className="text-sm text-primary bg-green-50 rounded px-2.5 py-1.5 leading-relaxed break-words inline-block">
-            {change.new ?? "—"}
-          </span>
-        )}
+      {/* Mobile: stacked layout */}
+      <div className="sm:hidden px-4 py-3 space-y-2">
+        <span className="text-sm font-medium text-gray-600">{change.field}</span>
+        <div className="flex items-start gap-2">
+          <span className="text-xs text-gray-400 uppercase tracking-wider shrink-0 pt-1.5 w-16">Current</span>
+          <div className="min-w-0 flex-1"><DiffValue fileId={change.oldFileId} fileName={change.old} text={change.old} variant="old" /></div>
+        </div>
+        <div className="flex items-start gap-2">
+          <span className="text-xs text-gray-400 uppercase tracking-wider shrink-0 pt-1.5 w-16">New</span>
+          <div className="min-w-0 flex-1"><DiffValue fileId={change.newFileId} fileName={change.new} text={change.new} variant="new" /></div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -73,25 +82,24 @@ function ModifiedItem({ change }: { change: DiffModifiedChange }) {
         <span className="text-sm font-medium text-primary">{change.itemLabel}</span>
       </div>
       {change.fields.map((f, i) => (
-        <div key={i} className="grid grid-cols-[2fr_1.5fr_1.5fr] gap-4 px-5 py-2.5 pl-10 items-start">
-          <span className="text-sm text-gray-500 leading-relaxed">{f.field}</span>
-          <div>
-            {f.oldFileId && f.old ? (
-              <DiffFileRow fileId={f.oldFileId} fileName={f.old} variant="old" />
-            ) : (
-              <span className="text-sm text-gray-500 bg-red-50 rounded px-2.5 py-1.5 leading-relaxed break-words inline-block">
-                {f.old}
-              </span>
-            )}
+        <div key={i}>
+          {/* Desktop */}
+          <div className="hidden sm:grid grid-cols-[2fr_1.5fr_1.5fr] gap-4 px-5 py-2.5 pl-10 items-start">
+            <span className="text-sm text-gray-500 leading-relaxed">{f.field}</span>
+            <div><DiffValue fileId={f.oldFileId} fileName={f.old} text={f.old} variant="old" /></div>
+            <div><DiffValue fileId={f.newFileId} fileName={f.new} text={f.new} variant="new" /></div>
           </div>
-          <div>
-            {f.newFileId && f.new ? (
-              <DiffFileRow fileId={f.newFileId} fileName={f.new} variant="new" />
-            ) : (
-              <span className="text-sm text-primary bg-green-50 rounded px-2.5 py-1.5 leading-relaxed break-words inline-block">
-                {f.new}
-              </span>
-            )}
+          {/* Mobile */}
+          <div className="sm:hidden px-4 py-2.5 pl-8 space-y-2">
+            <span className="text-sm font-medium text-gray-600">{f.field}</span>
+            <div className="flex items-start gap-2">
+              <span className="text-xs text-gray-400 uppercase tracking-wider shrink-0 pt-1.5 w-16">Current</span>
+              <div className="min-w-0 flex-1"><DiffValue fileId={f.oldFileId} fileName={f.old} text={f.old} variant="old" /></div>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-xs text-gray-400 uppercase tracking-wider shrink-0 pt-1.5 w-16">New</span>
+              <div className="min-w-0 flex-1"><DiffValue fileId={f.newFileId} fileName={f.new} text={f.new} variant="new" /></div>
+            </div>
           </div>
         </div>
       ))}
@@ -166,7 +174,7 @@ export default function SectionDiffCard({ section }: { section: DiffSection }) {
       </div>
 
       {hasFieldColumns && (
-        <div className="grid grid-cols-[2fr_1.5fr_1.5fr] gap-4 px-5 py-2.5 border-b border-gray-100">
+        <div className="hidden sm:grid grid-cols-[2fr_1.5fr_1.5fr] gap-4 px-5 py-2.5 border-b border-gray-100">
           <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Field</span>
           <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Current</span>
           <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Proposed</span>

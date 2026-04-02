@@ -9,7 +9,7 @@ import { taxRecordTaskAPI } from "../../../../../api/tax-record-task";
 import { TAX_RECORD_TASK_STATUS } from "../../../../../types/tax-record-task";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import { ConfirmActionModal } from "../../../../../components/common";
-import BreadcrumbNav from "../../../../../components/common/BreadcrumbNav";
+import BackButton from "../../../../../components/common/BackButton";
 import {
   statusStyles,
   statusDotColors,
@@ -30,13 +30,7 @@ export default function TaskHeader() {
 
   return (
     <div>
-      <BreadcrumbNav
-        items={[
-          { label: "Tasks", onClick: () => navigate(`/${prefix}/tasks`) },
-          { label: task.taskName },
-        ]}
-        className="mb-3"
-      />
+      <BackButton label="Tasks" onClick={() => navigate(`/${prefix}/tasks`)} className="mb-3" />
 
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-primary truncate">

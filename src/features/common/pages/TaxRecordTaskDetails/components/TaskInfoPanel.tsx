@@ -12,7 +12,7 @@ export default function TaskInfoPanel() {
     <div className="rounded-lg bg-white border border-gray-200 p-5">
       <h2 className="text-sm font-semibold text-primary mb-4">Task Information</h2>
 
-      <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+      <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
         <InfoField label="Client" value={task.clientDisplayName} />
         <InfoField label="Category" value={task.categoryName} />
         <InfoField label="Sub Category" value={task.subCategoryName} />

@@ -60,8 +60,6 @@ export type SortBy =
   | "clientDisplayName"
   | "taskName"
   | "categoryName"
-  | "period"
-  | "status"
   | "deadline"
   | "createdAt";
 

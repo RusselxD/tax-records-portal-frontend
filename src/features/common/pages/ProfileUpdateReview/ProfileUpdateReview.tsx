@@ -1,12 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { AlertTriangle, Clock, Pencil, CheckCircle2 } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
-import { Button, CommentPreview, CollapsibleSubsection } from "../../../../components/common";
+import { Button, CommentPreview } from "../../../../components/common";
 import NotFound from "../../../../pages/NotFound";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { getRolePrefix } from "../../../../constants/roles";
 import { PROFILE_REVIEW_STATUS } from "../../../../types/client-profile";
-import { useIsMobile } from "../../../../hooks/useMediaQuery";
 import { ActivityLogs } from "../../components/client-info";
 import {
   ProfileUpdateReviewProvider,
@@ -30,7 +29,6 @@ function ProfileUpdateReviewContent() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const prefix = getRolePrefix(user?.roleKey ?? "");
-  const isMobile = useIsMobile();
   const {
     taskId,
     clientId,
@@ -171,15 +169,9 @@ function ProfileUpdateReviewContent() {
           {isReviewer && review.status === PROFILE_REVIEW_STATUS.SUBMITTED && <ReviewActions />}
         </div>
 
-        {/* Sidebar — collapsible on mobile so reviewers can focus on diffs */}
+        {/* Sidebar */}
         <div className="lg:sticky lg:top-6 space-y-3">
-          {isMobile ? (
-            <CollapsibleSubsection title="Activity Logs">
-              <ActivityLogs taskId={taskId} refetchSignal={logsVersion} />
-            </CollapsibleSubsection>
-          ) : (
-            <ActivityLogs taskId={taskId} refetchSignal={logsVersion} />
-          )}
+          <ActivityLogs taskId={taskId} refetchSignal={logsVersion} />
         </div>
       </div>
     </div>

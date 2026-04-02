@@ -4,7 +4,7 @@ import { useNewClient } from "../context/NewClientContext";
 import type { SaveStatus } from "../../../../../types/client";
 import { deriveClientDisplayName } from "../../../../../lib/formatters";
 import ClientStatusBadge from "../../../../../components/common/ClientStatusBadge";
-import BreadcrumbNav from "../../../../../components/common/BreadcrumbNav";
+import BackButton from "../../../../../components/common/BackButton";
 
 function GlobalSaveIndicator({ status }: { status: SaveStatus }) {
   if (status === "saving") {
@@ -52,13 +52,7 @@ export default function NewClientHeader() {
 
   return (
     <div className="mb-8">
-      <BreadcrumbNav
-        items={[
-          { label: "Client Onboarding", onClick: () => navigate("/oos/client-onboarding") },
-          { label: clientName || title },
-        ]}
-        className="mb-2"
-      />
+      <BackButton label="Client Onboarding" onClick={() => navigate("/oos/client-onboarding")} className="mb-2" />
 
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-primary">

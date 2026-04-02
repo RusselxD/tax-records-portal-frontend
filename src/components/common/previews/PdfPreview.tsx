@@ -23,8 +23,9 @@ export default function PdfPreview({ fileUrl }: PdfPreviewProps) {
   useEffect(() => {
     const updateWidth = () => {
       if (containerRef.current) {
-        // Fit to container, cap at 800px for desktop readability
-        setPageWidth(Math.min(containerRef.current.clientWidth, 800));
+        // Account for px-4 (16px each side) padding on the outer container
+        const available = containerRef.current.clientWidth - 32;
+        setPageWidth(Math.min(available, 800));
       }
     };
 
@@ -48,14 +49,14 @@ export default function PdfPreview({ fileUrl }: PdfPreviewProps) {
   );
 
   return (
-    <div ref={containerRef} className="relative flex flex-col items-center flex-1 overflow-auto pb-16 scrollbar-dark">
-      <div data-preview-content>
+    <div ref={containerRef} className="relative flex flex-col items-center flex-1 overflow-auto pb-16 px-4 scrollbar-dark">
+      <div data-preview-content className="rounded-lg overflow-hidden bg-white shadow-lg">
         <Document
           file={fileUrl}
           onLoadSuccess={onLoadSuccess}
           loading={null}
           error={
-            <p className="text-sm text-red-400">Failed to load PDF document.</p>
+            <p className="text-sm text-red-400 p-8">Failed to load PDF document.</p>
           }
         >
           <Page pageNumber={currentPage} width={pageWidth} loading={null} />

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { Users } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import { systemAnalyticsAPI } from "../../../../api/systemAnalytics";
 import { getErrorMessage } from "../../../../lib/api-error";
@@ -68,10 +69,16 @@ export default function AccountantAnalytics() {
       )}
 
       {!loading && !error && filtered.length === 0 && (
-        <div className="flex items-center justify-center py-16 text-sm text-gray-400">
-          {search
-            ? "No accountants match your search."
-            : "No accountants found."}
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <Users className="h-8 w-8 text-gray-300 mb-2" />
+          <p className="text-sm text-gray-500">
+            {search
+              ? "No accountants match your search."
+              : "No accountants found."}
+          </p>
+          {search && (
+            <p className="text-xs text-gray-400 mt-0.5">Try a different search term.</p>
+          )}
         </div>
       )}
 

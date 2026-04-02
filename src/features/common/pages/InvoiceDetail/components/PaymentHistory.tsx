@@ -15,10 +15,11 @@ interface PaymentHistoryProps {
   clientId: string;
   payments: InvoicePaymentResponse[];
   hasEmailRecipients: boolean;
+  canManage?: boolean;
   onRefresh: () => void;
 }
 
-export default function PaymentHistory({ invoiceId, clientId, payments, hasEmailRecipients, onRefresh }: PaymentHistoryProps) {
+export default function PaymentHistory({ invoiceId, clientId, payments, hasEmailRecipients, canManage = false, onRefresh }: PaymentHistoryProps) {
   const [previewFile, setPreviewFile] = useState<FileItemResponse | null>(null);
 
   if (!payments || payments.length === 0) {
@@ -43,6 +44,7 @@ export default function PaymentHistory({ invoiceId, clientId, payments, hasEmail
             clientId={clientId}
             payment={payment}
             hasEmailRecipients={hasEmailRecipients}
+            canManage={canManage}
             onPreview={setPreviewFile}
             onRefresh={onRefresh}
           />
@@ -65,6 +67,7 @@ function PaymentRow({
   clientId,
   payment,
   hasEmailRecipients,
+  canManage,
   onPreview,
   onRefresh,
 }: {
@@ -72,6 +75,7 @@ function PaymentRow({
   clientId: string;
   payment: InvoicePaymentResponse;
   hasEmailRecipients: boolean;
+  canManage: boolean;
   onPreview: (file: FileItemResponse) => void;
   onRefresh: () => void;
 }) {
@@ -126,14 +130,16 @@ function PaymentRow({
           </div>
           <div className="flex items-center gap-3">
             <span className="text-sm font-medium text-primary">{formatCurrency(payment.amount)}</span>
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
-              title="Edit payment"
-              className="p-2 text-gray-300 hover:text-accent transition-colors"
-            >
-              <Pencil className="h-3 w-3" />
-            </button>
+            {canManage && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
+                title="Edit payment"
+                className="p-2 text-gray-300 hover:text-accent transition-colors"
+              >
+                <Pencil className="h-3 w-3" />
+              </button>
+            )}
             {hasEmailRecipients && (
               <button
                 type="button"
