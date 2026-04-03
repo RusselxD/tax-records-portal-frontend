@@ -69,6 +69,8 @@ interface TaskListProps {
   showStatus?: boolean;
   emptyMessage?: string;
   accent?: AccentColor;
+  /** Don't render the card at all when there are 0 items */
+  hideWhenEmpty?: boolean;
 }
 
 export default function TaskList({
@@ -78,6 +80,7 @@ export default function TaskList({
   showStatus = false,
   emptyMessage = "No tasks here right now.",
   accent = "navy",
+  hideWhenEmpty = false,
 }: TaskListProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -177,6 +180,8 @@ export default function TaskList({
   const endItem = Math.min((page + 1) * PAGE_SIZE, totalElements);
 
   const styles = accentStyles[accent];
+
+  if (hideWhenEmpty && !isLoading && totalElements === 0) return null;
 
   return (
     <div className={`bg-white rounded-lg custom-shadow border border-gray-200 border-l-[3px] ${styles.border} overflow-hidden`}>

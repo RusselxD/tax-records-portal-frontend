@@ -14,35 +14,21 @@ interface PdfPreviewProps {
   fileUrl: string;
 }
 
-// Standard PDF page aspect ratio (letter: 8.5 x 11)
-const PAGE_RATIO = 8.5 / 11; // ~0.773
-const MAX_WIDTH = 680;
-
 export default function PdfPreview({ fileUrl }: PdfPreviewProps) {
   const [numPages, setNumPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [pageWidth, setPageWidth] = useState(680);
+  const [pageWidth, setPageWidth] = useState(800);
 
   useEffect(() => {
-    const updateSize = () => {
+    const update = () => {
       if (!containerRef.current) return;
-
-      const containerW = containerRef.current.clientWidth - 32; // px-4 padding
-      const containerH = containerRef.current.clientHeight - 80; // pt + pb padding
-
-      // Width that would fill container width
-      const fitByWidth = Math.min(containerW, MAX_WIDTH);
-      // Width that would make the page fill container height
-      const fitByHeight = containerH * PAGE_RATIO;
-
-      // Use whichever is smaller (fits in both dimensions), but don't exceed max
-      setPageWidth(Math.min(fitByWidth, fitByHeight, MAX_WIDTH));
+      // Use container width on small screens, cap at 800 on desktop
+      setPageWidth(Math.min(containerRef.current.clientWidth, 800));
     };
-
-    updateSize();
-    window.addEventListener("resize", updateSize);
-    return () => window.removeEventListener("resize", updateSize);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
   }, []);
 
   const onLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
@@ -60,8 +46,8 @@ export default function PdfPreview({ fileUrl }: PdfPreviewProps) {
   );
 
   return (
-    <div ref={containerRef} className="relative flex flex-col items-center flex-1 overflow-auto pt-2 pb-16 px-4 scrollbar-dark">
-      <div data-preview-content className="rounded-lg overflow-hidden bg-white shadow-lg">
+    <div ref={containerRef} className="relative flex flex-col items-center flex-1 overflow-auto pb-16 scrollbar-dark">
+      <div data-preview-content>
         <Document
           file={fileUrl}
           onLoadSuccess={onLoadSuccess}

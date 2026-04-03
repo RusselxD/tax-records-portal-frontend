@@ -9,23 +9,21 @@ interface ToastContextValue {
 
 const ToastContext = createContext<ToastContextValue | undefined>(undefined);
 
-function ToastBody({
+function ToastContent({
   icon,
   iconBg,
   iconColor,
-  borderColor,
   title,
   message,
 }: {
   icon: React.ReactNode;
   iconBg: string;
   iconColor: string;
-  borderColor: string;
   title: string;
   message?: string;
 }) {
   return (
-    <div className={`flex items-start gap-3 bg-white rounded-lg border-l-4 ${borderColor} px-3.5 py-3 shadow-lg`}>
+    <div className="flex items-start gap-3">
       <div className={`flex-shrink-0 mt-0.5 w-5 h-5 rounded-full ${iconBg} flex items-center justify-center`}>
         <span className={iconColor}>{icon}</span>
       </div>
@@ -39,32 +37,46 @@ function ToastBody({
   );
 }
 
+const TOAST_STYLE_SUCCESS = {
+  background: "#ffffff",
+  borderLeft: "4px solid #16A34A",
+  borderRadius: "0 7px 7px 0",
+  boxShadow: "0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
+  padding: "13px 14px",
+};
+
+const TOAST_STYLE_ERROR = {
+  background: "#ffffff",
+  borderLeft: "4px solid #DC2626",
+  borderRadius: "0 7px 7px 0",
+  boxShadow: "0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
+  padding: "13px 14px",
+};
+
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const toastSuccess = useCallback((title: string, message?: string) => {
     toast(
-      <ToastBody
+      <ToastContent
         icon={<CheckCircle className="w-[13px] h-[13px]" strokeWidth={2.5} />}
         iconBg="bg-green-100"
         iconColor="text-green-600"
-        borderColor="border-l-green-500"
         title={title}
         message={message}
       />,
-      { icon: false, className: "!bg-transparent !shadow-none !p-0 !min-h-0" },
+      { icon: false, style: TOAST_STYLE_SUCCESS },
     );
   }, []);
 
   const toastError = useCallback((title: string, message?: string) => {
     toast(
-      <ToastBody
+      <ToastContent
         icon={<XCircle className="w-[13px] h-[13px]" strokeWidth={2.5} />}
         iconBg="bg-red-100"
         iconColor="text-red-600"
-        borderColor="border-l-red-500"
         title={title}
         message={message}
       />,
-      { icon: false, className: "!bg-transparent !shadow-none !p-0 !min-h-0" },
+      { icon: false, style: TOAST_STYLE_ERROR },
     );
   }, []);
 

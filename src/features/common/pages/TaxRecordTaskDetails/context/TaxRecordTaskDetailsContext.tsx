@@ -113,7 +113,8 @@ export function TaxRecordTaskDetailsProvider({
   // Initial fetch + full refetch (task, files, logs)
   useEffect(() => {
     let cancelled = false;
-    setIsLoading(true);
+    // Only show skeleton on initial load, not on action-triggered refetches
+    if (version === 0) setIsLoading(true);
     setError(null);
     setNotFound(false);
 

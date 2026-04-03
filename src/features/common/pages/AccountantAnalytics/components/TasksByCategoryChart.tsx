@@ -29,8 +29,8 @@ export default function TasksByCategoryChart() {
   const { data, loading, error, retry } = byCategory;
 
   return (
-    <ChartContainer title="Tasks by Category" className="flex-1 flex flex-col">
-      <div className="flex-1 min-h-0">
+    <ChartContainer title="Tasks by Category">
+      <div>
         {loading && <Skeleton />}
 
         {!loading && error && (

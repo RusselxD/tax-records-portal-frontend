@@ -17,8 +17,6 @@ export default function App() {
             autoClose={4000}
             newestOnTop
             closeButton={false}
-            toastClassName="!rounded-lg !shadow-lg !p-0 !min-h-0 !mb-2"
-            className="!w-auto sm:!w-[360px] !p-3 sm:!p-0"
           />
         </ToastProvider>
       </NotificationsProvider>

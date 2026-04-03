@@ -43,6 +43,7 @@ export default function Dashboard() {
         showStatus
         accent="red"
         emptyMessage="No overdue tasks — you're on track."
+        hideWhenEmpty
       />
       <TaskList
         title="Rejected Tasks"
@@ -50,6 +51,7 @@ export default function Dashboard() {
         fetchFn={fetchRejected}
         accent="red"
         emptyMessage="No rejected tasks right now."
+        hideWhenEmpty
       />
       <TaskList
         title="To-do List"
