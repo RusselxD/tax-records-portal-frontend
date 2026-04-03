@@ -69,23 +69,23 @@ export default function TasksByCategory() {
       {!isFetching && error && <ErrorState message={error} onRetry={fetchData} />}
       {!isFetching && !error && data && (
         data.length === 0 ? <EmptyState /> : (
-          <ResponsiveContainer width="100%" height={340}>
-            <BarChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 60 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+          <ResponsiveContainer width="100%" height={Math.max(280, data.length * 44 + 60)}>
+            <BarChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: 5 }} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
               <XAxis
-                dataKey="category"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 11, fill: "#6B7280" }}
-                interval={0}
-                angle={-35}
-                textAnchor="end"
-              />
-              <YAxis
+                type="number"
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12, fill: "#6B7280" }}
                 allowDecimals={false}
+              />
+              <YAxis
+                type="category"
+                dataKey="category"
+                axisLine={false}
+                tickLine={false}
+                width={200}
+                tick={{ fontSize: 11, fill: "#6B7280" }}
               />
               <Tooltip
                 contentStyle={{
@@ -102,7 +102,7 @@ export default function TasksByCategory() {
                 wrapperStyle={{ fontSize: 12, paddingTop: 12 }}
               />
               {STATUS_BARS.map(({ key, label, color }) => (
-                <Bar key={key} dataKey={key} name={label} stackId="a" fill={color} />
+                <Bar key={key} dataKey={key} name={label} stackId="a" fill={color} radius={[0, 4, 4, 0]} />
               ))}
             </BarChart>
           </ResponsiveContainer>

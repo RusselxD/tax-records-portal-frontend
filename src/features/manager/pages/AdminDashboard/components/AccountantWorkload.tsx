@@ -35,8 +35,11 @@ const EmptyState = () => (
   </div>
 );
 
+const ROW_HEIGHT = 44;
+const PADDING = 30;
+
 const WorkloadChart = ({ data }: { data: AccountantWorkloadItem[] }) => (
-  <ResponsiveContainer width="100%" height={280}>
+  <ResponsiveContainer width="100%" height={data.length * ROW_HEIGHT + PADDING}>
     <BarChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }} layout="vertical">
       <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
       <XAxis
