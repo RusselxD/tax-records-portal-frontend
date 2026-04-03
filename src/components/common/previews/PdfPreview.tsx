@@ -49,7 +49,7 @@ export default function PdfPreview({ fileUrl }: PdfPreviewProps) {
   );
 
   return (
-    <div ref={containerRef} className="relative flex flex-col items-center flex-1 overflow-auto pb-16 px-4 scrollbar-dark">
+    <div ref={containerRef} className="relative flex flex-col items-center flex-1 overflow-auto pt-2 pb-16 px-4 scrollbar-dark">
       <div data-preview-content className="rounded-lg overflow-hidden bg-white shadow-lg">
         <Document
           file={fileUrl}

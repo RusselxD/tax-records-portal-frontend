@@ -15,7 +15,7 @@ export default function UserProfile() {
     user?.roleKey === UserRole.QTD;
 
   return (
-    <div className="p-6 md:p-8 max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 items-start">
         <div className="flex flex-col gap-6">
           <PersonalInfoCard />
