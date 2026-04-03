@@ -278,8 +278,8 @@ export default function FilePreviewOverlay({
         </button>
       </div>
 
-      {/* Content — clipped to this container, won't scroll past header */}
-      <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+      {/* Content */}
+      <div className="flex flex-col flex-1 min-h-0">
         {renderContent()}
       </div>
     </div>,
