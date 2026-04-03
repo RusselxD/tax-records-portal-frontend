@@ -82,21 +82,15 @@
   }
 }
 
-/* Toast overrides — mobile: bottom-center with margins, desktop: top-right */
+/* Toast — safe area bottom padding on mobile */
 @media (max-width: 639px) {
-  .Toastify__toast-container {
+  .Toastify__toast-container--bottom-center {
     bottom: calc(12px + env(safe-area-inset-bottom)) !important;
-    top: auto !important;
     left: 12px !important;
     right: 12px !important;
     padding: 0 !important;
     transform: none !important;
     width: auto !important;
-  }
-
-  .Toastify__toast-container--top-right {
-    top: auto !important;
-    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
   }
 }
 

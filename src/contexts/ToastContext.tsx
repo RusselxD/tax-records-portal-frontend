@@ -1,6 +1,7 @@
 import { CheckCircle, XCircle } from "lucide-react";
 import { createContext, useCallback, useContext, useMemo } from "react";
 import { toast } from "react-toastify";
+import { useIsMobile } from "../hooks/useMediaQuery";
 
 interface ToastContextValue {
   toastSuccess: (title: string, message?: string) => void;
@@ -37,23 +38,27 @@ function ToastContent({
   );
 }
 
-const TOAST_STYLE_SUCCESS = {
-  background: "#ffffff",
-  borderLeft: "4px solid #16A34A",
-  borderRadius: "0 7px 7px 0",
-  boxShadow: "0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
-  padding: "13px 14px",
-};
-
-const TOAST_STYLE_ERROR = {
-  background: "#ffffff",
-  borderLeft: "4px solid #DC2626",
-  borderRadius: "0 7px 7px 0",
-  boxShadow: "0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
-  padding: "13px 14px",
-};
+function getToastStyle(color: string, mobile: boolean): React.CSSProperties {
+  return mobile
+    ? {
+        background: "#ffffff",
+        borderTop: `3px solid ${color}`,
+        borderRadius: "0 0 7px 7px",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
+        padding: "13px 14px",
+      }
+    : {
+        background: "#ffffff",
+        borderLeft: `4px solid ${color}`,
+        borderRadius: "0 7px 7px 0",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
+        padding: "13px 14px",
+      };
+}
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
+  const mobile = useIsMobile();
+
   const toastSuccess = useCallback((title: string, message?: string) => {
     toast(
       <ToastContent
@@ -63,9 +68,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         title={title}
         message={message}
       />,
-      { icon: false, style: TOAST_STYLE_SUCCESS },
+      { icon: false, style: getToastStyle("#16A34A", mobile) },
     );
-  }, []);
+  }, [mobile]);
 
   const toastError = useCallback((title: string, message?: string) => {
     toast(
@@ -76,9 +81,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         title={title}
         message={message}
       />,
-      { icon: false, style: TOAST_STYLE_ERROR },
+      { icon: false, style: getToastStyle("#DC2626", mobile) },
     );
-  }, []);
+  }, [mobile]);
 
   const value = useMemo(() => ({ toastSuccess, toastError }), [toastSuccess, toastError]);
 
