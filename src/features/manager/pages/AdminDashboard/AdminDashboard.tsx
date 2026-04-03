@@ -19,6 +19,7 @@ export default function AdminDashboard() {
         <AccountantWorkload />
         <TasksByCategory />
       </div>
+
     </div>
   );
 }
