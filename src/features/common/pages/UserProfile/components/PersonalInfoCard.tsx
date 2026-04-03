@@ -11,7 +11,7 @@ import InfoField from "../../../../../components/common/InfoField";
 import Input from "../../../../../components/common/Input";
 import Button from "../../../../../components/common/Button";
 import TitlesEditor from "../../../../../components/common/TitlesEditor";
-import { USER_STATUS, type MyProfileResponse, type UserTitle } from "../../../../../types/user";
+import type { MyProfileResponse, UserTitle } from "../../../../../types/user";
 
 interface EditForm {
   firstName: string;
@@ -21,7 +21,7 @@ interface EditForm {
 }
 
 export default function PersonalInfoCard() {
-  const { user, updateUser } = useAuth();
+  const { user, refreshFromToken } = useAuth();
   const { toastSuccess, toastError } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -48,7 +48,10 @@ export default function PersonalInfoCard() {
   if (!user) return null;
 
   const isClient = user.roleKey === UserRole.CLIENT;
-  const { bg, text } = getAvatarColor(user.name);
+  // Use profile data (from API) when available, fall back to auth context (JWT)
+  const displayName = profile?.name ?? user.name;
+  const displayEmail = profile?.email ?? user.email;
+  const { bg, text } = getAvatarColor(displayName);
   const isBusy = isUploading || isRemoving;
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,8 +60,8 @@ export default function PersonalInfoCard() {
     e.target.value = "";
     setIsUploading(true);
     try {
-      const { profileUrl } = await usersAPI.uploadAvatar(file);
-      updateUser({ profileUrl });
+      const { accessToken } = await usersAPI.uploadAvatar(file);
+      refreshFromToken(accessToken);
       toastSuccess("Profile photo updated.");
     } catch (err) {
       toastError(getErrorMessage(err));
@@ -70,8 +73,8 @@ export default function PersonalInfoCard() {
   const handleRemove = async () => {
     setIsRemoving(true);
     try {
-      await usersAPI.deleteAvatar();
-      updateUser({ profileUrl: null });
+      const { accessToken } = await usersAPI.deleteAvatar();
+      refreshFromToken(accessToken);
       toastSuccess("Profile photo removed.");
     } catch (err) {
       toastError(getErrorMessage(err));
@@ -92,7 +95,7 @@ export default function PersonalInfoCard() {
     setIsSaving(true);
     try {
       const res = await usersAPI.updateMe(form);
-      updateUser({ name: res.name, email: res.email });
+      refreshFromToken(res.accessToken);
       setProfile((prev) => prev ? { ...prev, ...form, name: res.name, email: res.email } : prev);
       setIsEditing(false);
       toastSuccess("Profile updated.");
@@ -135,7 +138,7 @@ export default function PersonalInfoCard() {
                 />
               ) : (
                 <div className={`w-full h-full ${bg} flex items-center justify-center`}>
-                  <span className={`${text} text-xl font-semibold`}>{getInitials(user.name)}</span>
+                  <span className={`${text} text-xl font-semibold`}>{getInitials(displayName)}</span>
                 </div>
               )}
             </div>
@@ -180,18 +183,12 @@ export default function PersonalInfoCard() {
             </div>
           ) : (
             <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
-              <InfoField label="Full Name" value={user.name} />
-              <InfoField label="Email" value={user.email} />
+              <InfoField label="Full Name" value={displayName} />
+              <InfoField label="Email" value={displayEmail} />
               {!isClient && (
                 <>
                   <InfoField label="Position" value={user.position ?? undefined} />
                   <InfoField label="Role" value={user.role} />
-                  <InfoField label="Status">
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className={`w-1.5 h-1.5 rounded-full ${user.status === USER_STATUS.ACTIVE ? "bg-green-500" : "bg-yellow-400"}`} />
-                      <span className="text-sm text-gray-700 capitalize">{user.status.toLowerCase()}</span>
-                    </span>
-                  </InfoField>
                 </>
               )}
             </dl>

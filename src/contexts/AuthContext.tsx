@@ -36,6 +36,8 @@ interface AuthContextType {
   loginWithTokens: (response: LoginResponse) => User;
   logout: () => void;
   updateUser: (updates: Partial<User>) => void;
+  /** Replace the stored access token and refresh user state from its claims */
+  refreshFromToken: (accessToken: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -193,6 +195,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser((prev) => (prev ? { ...prev, ...updates } : prev));
   }, []);
 
+  const refreshFromToken = useCallback((accessToken: string) => {
+    tokenStorage.setAccessToken(accessToken);
+    const claims = decodeJwt(accessToken);
+    if (claims) setUser(claimsToUser(claims));
+  }, []);
+
   const value = useMemo<AuthContextType>(
     () => ({
       user,
@@ -202,8 +210,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       loginWithTokens,
       logout,
       updateUser,
+      refreshFromToken,
     }),
-    [user, isLoading, login, loginWithTokens, logout, updateUser],
+    [user, isLoading, login, loginWithTokens, logout, updateUser, refreshFromToken],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

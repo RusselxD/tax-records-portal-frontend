@@ -97,17 +97,18 @@ export const usersAPI = {
     await apiClient.post(`/users/${userId}/resend-activation`, data ?? {});
   },
 
-  uploadAvatar: async (file: File): Promise<{ profileUrl: string }> => {
+  uploadAvatar: async (file: File): Promise<{ profileUrl: string; accessToken: string }> => {
     const formData = new FormData();
     formData.append("file", file);
     const res = await apiClient.post("/users/me/avatar", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-    return res.data as { profileUrl: string };
+    return res.data as { profileUrl: string; accessToken: string };
   },
 
-  deleteAvatar: async (): Promise<void> => {
-    await apiClient.delete("/users/me/avatar");
+  deleteAvatar: async (): Promise<{ accessToken: string }> => {
+    const res = await apiClient.delete("/users/me/avatar");
+    return res.data as { accessToken: string };
   },
 
   changePassword: async (data: {

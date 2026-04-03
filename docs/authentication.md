@@ -89,6 +89,7 @@ config.headers.Authorization = `Bearer ${tokenStorage.getAccessToken()}`;
 |--------|-------------|
 | `getAccessToken()` | Returns the stored access token or `null` |
 | `getRefreshToken()` | Returns the stored refresh token or `null` |
+| `setAccessToken(accessToken)` | Stores only the access token (used by `refreshFromToken`) |
 | `setTokens(accessToken, refreshToken)` | Stores both tokens |
 | `clearTokens()` | Removes both tokens |
 | `hasTokens()` | Returns `true` if both tokens are present |
@@ -143,7 +144,21 @@ const updateUser = useCallback((updates: Partial<User>) => {
 }, []);
 ```
 
-This is used for in-session updates like avatar uploads or profile saves. It does **not** persist to the backend or modify the stored JWT -- changes last only until the next page reload or token refresh.
+This is used for lightweight in-session patches. It does **not** persist to the backend or modify the stored JWT -- changes last only until the next page reload or token refresh.
+
+## refreshFromToken
+
+`AuthContext` exposes `refreshFromToken(accessToken: string)` for profile-mutating endpoints that return a new JWT:
+
+```typescript
+const refreshFromToken = useCallback((accessToken: string) => {
+  tokenStorage.setAccessToken(accessToken);
+  const claims = decodeJwt(accessToken);
+  if (claims) setUser(claimsToUser(claims));
+}, []);
+```
+
+Used by `PATCH /users/me`, `POST /users/me/avatar`, and `DELETE /users/me/avatar` -- these endpoints return a fresh `accessToken` with updated claims (`name`, `email`, `profile_url`). This replaces the stored token and re-derives user state, so both the current session and subsequent page reloads reflect the changes.
 
 ## Rate Limiting
 

@@ -94,6 +94,7 @@ export interface UpdateMyProfileRequest {
 export interface UpdateMyProfileResponse {
   name: string;
   email: string;
+  accessToken: string;
 }
 
 export interface AssignedClientItem {

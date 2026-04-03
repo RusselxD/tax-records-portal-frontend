@@ -35,9 +35,9 @@ Source: `src/api/users.ts`
 | Method | Path | Description | Params / Body | Response |
 |--------|------|-------------|---------------|----------|
 | GET | `/users/me` | Get current user's full profile | -- | `MyProfileResponse` |
-| PATCH | `/users/me` | Update current user's profile | `UpdateMyProfileRequest` | `UpdateMyProfileResponse` |
-| POST | `/users/me/avatar` | Upload avatar | `multipart/form-data` (file) | `{ profileUrl }` |
-| DELETE | `/users/me/avatar` | Delete avatar | -- | void |
+| PATCH | `/users/me` | Update current user's profile | `UpdateMyProfileRequest` | `UpdateMyProfileResponse` (includes `accessToken`) |
+| POST | `/users/me/avatar` | Upload avatar | `multipart/form-data` (file) | `{ profileUrl, accessToken }` |
+| DELETE | `/users/me/avatar` | Delete avatar | -- | `{ accessToken }` |
 | POST | `/users/me/change-password` | Change password | `{ currentPassword, newPassword }` | void |
 | GET | `/users` | List managed users | Query: `search`, `roleKey`, `status`, `position` | `ManagedUser[]` |
 | POST | `/users` | Create user | `CreateUserRequest` | `ManagedUser` (201) |

@@ -10,6 +10,10 @@ export const tokenStorage = {
     return localStorage.getItem("refreshToken");
   },
 
+  setAccessToken: (accessToken: string): void => {
+    localStorage.setItem("authToken", accessToken);
+  },
+
   setTokens: (accessToken: string, refreshToken: string): void => {
     localStorage.setItem("authToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
