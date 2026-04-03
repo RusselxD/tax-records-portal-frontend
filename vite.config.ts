@@ -11,7 +11,7 @@ export default defineConfig({
     cloudflare(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['upturn.svg', 'upturn.png', 'apple-touch-icon.png'],
+      includeAssets: ['upturn.svg'],
       manifest: {
         name: 'Tax Records Portal',
         short_name: 'Tax Records Portal',
@@ -23,20 +23,9 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
+            src: 'upturn.png',
+            sizes: '1000x1000',
             type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-          {
-            src: 'pwa-maskable-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable',
           },
         ],
       },

@@ -112,29 +112,35 @@ export default function InvoiceDetail() {
 
       {/* Actions — billing only */}
       {canManage && (
-        <div className="flex flex-wrap items-center justify-end gap-2 mb-5">
-          {!isVoid && invoice.hasEmailRecipients && (
-            <Button variant="secondary" onClick={handleSendEmail} disabled={isSendingEmail}>
-              {isSendingEmail ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <Send className="h-4 w-4 mr-1.5" />}
-              {invoice.emailSent ? "Resend Email" : "Send Email"}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 mb-5">
+          {/* Primary actions */}
+          <div className="flex gap-2 sm:contents">
+            {!isVoid && invoice.hasEmailRecipients && (
+              <Button variant="secondary" onClick={handleSendEmail} disabled={isSendingEmail} className="flex-1 sm:flex-initial">
+                {isSendingEmail ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <Send className="h-4 w-4 mr-1.5" />}
+                {invoice.emailSent ? "Resend Email" : "Send Email"}
+              </Button>
+            )}
+            {!isVoid && !isFullyPaid && (
+              <Button onClick={() => setShowPaymentForm(true)} className="flex-1 sm:flex-initial">
+                <CreditCard className="h-4 w-4 mr-1.5" />
+                Receive Payment
+              </Button>
+            )}
+          </div>
+          {/* Destructive actions */}
+          <div className="flex gap-2 sm:contents">
+            {!isVoid && (
+              <Button variant="secondary" onClick={() => setShowVoidConfirm(true)} className="flex-1 sm:flex-initial">
+                <Ban className="h-4 w-4 mr-1.5" />
+                Void
+              </Button>
+            )}
+            <Button variant="secondary" onClick={() => setShowDeleteConfirm(true)} className="flex-1 sm:flex-initial">
+              <Trash2 className="h-4 w-4 mr-1.5" />
+              Delete
             </Button>
-          )}
-          {!isVoid && !isFullyPaid && (
-            <Button onClick={() => setShowPaymentForm(true)}>
-              <CreditCard className="h-4 w-4 mr-1.5" />
-              Receive Payment
-            </Button>
-          )}
-          {!isVoid && (
-            <Button variant="secondary" onClick={() => setShowVoidConfirm(true)}>
-              <Ban className="h-4 w-4 mr-1.5" />
-              Void
-            </Button>
-          )}
-          <Button variant="secondary" onClick={() => setShowDeleteConfirm(true)}>
-            <Trash2 className="h-4 w-4 mr-1.5" />
-            Delete
-          </Button>
+          </div>
         </div>
       )}
 
