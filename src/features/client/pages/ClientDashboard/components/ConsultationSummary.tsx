@@ -92,7 +92,7 @@ export default function ConsultationSummary() {
           {summary.estimatedExcessFee > 0 && (
             <div className="mt-3 rounded-md bg-orange-50 border border-orange-100 px-3 py-2">
               <p className="text-xs text-orange-700">
-                Estimated excess fee: <span className="font-semibold">{formatCurrency(summary.estimatedExcessFee)}</span>
+                Estimated billable fee: <span className="font-semibold">{formatCurrency(summary.estimatedExcessFee)}</span>
                 <span className="text-orange-500 ml-1">({formatCurrency(summary.excessRate)}/hr)</span>
               </p>
             </div>

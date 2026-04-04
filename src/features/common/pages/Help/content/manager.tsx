@@ -713,23 +713,23 @@ export const managerSections: HelpSection[] = [
         <BulletList
           items={[
             "Included — within the client's monthly included hours.",
-            "Billable — beyond the monthly cap, billed at the excess rate.",
+            "Billable — beyond the monthly included hours, billed at the hourly rate.",
             "Courtesy — manually flagged, doesn't count toward billing.",
           ]}
         />
         <P>
           When a log is approved, the system recomputes all approved logs for
           that client and month in chronological order. Once cumulative hours
-          exceed the client's included-hours cap, remaining logs become Excess.
+          exceed the client's included-hours cap, remaining logs become Billable.
           If no consultation config exists for the client, all non-courtesy logs
-          default to Excess.
+          default to Billable.
         </P>
 
         <Heading>Client Details — Consultations Tab</Heading>
         <P>
           On any client's details page, the Consultations tab shows a monthly
-          summary with a progress bar, hours breakdown (included, excess,
-          courtesy), and estimated excess fees. Below that is a table of
+          summary with a progress bar, hours breakdown (included, billable,
+          courtesy), and estimated billable fees. Below that is a table of
           approved logs for the selected month.
         </P>
       </>

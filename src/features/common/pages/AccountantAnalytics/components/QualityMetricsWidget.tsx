@@ -26,7 +26,7 @@ const StatRow = ({ label, value, sub, highlight = "neutral" }: StatRowProps) => 
   </div>
 );
 
-export default function QualityMetricsWidget() {
+export default function QualityMetricsWidget({ className }: { className?: string }) {
   const { qualityMetrics } = useAccountantAnalytics();
   const { data, loading, error, retry } = qualityMetrics;
 
@@ -34,10 +34,10 @@ export default function QualityMetricsWidget() {
   const rateHighlight =
     approvalRate >= 80 ? "green" : approvalRate >= 50 ? "neutral" : "red";
 
-  if (loading) return <div className="skeleton rounded-xl h-56 w-full" />;
+  if (loading) return <div className={`skeleton rounded-xl h-56 w-full ${className ?? ""}`} />;
 
   return (
-    <ChartContainer title="Quality Metrics">
+    <ChartContainer title="Quality Metrics" className={className}>
 
       {!loading && error && (
         <div className="flex items-center justify-center py-10 text-sm text-status-rejected">

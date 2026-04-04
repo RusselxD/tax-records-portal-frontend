@@ -89,14 +89,14 @@ const Legend = ({ data }: { data: OnTimeRateResponse }) => (
   </div>
 );
 
-export default function OnTimeRateWidget() {
+export default function OnTimeRateWidget({ className }: { className?: string }) {
   const { onTimeRate } = useAccountantAnalytics();
   const { data, loading, error, retry } = onTimeRate;
 
-  if (loading) return <div className="skeleton rounded-xl h-64 w-full" />;
+  if (loading) return <div className={`skeleton rounded-xl h-64 w-full ${className ?? ""}`} />;
 
   return (
-    <ChartContainer title="On-Time Rate">
+    <ChartContainer title="On-Time Rate" className={className}>
       {!loading && error && (
         <div className="h-[220px] flex items-center justify-center text-sm text-status-rejected">
           <span>{error}</span>

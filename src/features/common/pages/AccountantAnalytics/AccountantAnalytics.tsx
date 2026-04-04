@@ -29,9 +29,9 @@ export function AccountantAnalyticsContent({
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4">
         <TasksByCategoryChart />
-        <div className="flex flex-col gap-4">
-          <OnTimeRateWidget />
-          <QualityMetricsWidget />
+        <div className="flex flex-col gap-4 min-h-0">
+          <OnTimeRateWidget className="flex-1 min-h-0" />
+          <QualityMetricsWidget className="flex-1 min-h-0" />
         </div>
       </div>
 

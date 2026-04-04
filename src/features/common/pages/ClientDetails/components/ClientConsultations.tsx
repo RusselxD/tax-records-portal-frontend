@@ -41,7 +41,7 @@ function InlineConfigSetup({ clientId, onConfigured }: { clientId: string; onCon
         <Settings className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
         <div>
           <p className="text-sm font-medium text-amber-800">Consultation config not set up</p>
-          <p className="text-sm text-amber-700 mt-1">Set the monthly included hours and excess rate to enable consultation tracking for this client.</p>
+          <p className="text-sm text-amber-700 mt-1">Set the monthly included hours and billable rate to enable consultation tracking for this client.</p>
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-md">
@@ -56,7 +56,7 @@ function InlineConfigSetup({ clientId, onConfigured }: { clientId: string; onCon
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-amber-700 mb-1">Excess Rate (per hour)</label>
+          <label className="block text-xs font-medium text-amber-700 mb-1">Billable Rate (per hour)</label>
           <input
             type="number"
             value={rate}
@@ -216,7 +216,7 @@ export default function ClientConsultations({ clientId }: { clientId: string }) 
                       <input type="number" value={editHours} onChange={(e) => setEditHours(e.target.value)} placeholder="0.00" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
                     </div>
                     <div>
-                      <label className="block text-xs text-gray-500 mb-1">Excess Rate (per hour)</label>
+                      <label className="block text-xs text-gray-500 mb-1">Billable Rate (per hour)</label>
                       <input type="number" value={editRate} onChange={(e) => setEditRate(e.target.value)} placeholder="0.00" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
                     </div>
                   </div>
@@ -294,7 +294,7 @@ export default function ClientConsultations({ clientId }: { clientId: string }) 
                   <p className="text-lg font-bold text-violet-700">{summary.courtesyHours.toFixed(2)}h</p>
                 </div>
                 <div className="rounded-md bg-gray-50 border border-gray-200 px-3 py-2.5">
-                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Est. Excess Fee</p>
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Est. Billable Fee</p>
                   <p className="text-lg font-bold text-primary">{formatCurrency(summary.estimatedExcessFee)}</p>
                   {summary.excessRate > 0 && (
                     <p className="text-xs text-gray-400 mt-0.5">{formatCurrency(summary.excessRate)}/hr</p>

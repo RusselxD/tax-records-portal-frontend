@@ -103,7 +103,7 @@ export default function ClientEngagementsPreview({ data }: { data: ScopeOfEngage
       {(data.consultationFreeAllowance || data.consultationExcessRate) && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
           <TextDisplay label="Consultation Free Allowance" value={data.consultationFreeAllowance} />
-          <TextDisplay label="Consultation Excess Rate" value={data.consultationExcessRate} />
+          <TextDisplay label="Consultation Billable Rate" value={data.consultationExcessRate} />
         </div>
       )}
     </div>

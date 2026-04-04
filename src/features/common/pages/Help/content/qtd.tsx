@@ -414,14 +414,14 @@ export const qtdSections: HelpSection[] = [
         <BulletList
           items={[
             "Included — within the client's monthly included hours.",
-            "Billable — beyond the monthly cap, billed at the excess rate.",
+            "Billable — beyond the monthly included hours, billed at the hourly rate.",
             "Courtesy — manually flagged by the accountant, not billed.",
           ]}
         />
         <P>
           When a log is approved, the system recomputes all approved logs for
           that client and month in chronological order. Once cumulative hours
-          exceed the client's included-hours cap, remaining logs become Excess.
+          exceed the client's included-hours cap, remaining logs become Billable.
         </P>
       </>
     ),

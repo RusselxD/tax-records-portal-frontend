@@ -84,7 +84,7 @@ export default function ConsultationConfigCard({ clientId }: ConsultationConfigC
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Excess Rate (per hour)</label>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Billable Rate (per hour)</label>
             <input
               type="number"
               value={editRate}
@@ -133,7 +133,7 @@ export default function ConsultationConfigCard({ clientId }: ConsultationConfigC
             </button>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Excess Rate</p>
+            <p className="text-xs text-gray-400">Billable Rate</p>
             <p className="text-sm font-medium text-primary">{formatCurrency(excessRate ?? 0)} / hr</p>
           </div>
         </div>
