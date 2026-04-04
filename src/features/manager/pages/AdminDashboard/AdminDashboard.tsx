@@ -15,7 +15,7 @@ export default function AdminDashboard() {
         <TaskCompletionTrend />
         <TaskApprovalRate />
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] lg:grid-rows-[22rem] gap-4">
         <AccountantWorkload />
         <TasksByCategory />
       </div>

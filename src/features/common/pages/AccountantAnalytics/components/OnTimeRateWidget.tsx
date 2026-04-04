@@ -1,6 +1,7 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { ChartContainer } from "../../../../../components/common";
 import { useAccountantAnalytics } from "../context/AccountantAnalyticsContext";
+import { formatNum } from "../../../../../lib/formatters";
 import type { OnTimeRateResponse } from "../../../../../types/analytics";
 
 const COLORS = { onTime: "#16A34A", late: "#DC2626" };
@@ -79,11 +80,11 @@ const Legend = ({ data }: { data: OnTimeRateResponse }) => (
   <div className="flex items-center justify-center gap-5 mt-1">
     <div className="flex items-center gap-1.5 text-sm text-gray-600">
       <span className="w-2.5 h-2.5 rounded-full bg-status-approved inline-block" />
-      On Time: {data.completedOnTime ?? 0}
+      On Time: {formatNum(data.completedOnTime ?? 0)}
     </div>
     <div className="flex items-center gap-1.5 text-sm text-gray-600">
       <span className="w-2.5 h-2.5 rounded-full bg-status-rejected inline-block" />
-      Late: {data.completedLate ?? 0}
+      Late: {formatNum(data.completedLate ?? 0)}
     </div>
   </div>
 );
@@ -113,7 +114,7 @@ export default function OnTimeRateWidget() {
           <Donut data={data} />
           <Legend data={data} />
           <p className="text-center text-xs text-gray-400 mt-3">
-            Based on {data.totalCompleted ?? 0} completed{" "}
+            Based on {formatNum(data.totalCompleted ?? 0)} completed{" "}
             {(data.totalCompleted ?? 0) === 1 ? "task" : "tasks"}
           </p>
         </>

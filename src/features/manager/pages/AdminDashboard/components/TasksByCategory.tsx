@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getErrorMessage } from "../../../../../lib/api-error";
+import { formatNum } from "../../../../../lib/formatters";
 import type { TasksByCategorySystemItem } from "../../../../../types/analytics";
 import { systemAnalyticsAPI } from "../../../../../api/systemAnalytics";
 import { ChartContainer } from "../../../../../components/common";
@@ -40,7 +41,7 @@ function CategoryRow({ item, maxTotal }: { item: TasksByCategorySystemItem; maxT
     <div className="py-2.5">
       <div className="flex items-center justify-between mb-1.5">
         <span className="text-sm font-medium text-gray-700 leading-snug">{item.category}</span>
-        <span className="text-sm font-semibold text-gray-900 tabular-nums ml-3 shrink-0">{total}</span>
+        <span className="text-sm font-semibold text-gray-900 tabular-nums ml-3 shrink-0">{formatNum(total)}</span>
       </div>
 
       {/* Stacked progress bar */}
@@ -64,7 +65,7 @@ function CategoryRow({ item, maxTotal }: { item: TasksByCategorySystemItem; maxT
         {visible.map(({ label, color, count }) => (
           <span key={label} className="flex items-center gap-1 text-xs text-gray-500">
             <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
-            {label} {count}
+            {label} {formatNum(count)}
           </span>
         ))}
         {remaining > 0 && (
@@ -124,12 +125,12 @@ export default function TasksByCategory() {
   const maxTotal = data ? Math.max(...data.map(getTotal), 1) : 1;
 
   return (
-    <ChartContainer title="Tasks by Category" className="flex flex-col">
+    <ChartContainer title="Tasks by Category" className="h-full min-h-0 flex flex-col">
       {isFetching && <ChartSkeleton />}
       {!isFetching && error && <ErrorState message={error} onRetry={fetchData} />}
       {!isFetching && !error && data && (
         data.length === 0 ? <EmptyState /> : (
-          <div className="flex-1 overflow-y-auto -mx-1 px-1 divide-y divide-gray-100">
+          <div className="flex-1 min-h-0 overflow-y-auto -mx-1 px-1 divide-y divide-gray-100">
             {data.map((item) => (
               <CategoryRow key={item.category} item={item} maxTotal={maxTotal} />
             ))}

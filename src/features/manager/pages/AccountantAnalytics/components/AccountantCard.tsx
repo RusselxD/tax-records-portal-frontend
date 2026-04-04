@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { UserAvatar } from "../../../../../components/common";
+import { formatNum } from "../../../../../lib/formatters";
 import type { AccountantOverviewItem } from "../../../../../types/analytics";
 
 const roleBadgeStyles: Record<string, string> = {
@@ -47,11 +48,11 @@ export default function AccountantCard({ accountant: a }: AccountantCardProps) {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 pt-3 border-t border-gray-100">
         <div className="text-center">
-          <p className="text-lg font-bold text-primary">{a.activeTasks}</p>
+          <p className="text-lg font-bold text-primary">{formatNum(a.activeTasks)}</p>
           <p className="text-xs text-gray-400 mt-0.5">Active Tasks</p>
         </div>
         <div className="text-center">
-          <p className="text-lg font-bold text-primary">{a.assignedClients}</p>
+          <p className="text-lg font-bold text-primary">{formatNum(a.assignedClients)}</p>
           <p className="text-xs text-gray-400 mt-0.5">Assigned Clients</p>
         </div>
         <div className="text-center">
@@ -60,7 +61,7 @@ export default function AccountantCard({ accountant: a }: AccountantCardProps) {
               a.overdueTasks > 0 ? "text-status-rejected" : "text-primary"
             }`}
           >
-            {a.overdueTasks}
+            {formatNum(a.overdueTasks)}
           </p>
           <p className="text-xs text-gray-400 mt-0.5">Overdue Tasks</p>
         </div>

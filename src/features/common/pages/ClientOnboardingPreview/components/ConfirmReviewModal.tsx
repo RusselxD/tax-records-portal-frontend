@@ -1,4 +1,4 @@
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
 import { getErrorMessage, isConflictError } from "../../../../../lib/api-error";
 import { Modal, Button, CommentPreview } from "../../../../../components/common";
 import { clientAPI } from "../../../../../api/client";
@@ -74,6 +74,14 @@ export default function ConfirmReviewModal({
 
   const cfg = CONFIG[action];
   const remarksToSend = hasContent(remarks) ? remarks : null;
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !isSubmitting && !(e.target instanceof HTMLElement && (e.target.closest("[contenteditable]") || e.target.tagName === "TEXTAREA"))) handleSubmit();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isSubmitting]);
 
   const handleSubmit = async () => {
     setIsSubmitting(true);

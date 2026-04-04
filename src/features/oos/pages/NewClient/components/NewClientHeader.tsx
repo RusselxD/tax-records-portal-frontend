@@ -36,11 +36,11 @@ function GlobalSaveIndicator({ status }: { status: SaveStatus }) {
 
 function useClientDisplayName(): string {
   const { header, sections } = useNewClient();
-  if (header?.displayName) return header.displayName;
-  return deriveClientDisplayName(
+  const derived = deriveClientDisplayName(
     sections.clientInformation?.registeredName,
     sections.clientInformation?.tradeName,
   );
+  return derived || header?.displayName || "";
 }
 
 export default function NewClientHeader() {

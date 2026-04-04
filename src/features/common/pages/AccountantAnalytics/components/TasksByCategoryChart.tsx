@@ -1,25 +1,84 @@
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
 import { ChartContainer } from "../../../../../components/common";
 import { useAccountantAnalytics } from "../context/AccountantAnalyticsContext";
-const MIN_CHART_HEIGHT = 200;
-const ROW_HEIGHT = 50; // height per category row
+import { formatNum } from "../../../../../lib/formatters";
+import { ErrorState } from "../../../../manager/pages/AdminDashboard/components/chartShared";
+import type { CategoryCountItem } from "../../../../../types/analytics";
 
-const Skeleton = () => <div className="skeleton rounded-lg" style={{ height: MIN_CHART_HEIGHT }} />;
+const STATUS_CONFIG: { key: keyof Pick<CategoryCountItem, "active" | "completed">; label: string; color: string }[] = [
+  { key: "active",    label: "Active",    color: "#2F6FED" },
+  { key: "completed", label: "Completed", color: "#16A34A" },
+];
+
+function getTotal(item: CategoryCountItem): number {
+  return STATUS_CONFIG.reduce((sum, { key }) => sum + item[key], 0);
+}
+
+function CategoryRow({ item, maxTotal }: { item: CategoryCountItem; maxTotal: number }) {
+  const total = getTotal(item);
+  const barPercent = maxTotal > 0 ? (total / maxTotal) * 100 : 0;
+
+  const segments = STATUS_CONFIG
+    .map(({ key, color }) => ({ value: item[key], color }))
+    .filter(({ value }) => value > 0);
+
+  const nonZero = STATUS_CONFIG
+    .map(({ key, label, color }) => ({ count: item[key], label, color }))
+    .filter(({ count }) => count > 0);
+
+  return (
+    <div className="py-2.5">
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-sm font-medium text-gray-700 leading-snug">{item.category}</span>
+        <span className="text-sm font-semibold text-gray-900 tabular-nums ml-3 shrink-0">{formatNum(total)}</span>
+      </div>
+
+      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-full flex rounded-full overflow-hidden" style={{ width: `${barPercent}%` }}>
+          {segments.map(({ color, value }, i) => (
+            <div
+              key={i}
+              className="h-full"
+              style={{
+                width: `${(value / total) * 100}%`,
+                backgroundColor: color,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 mt-1.5">
+        {nonZero.map(({ label, color, count }) => (
+          <span key={label} className="flex items-center gap-1 text-xs text-gray-500">
+            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
+            {label} {formatNum(count)}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const ChartSkeleton = () => (
+  <div className="space-y-4 py-2">
+    {Array.from({ length: 5 }).map((_, i) => (
+      <div key={i}>
+        <div className="flex justify-between mb-2">
+          <div className="skeleton h-3.5 rounded" style={{ width: `${8 + i * 1.5}rem` }} />
+          <div className="skeleton h-3.5 w-8 rounded" />
+        </div>
+        <div className="skeleton h-2 w-full rounded-full" />
+        <div className="flex gap-3 mt-2">
+          <div className="skeleton h-3 w-14 rounded" />
+          <div className="skeleton h-3 w-14 rounded" />
+        </div>
+      </div>
+    ))}
+  </div>
+);
 
 const EmptyState = () => (
-  <div
-    className="flex items-center justify-center text-sm text-gray-400"
-    style={{ height: MIN_CHART_HEIGHT }}
-  >
+  <div className="h-[12.5rem] flex items-center justify-center text-sm text-gray-400">
     No task data available yet.
   </div>
 );
@@ -28,88 +87,22 @@ export default function TasksByCategoryChart() {
   const { byCategory } = useAccountantAnalytics();
   const { data, loading, error, retry } = byCategory;
 
+  const items = data?.data ?? [];
+  const maxTotal = items.length > 0 ? Math.max(...items.map(getTotal), 1) : 1;
+
   return (
     <ChartContainer title="Tasks by Category">
-      <div>
-        {loading && <Skeleton />}
-
-        {!loading && error && (
-          <div
-            className="flex items-center justify-center text-sm text-status-rejected"
-            style={{ height: MIN_CHART_HEIGHT }}
-          >
-            <span>{error}</span>
-            <button
-              onClick={retry}
-              className="ml-2 underline hover:no-underline font-medium"
-            >
-              Retry
-            </button>
+      {loading && <ChartSkeleton />}
+      {!loading && error && <ErrorState message={error} onRetry={retry} />}
+      {!loading && !error && data && (
+        items.length === 0 ? <EmptyState /> : (
+          <div className="divide-y divide-gray-100">
+            {items.map((item) => (
+              <CategoryRow key={item.category} item={item} maxTotal={maxTotal} />
+            ))}
           </div>
-        )}
-
-        {!loading && !error && data && (
-          data.data.length === 0 ? (
-            <EmptyState />
-          ) : (
-            <ResponsiveContainer width="100%" height={Math.max(MIN_CHART_HEIGHT, data.data.length * ROW_HEIGHT + 40)}>
-              <BarChart
-                data={data.data.map((d) => ({
-                  category: d.category,
-                  Active: d.active,
-                  Completed: d.completed,
-                }))}
-                layout="vertical"
-                margin={{ top: 5, right: 20, left: 8, bottom: 5 }}
-                barCategoryGap="30%"
-              >
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
-                <XAxis
-                  type="number"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fill: "#6B7280" }}
-                  allowDecimals={false}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="category"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 11, fill: "#374151" }}
-                  width={100}
-                />
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: 8,
-                    border: "1px solid #E5E7EB",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                    fontSize: 13,
-                  }}
-                  cursor={{ fill: "rgba(47, 111, 237, 0.04)" }}
-                />
-                <Legend
-                  iconType="circle"
-                  iconSize={8}
-                  wrapperStyle={{ fontSize: 13, paddingTop: 8 }}
-                />
-                <Bar
-                  dataKey="Active"
-                  fill="#2F6FED"
-                  radius={[0, 8, 8, 0]}
-                  barSize={Math.max(8, Math.min(32, Math.floor(160 / data.data.length)))}
-                />
-                <Bar
-                  dataKey="Completed"
-                  fill="#16A34A"
-                  radius={[0, 4, 4, 0]}
-                  barSize={Math.max(8, Math.min(32, Math.floor(160 / data.data.length)))}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          )
-        )}
-      </div>
+        )
+      )}
     </ChartContainer>
   );
 }

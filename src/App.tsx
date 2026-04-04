@@ -14,7 +14,7 @@ function AppToastContainer() {
       position={isMobile ? "bottom-center" : "top-right"}
       autoClose={4000}
       newestOnTop
-      closeButton={false}
+      closeButton
     />
   );
 }

@@ -58,7 +58,7 @@ export default function ConfirmActionModal({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && !isLoading) handleConfirm();
+      if (e.key === "Enter" && !isLoading && !(e.target instanceof HTMLElement && (e.target.closest("[contenteditable]") || e.target.tagName === "TEXTAREA"))) handleConfirm();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, X } from "lucide-react";
 import { Button, Modal, CommentEditor, CommentPreview } from "../../../../../components/common";
 import { getErrorMessage } from "../../../../../lib/api-error";
@@ -34,6 +34,14 @@ function ConfirmModal({
 }) {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !isSubmitting && !(e.target instanceof HTMLElement && (e.target.closest("[contenteditable]") || e.target.tagName === "TEXTAREA"))) handleSubmit();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isSubmitting]);
 
   const handleSubmit = async () => {
     setError(null);

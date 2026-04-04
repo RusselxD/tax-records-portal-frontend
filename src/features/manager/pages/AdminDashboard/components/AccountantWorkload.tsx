@@ -1,84 +1,59 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
 import { getErrorMessage } from "../../../../../lib/api-error";
+import { formatNum } from "../../../../../lib/formatters";
 import type { AccountantWorkloadItem } from "../../../../../types/analytics";
 import { systemAnalyticsAPI } from "../../../../../api/systemAnalytics";
 import { ChartContainer } from "../../../../../components/common";
 import { ErrorState } from "./chartShared";
 
-const BAR_COLOR = "#d0a865";
-const MAX_ROWS = 5;
-const ROW_HEIGHT_REM = 2.75;
-const PADDING_REM = 1.875;
-const CHART_HEIGHT_REM = MAX_ROWS * ROW_HEIGHT_REM + PADDING_REM;
+function WorkloadRow({ item, maxTasks, rank }: { item: AccountantWorkloadItem; maxTasks: number; rank: number }) {
+  const barPercent = maxTasks > 0 ? (item.activeTasks / maxTasks) * 100 : 0;
+  const opacity = 1 - rank * 0.12;
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-sm font-medium text-gray-700 truncate" title={item.accountantName}>
+          {item.accountantName}
+        </span>
+        <span className="text-sm font-semibold text-gray-900 tabular-nums ml-3 shrink-0">
+          {formatNum(item.activeTasks)}
+        </span>
+      </div>
+      <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full"
+          style={{
+            width: `${barPercent}%`,
+            backgroundColor: "#d0a865",
+            opacity,
+          }}
+        />
+      </div>
+    </div>
+  );
+}
 
 const ChartSkeleton = () => (
-  <div className="flex items-end gap-6 px-8 pb-6" style={{ height: `${CHART_HEIGHT_REM}rem` }}>
+  <div className="flex-1 flex flex-col justify-between py-1">
     {Array.from({ length: 5 }).map((_, i) => (
-      <div key={i} className="flex-1 flex flex-col items-center gap-2">
-        <div className="skeleton w-full rounded-lg" style={{ height: `${3.75 + i * 1.875}rem` }} />
-        <div className="skeleton h-3 w-16 rounded" />
+      <div key={i}>
+        <div className="flex justify-between mb-1">
+          <div className="skeleton h-3.5 rounded" style={{ width: `${7 + i}rem` }} />
+          <div className="skeleton h-3.5 w-10 rounded" />
+        </div>
+        <div className="skeleton h-3 w-full rounded-full" />
       </div>
     ))}
   </div>
 );
 
 const EmptyState = () => (
-  <div className="flex items-center justify-center text-sm text-gray-400" style={{ height: `${CHART_HEIGHT_REM}rem` }}>
+  <div className="flex-1 flex items-center justify-center text-sm text-gray-400">
     No accountant workload data available.
   </div>
 );
-
-const WorkloadChart = ({ data }: { data: AccountantWorkloadItem[] }) => {
-  const remToPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
-  return (
-    <ResponsiveContainer width="100%" height={CHART_HEIGHT_REM * remToPx}>
-      <BarChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }} layout="vertical">
-        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
-        <XAxis
-          type="number"
-          axisLine={false}
-          tickLine={false}
-          tick={{ fontSize: 12, fill: "#6B7280" }}
-          allowDecimals={false}
-        />
-        <YAxis
-          type="category"
-          dataKey="accountantName"
-          axisLine={false}
-          tickLine={false}
-          width={160}
-          tick={{ fontSize: 12, fill: "#6B7280" }}
-        />
-        <Tooltip
-          contentStyle={{
-            borderRadius: 8,
-            border: "1px solid #E5E7EB",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-            fontSize: 13,
-          }}
-          cursor={{ fill: "rgba(208, 168, 101, 0.08)" }}
-          formatter={(value: number | undefined) => [value ?? 0, "Active Tasks"]}
-        />
-        <Bar dataKey="activeTasks" radius={[0, 4, 4, 0]} barSize={24}>
-          {data.map((_, i) => (
-            <Cell key={i} fill={BAR_COLOR} fillOpacity={1 - i * 0.12} />
-          ))}
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
-  );
-};
 
 export default function AccountantWorkload() {
   const [data, setData] = useState<AccountantWorkloadItem[] | null>(null);
@@ -102,9 +77,12 @@ export default function AccountantWorkload() {
     fetchData();
   }, []);
 
+  const maxTasks = data ? Math.max(...data.map((d) => d.activeTasks), 1) : 1;
+
   return (
     <ChartContainer
       title="Top Accountants by Workload"
+      className="h-full min-h-0 flex flex-col"
       action={
         <Link to="/manager/analytics" className="text-sm font-medium text-primary hover:text-primary-hover transition-colors">
           View all →
@@ -112,9 +90,15 @@ export default function AccountantWorkload() {
       }
     >
       {isFetching && <ChartSkeleton />}
-      {!isFetching && error && <ErrorState message={error} onRetry={fetchData} className={`h-[${CHART_HEIGHT_REM}rem]`} />}
+      {!isFetching && error && <ErrorState message={error} onRetry={fetchData} />}
       {!isFetching && !error && data && (
-        data.length === 0 ? <EmptyState /> : <WorkloadChart data={data} />
+        data.length === 0 ? <EmptyState /> : (
+          <div className="flex-1 min-h-0 flex flex-col justify-between">
+            {data.map((item, i) => (
+              <WorkloadRow key={item.accountantName} item={item} maxTasks={maxTasks} rank={i} />
+            ))}
+          </div>
+        )
       )}
     </ChartContainer>
   );

@@ -109,7 +109,7 @@ export default function TaskActionModals({
   useEffect(() => {
     if (!activeModal) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && !isLoading) {
+      if (e.key === "Enter" && !isLoading && !(e.target instanceof HTMLElement && (e.target.closest("[contenteditable]") || e.target.tagName === "TEXTAREA"))) {
         e.preventDefault();
         handleConfirm();
       }

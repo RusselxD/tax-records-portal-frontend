@@ -1,5 +1,6 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { useAccountantAnalytics } from "../context/AccountantAnalyticsContext";
+import { formatNum } from "../../../../../lib/formatters";
 import type { OnboardingPipelineResponse } from "../../../../../types/analytics";
 
 const SEGMENTS = [
@@ -56,7 +57,7 @@ function Donut({ data }: { data: OnboardingPipelineResponse }) {
         )}
         <text x="50%" y="50%" textAnchor="middle" dominantBaseline="central">
           <tspan x="50%" dy="-8" fontSize={24} fontWeight={700} fill="#0F172A">
-            {total}
+            {formatNum(total)}
           </tspan>
           <tspan x="50%" dy={20} fontSize={11} fill="#9CA3AF">
             {isEmpty ? "No clients" : "clients"}
@@ -79,7 +80,7 @@ function Legend({ data }: { data: OnboardingPipelineResponse }) {
               style={{ backgroundColor: s.color }}
             />
             <span className="text-sm text-gray-600">
-              <span className="font-medium text-gray-700">{value}</span>{" "}
+              <span className="font-medium text-gray-700">{formatNum(value)}</span>{" "}
               {s.label}
             </span>
           </div>
