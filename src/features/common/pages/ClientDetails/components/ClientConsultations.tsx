@@ -286,7 +286,7 @@ export default function ClientConsultations({ clientId }: { clientId: string }) 
                   <p className="text-lg font-bold text-blue-700">{(summary.billableHours - summary.excessHours).toFixed(2)}h</p>
                 </div>
                 <div className="rounded-md bg-orange-50 border border-orange-100 px-3 py-2.5">
-                  <p className="text-xs text-orange-600 font-medium uppercase tracking-wider">Excess</p>
+                  <p className="text-xs text-orange-600 font-medium uppercase tracking-wider">Billable</p>
                   <p className="text-lg font-bold text-orange-700">{summary.excessHours.toFixed(2)}h</p>
                 </div>
                 <div className="rounded-md bg-violet-50 border border-violet-100 px-3 py-2.5">

@@ -3,6 +3,7 @@ import { ClipboardList, Send, FileCheck } from "lucide-react";
 import { accountantAnalyticsAPI } from "../../../../../api/accountantAnalytics";
 import type { AccountantsDashboardAnalyticsResponse } from "../../../../../types/analytics";
 import { getErrorMessage } from "../../../../../lib/api-error";
+import { formatNum } from "../../../../../lib/formatters";
 
 function StatsSkeleton() {
   return (
@@ -42,7 +43,7 @@ function StatCard({
         </div>
       </div>
       <div className="flex items-baseline gap-3 -mt-3">
-        <span className="text-4xl font-bold text-primary">{value}</span>
+        <span className="text-4xl font-bold text-primary">{formatNum(value)}</span>
         {pill && (
           <span
             className={`text-xs font-semibold px-2.5 py-1 rounded-full ${pill.bg} ${pill.text}`}

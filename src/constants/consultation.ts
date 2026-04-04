@@ -16,7 +16,7 @@ export const statusStyles: Record<ConsultationStatus, string> = {
 
 export const billableLabels: Record<BillableType, string> = {
   INCLUDED: "Included",
-  EXCESS: "Excess",
+  EXCESS: "Billable",
   COURTESY: "Courtesy",
 };
 

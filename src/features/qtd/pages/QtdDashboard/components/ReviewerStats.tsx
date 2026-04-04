@@ -3,6 +3,7 @@ import { ClipboardCheck, ThumbsUp, TrendingUp } from "lucide-react";
 import { accountantAnalyticsAPI } from "../../../../../api/accountantAnalytics";
 import type { ReviewerDashboardStatsResponse } from "../../../../../types/analytics";
 import { getErrorMessage } from "../../../../../lib/api-error";
+import { formatNum } from "../../../../../lib/formatters";
 
 function StatsSkeleton() {
   return (
@@ -45,7 +46,7 @@ function StatCard({
       </div>
       <div className="flex items-baseline gap-3 -mt-3">
         <span className="text-4xl font-bold text-primary">
-          {valueDisplay ?? value}
+          {valueDisplay ?? formatNum(value)}
         </span>
         {pill && (
           <span

@@ -173,12 +173,12 @@ function buildCards(d: TaskSummaryResponse): StatCardProps[] {
     },
     {
       label: "Monthly Trend",
-      valueDisplay: formatNum(d.completedThisMonthTrend),
+      valueDisplay: formatNum(d.completedThisMonth),
       icon: <TrendingUp className="w-5 h-5" />,
       iconBg: "bg-blue-50",
       iconColor: "text-blue-600",
       subtitle:
-        d.completedLastMonth > 0 || d.completedThisMonthTrend > 0 ? (
+        d.completedLastMonth > 0 || d.completedThisMonth > 0 ? (
           <div className="flex items-center gap-2">
             <TrendPill percentChange={d.percentChange} />
             <span className="text-xs text-gray-400">

@@ -713,7 +713,7 @@ export const managerSections: HelpSection[] = [
         <BulletList
           items={[
             "Included — within the client's monthly included hours.",
-            "Excess — beyond the monthly cap, billed at the excess rate.",
+            "Billable — beyond the monthly cap, billed at the excess rate.",
             "Courtesy — manually flagged, doesn't count toward billing.",
           ]}
         />

@@ -29,7 +29,7 @@ const statusOptions = [
 const billableOptions = [
   { label: "All Types", value: "" },
   { label: "Included", value: "INCLUDED" },
-  { label: "Excess", value: "EXCESS" },
+  { label: "Billable", value: "EXCESS" },
   { label: "Courtesy", value: "COURTESY" },
 ];
 

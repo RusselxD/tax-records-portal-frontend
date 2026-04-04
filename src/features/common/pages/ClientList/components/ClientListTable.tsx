@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
-import { formatDate } from "../../../../../lib/formatters";
+import { formatDate, formatNum } from "../../../../../lib/formatters";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { hasPermission, Permission } from "../../../../../constants/permissions";
 import { Pagination, ResponsiveTable } from "../../../../../components/common";
@@ -54,14 +54,14 @@ function ClientRow({
         </td>
       )}
       <td className="px-4 py-4 text-sm text-gray-600">
-        {client.totalTasks}
+        {formatNum(client.totalTasks)}
       </td>
       <td className="px-4 py-4 text-sm text-gray-600">
-        {client.pendingTasks}
+        {formatNum(client.pendingTasks)}
       </td>
       <td className="px-4 py-4 text-sm">
         <span className={client.overdueTasks > 0 ? "text-red-600 font-medium" : "text-gray-600"}>
-          {client.overdueTasks}
+          {formatNum(client.overdueTasks)}
         </span>
       </td>
       {!canViewAll && (

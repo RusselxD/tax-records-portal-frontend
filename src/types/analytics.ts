@@ -36,7 +36,6 @@ export interface TaskSummaryResponse {
 
   // Card 8 — Trend
   completedLastMonth: number;
-  completedThisMonthTrend: number;
   percentChange: number | null;
 }
 

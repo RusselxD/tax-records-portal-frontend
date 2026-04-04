@@ -80,7 +80,7 @@ export default function ConsultationSummary() {
               <p className="text-sm font-bold text-blue-700">{(summary.billableHours - summary.excessHours).toFixed(1)}h</p>
             </div>
             <div className="rounded-md bg-orange-50 px-3 py-2 text-center">
-              <p className="text-xs text-orange-600 font-medium">Excess</p>
+              <p className="text-xs text-orange-600 font-medium">Billable</p>
               <p className="text-sm font-bold text-orange-700">{summary.excessHours.toFixed(1)}h</p>
             </div>
             <div className="rounded-md bg-violet-50 px-3 py-2 text-center">
