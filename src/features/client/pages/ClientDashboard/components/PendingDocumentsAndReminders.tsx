@@ -15,7 +15,7 @@ export default function PendingDocumentsAndReminders({
   const isEmpty = reminders.length === 0 && pendingDocuments.length === 0;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg h-full">
+    <div className="bg-white border border-gray-200 rounded-lg h-full flex flex-col">
       <div className="flex items-center gap-2 px-3 py-3 border-b border-gray-100">
         <ClipboardList className="h-4 w-4 text-accent" />
         <h2 className="text-sm font-semibold text-primary">
@@ -23,7 +23,7 @@ export default function PendingDocumentsAndReminders({
         </h2>
       </div>
 
-      <div className="max-h-64 overflow-y-auto">
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin">
         {isLoading && (
           <div className="flex items-center justify-center px-5 py-10">
             <Loader2 className="h-5 w-5 animate-spin text-gray-400" />

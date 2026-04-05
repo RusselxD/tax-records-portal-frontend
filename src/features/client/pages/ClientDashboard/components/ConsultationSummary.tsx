@@ -32,7 +32,7 @@ export default function ConsultationSummary() {
     : "";
 
   return (
-    <div className="rounded-lg bg-white border border-gray-200 p-5">
+    <div className="rounded-lg bg-white border border-gray-200 p-5 h-full overflow-y-auto scrollbar-thin">
       <div className="flex items-center gap-2 mb-4">
         <Clock className="h-5 w-5 text-accent" />
         <h2 className="text-base font-bold text-primary">Consultation Hours</h2>

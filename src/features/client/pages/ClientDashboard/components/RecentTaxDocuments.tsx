@@ -47,7 +47,7 @@ export default function RecentTaxDocuments() {
   }, []);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg h-full">
+    <div className="bg-white border border-gray-200 rounded-lg h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-3 border-b border-gray-100">
         <div className="flex items-center gap-2">
@@ -67,7 +67,7 @@ export default function RecentTaxDocuments() {
       </div>
 
       {/* Content */}
-      <div className="max-h-64 overflow-y-auto">
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin">
         {isLoading && (
           <div className="flex items-center justify-center py-10">
             <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
@@ -142,7 +142,7 @@ export default function RecentTaxDocuments() {
 
       {/* Footer */}
       {!isLoading && !error && entries.length > 0 && (
-        <div className="border-t border-gray-100 px-5 py-3">
+        <div className="border-t border-gray-100 px-5 py-3 shrink-0">
           <button
             onClick={() => navigate("/client/tax-records")}
             className="text-sm font-medium text-accent hover:underline"

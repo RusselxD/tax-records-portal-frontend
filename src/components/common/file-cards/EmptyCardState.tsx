@@ -6,7 +6,7 @@ interface EmptyCardStateProps {
 
 export default function EmptyCardState({ icon, title, message }: EmptyCardStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center h-full min-h-[15rem] gap-2 text-center">
+    <div className="flex flex-col items-center justify-center h-full min-h-[12rem] gap-2 text-center">
       <div className="text-gray-300 mb-1">{icon}</div>
       <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
         {title}
