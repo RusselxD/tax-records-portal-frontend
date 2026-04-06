@@ -164,7 +164,7 @@ export const taxRecordTaskAPI = {
     cursor?: string,
   ): Promise<ClientTaxRecordTaskPageResponse> => {
     const params = buildParams({ cursor: cursor ?? "" });
-    const res = await apiClient.get(`/tax-record-tasks/client/${clientId}`, {
+    const res = await apiClient.get(`/tax-record-tasks/client/${clientId}/incomplete`, {
       params,
     });
     return res.data;

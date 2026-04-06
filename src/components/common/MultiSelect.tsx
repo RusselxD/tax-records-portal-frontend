@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, X } from "lucide-react";
 
 export interface MultiSelectOption {
@@ -14,6 +15,7 @@ export interface MultiSelectProps {
   placeholder?: string;
   disabled?: boolean;
   error?: string;
+  portal?: boolean;
 }
 
 export default function MultiSelect({
@@ -24,20 +26,34 @@ export default function MultiSelect({
   placeholder = "Select...",
   disabled = false,
   error,
+  portal = false,
 }: MultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [menuHeight, setMenuHeight] = useState(0);
+  const [portalStyle, setPortalStyle] = useState<React.CSSProperties>({});
   const selectedLabels = useMemo(
     () => value.map((v) => options.find((o) => o.value === v)?.label).filter(Boolean) as string[],
     [value, options],
   );
 
   useEffect(() => {
+    if (isOpen && menuRef.current) {
+      setMenuHeight(menuRef.current.scrollHeight);
+    } else {
+      setMenuHeight(0);
+    }
+  }, [isOpen, options]);
+
+  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      const insideContainer = containerRef.current?.contains(target);
+      const insideMenu = portal && menuRef.current?.contains(target);
       if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
+        !insideContainer &&
+        !insideMenu
       ) {
         setIsOpen(false);
       }
@@ -46,7 +62,7 @@ export default function MultiSelect({
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
+  }, [isOpen, portal]);
 
   const handleToggleOption = (optionValue: string) => {
     if (value.includes(optionValue)) {
@@ -60,6 +76,74 @@ export default function MultiSelect({
     onChange(value.filter((v) => v !== optionValue));
   };
 
+  const handleToggle = () => {
+    if (disabled) return;
+
+    if (!isOpen && portal && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setPortalStyle({
+        position: "fixed",
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+        zIndex: 9999,
+      });
+    }
+
+    setIsOpen((open) => !open);
+  };
+
+  const menuEl = (
+    <div
+      ref={menuRef}
+      className={`${portal ? "" : "absolute left-0 top-full"} mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg transition-all duration-200 ${portal ? "" : "z-20"}`}
+      style={{
+        ...(portal ? portalStyle : {}),
+        maxHeight: isOpen ? Math.min(menuHeight, 192) : 0,
+        overflowY: "auto",
+        opacity: isOpen ? 1 : 0,
+        pointerEvents: isOpen ? "auto" : "none",
+      }}
+    >
+      {options.map((option) => {
+        const isSelected = value.includes(option.value);
+        return (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => handleToggleOption(option.value)}
+            className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors ${
+              isSelected
+                ? "bg-accent/10 text-accent font-medium"
+                : "text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <span
+              className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
+                isSelected
+                  ? "border-accent bg-accent text-white"
+                  : "border-gray-300"
+              }`}
+            >
+              {isSelected && (
+                <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none">
+                  <path
+                    d="M2.5 6L5 8.5L9.5 3.5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </span>
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+
   return (
     <div className="w-full">
       {label && (
@@ -70,7 +154,7 @@ export default function MultiSelect({
       <div className="relative" ref={containerRef}>
         <button
           type="button"
-          onClick={() => !disabled && setIsOpen(!isOpen)}
+          onClick={handleToggle}
           disabled={disabled}
           className={`flex w-full items-center justify-between rounded-md border px-3 py-2.5 text-sm transition-colors focus:outline-none focus:ring-1 ${
             error
@@ -87,53 +171,7 @@ export default function MultiSelect({
             className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
           />
         </button>
-
-        <div
-          ref={menuRef}
-          className="absolute left-0 mt-1 w-full max-h-48 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg z-20 transition-all duration-200"
-          style={{
-            maxHeight: isOpen ? 192 : 0,
-            opacity: isOpen ? 1 : 0,
-            pointerEvents: isOpen ? "auto" : "none",
-          }}
-        >
-          {options.map((option) => {
-            const isSelected = value.includes(option.value);
-            return (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => handleToggleOption(option.value)}
-                className={`flex w-full items-center gap-2 text-left px-3 py-2 text-sm transition-colors ${
-                  isSelected
-                    ? "bg-accent/10 text-accent font-medium"
-                    : "text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                <span
-                  className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
-                    isSelected
-                      ? "border-accent bg-accent text-white"
-                      : "border-gray-300"
-                  }`}
-                >
-                  {isSelected && (
-                    <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none">
-                      <path
-                        d="M2.5 6L5 8.5L9.5 3.5"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  )}
-                </span>
-                {option.label}
-              </button>
-            );
-          })}
-        </div>
+        {portal ? createPortal(menuEl, document.body) : menuEl}
       </div>
 
       {/* Selected tags */}

@@ -102,6 +102,7 @@ export default function ReassignAccountantsModal({
         </p>
 
         <MultiSelect
+          portal
           label="OOS / CSD Accountants"
           options={csdOosOptions}
           value={csdOosIds}
