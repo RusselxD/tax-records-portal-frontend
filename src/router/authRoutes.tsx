@@ -1,8 +1,10 @@
+import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
 import AuthLayout from "../components/layout/AuthLayout";
-import Login from "../pages/Login";
-import ActivateAccount from "../pages/ActivateAccount";
-import ResetPassword from "../pages/ResetPassword";
+
+const Login = lazy(() => import("../pages/Login"));
+const ActivateAccount = lazy(() => import("../pages/ActivateAccount"));
+const ResetPassword = lazy(() => import("../pages/ResetPassword"));
 
 export const authRoutes: RouteObject = {
   path: "/auth",

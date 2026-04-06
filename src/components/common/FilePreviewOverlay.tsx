@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef, lazy, Suspense } from "react";
-import type { Dispatch, SetStateAction } from "react";
+import { useState, useEffect, useCallback, useRef, lazy, Suspense, Component } from "react";
+import type { ReactNode, Dispatch, SetStateAction } from "react";
 import { createPortal } from "react-dom";
 import { X, Download, Loader2 } from "lucide-react";
 import { fileAPI } from "../../api/file";
@@ -60,6 +60,19 @@ function getFileTypeFromMime(mimeType: string): FileType {
   return MIME_MAP[mimeType] ?? "unsupported";
 }
 
+class PreviewErrorBoundary extends Component<
+  { children: ReactNode; fallback: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    return this.state.hasError ? this.props.fallback : this.props.children;
+  }
+}
+
 const LoadingFallback = () => (
   <div className="flex flex-col items-center justify-center flex-1 gap-3 text-gray-400">
     <Loader2 className="h-8 w-8 animate-spin" />
@@ -91,8 +104,10 @@ export default function FilePreviewOverlay({
         setFileUrl(URL.createObjectURL(blob));
       } catch (err) {
         if (!revoked) {
-          const is403 = err instanceof Error && "response" in err && (err as { response?: { status?: number } }).response?.status === 403;
-          setError(is403 ? "This file is currently protected and unavailable for download." : "Failed to load file preview.");
+          const status = (err as { response?: { status?: number } }).response?.status;
+          if (status === 403) setError("This file is currently protected and unavailable for download.");
+          else if (status === 404) setError("This file could not be found. It may have been removed.");
+          else setError("Failed to load file preview.");
         }
       } finally {
         if (!revoked) setLoading(false);
@@ -213,35 +228,65 @@ export default function FilePreviewOverlay({
       );
     }
 
+    const chunkErrorFallback = (
+      <div className="flex flex-col items-center justify-center flex-1 gap-4 text-center px-6">
+        <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center">
+          <X className="w-7 h-7 text-red-400" />
+        </div>
+        <div>
+          <p className="text-sm font-medium text-gray-300">Preview unavailable</p>
+          <p className="text-xs text-gray-500 mt-1.5 max-w-xs">
+            The preview could not be loaded. Download the file to view it on your device.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={handleDownload}
+          className="mt-1 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-medium text-gray-200 transition-colors"
+        >
+          <Download className="w-4 h-4" />
+          Download File
+        </button>
+      </div>
+    );
+
     if (fileType === "pdf") {
       return (
-        <Suspense fallback={<LoadingFallback />}>
-          <PdfPreview fileUrl={fileUrl} />
-        </Suspense>
+        <PreviewErrorBoundary fallback={chunkErrorFallback}>
+          <Suspense fallback={<LoadingFallback />}>
+            <PdfPreview fileUrl={fileUrl} />
+          </Suspense>
+        </PreviewErrorBoundary>
       );
     }
 
     if (fileType === "image") {
       return (
-        <Suspense fallback={<LoadingFallback />}>
-          <ImagePreview fileUrl={fileUrl} fileName={fileName} />
-        </Suspense>
+        <PreviewErrorBoundary fallback={chunkErrorFallback}>
+          <Suspense fallback={<LoadingFallback />}>
+            <ImagePreview fileUrl={fileUrl} fileName={fileName} />
+          </Suspense>
+        </PreviewErrorBoundary>
       );
     }
 
     if (fileType === "excel" || fileType === "csv") {
       return (
-        <Suspense fallback={<LoadingFallback />}>
-          <SpreadsheetPreview fileUrl={fileUrl} />
-        </Suspense>
+        <PreviewErrorBoundary fallback={chunkErrorFallback}>
+          <Suspense fallback={<LoadingFallback />}>
+            <SpreadsheetPreview fileUrl={fileUrl} />
+          </Suspense>
+        </PreviewErrorBoundary>
       );
     }
 
     // Word docs
     return (
-      <Suspense fallback={<LoadingFallback />}>
-        <DocPreview fileUrl={fileUrl} />
-      </Suspense>
+      <PreviewErrorBoundary fallback={chunkErrorFallback}>
+        <Suspense fallback={<LoadingFallback />}>
+          <DocPreview fileUrl={fileUrl} />
+        </Suspense>
+      </PreviewErrorBoundary>
     );
   };
 

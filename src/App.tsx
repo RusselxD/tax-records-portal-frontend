@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { Loader2 } from "lucide-react";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ToastProvider } from "./contexts/ToastContext";
 import { NotificationsProvider } from "./contexts/NotificationsContext";
@@ -19,12 +21,22 @@ function AppToastContainer() {
   );
 }
 
+function PageLoader() {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-white">
+      <Loader2 className="h-8 w-8 animate-spin text-accent" />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <NotificationsProvider>
         <ToastProvider>
-          <RouterProvider router={router} />
+          <Suspense fallback={<PageLoader />}>
+            <RouterProvider router={router} />
+          </Suspense>
           <AppToastContainer />
         </ToastProvider>
       </NotificationsProvider>
