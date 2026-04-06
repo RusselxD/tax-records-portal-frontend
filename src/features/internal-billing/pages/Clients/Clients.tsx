@@ -1,25 +1,26 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 import { Loader2, AlertTriangle } from "lucide-react";
-import usePageTitle from "../../../hooks/usePageTitle";
-import { invoiceAPI } from "../../../api/invoice";
-import { getErrorMessage } from "../../../lib/api-error";
-import { formatCurrency } from "../../../lib/formatters";
-import { SearchInput, Pagination, Button, ResponsiveTable } from "../../../components/common";
-import type { CardField } from "../../../components/common/ResponsiveTable";
-import type { PageResponse, BillingClientListItemResponse } from "../../../types/invoice";
+import usePageTitle from "../../../../hooks/usePageTitle";
+import { invoiceAPI } from "../../../../api/invoice";
+import { getErrorMessage } from "../../../../lib/api-error";
+import { formatCurrency } from "../../../../lib/formatters";
+import { SearchInput, Pagination, Button, ResponsiveTable } from "../../../../components/common";
+import type { CardField } from "../../../../components/common/ResponsiveTable";
+import type { PageResponse, BillingClientListItemResponse } from "../../../../types/invoice";
+import ClientConsultationAccordion from "./components/ClientConsultationAccordion";
 
 const PAGE_SIZE = 20;
 
 export default function Clients() {
   usePageTitle("Billing Clients");
-  const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [data, setData] = useState<PageResponse<BillingClientListItemResponse> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedClientId, setExpandedClientId] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -46,6 +47,10 @@ export default function Clients() {
     setSearch(value);
     setPage(0);
   };
+
+  const handleRowClick = useCallback((clientId: string) => {
+    setExpandedClientId((prev) => (prev === clientId ? null : clientId));
+  }, []);
 
   const clients = data?.content ?? [];
 
@@ -76,13 +81,6 @@ export default function Clients() {
     [],
   );
 
-  const handleItemClick = useCallback(
-    (c: BillingClientListItemResponse) => {
-      navigate(`/internal-billing/billings?clientId=${c.clientId}`);
-    },
-    [navigate],
-  );
-
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
@@ -99,7 +97,7 @@ export default function Clients() {
           keyExtractor={keyExtractor}
           primaryFields={primaryFields}
           secondaryFields={secondaryFields}
-          onItemClick={handleItemClick}
+          onItemClick={(c) => handleRowClick(c.clientId)}
           isLoading={isLoading && !data}
           emptyMessage={search ? "No clients match your search." : "No clients found."}
         >
@@ -137,23 +135,43 @@ export default function Clients() {
                   </td>
                 </tr>
               ) : (
-                clients.map((client) => (
-                  <tr
-                    key={client.clientId}
-                    onClick={() => navigate(`/internal-billing/billings?clientId=${client.clientId}`)}
-                    className="hover:bg-gray-50 cursor-pointer transition-colors"
-                  >
-                    <td className="px-4 py-3 font-medium text-primary max-w-0">
-                      <span className="block truncate" title={client.clientName}>{client.clientName}</span>
-                    </td>
-                    <td className="px-4 py-3 text-right text-gray-600">{client.totalInvoices}</td>
-                    <td className="px-4 py-3 text-right text-red-600">{client.unpaidInvoices}</td>
-                    <td className="px-4 py-3 text-right text-amber-600">{client.partiallyPaidInvoices}</td>
-                    <td className="px-4 py-3 text-right text-emerald-600">{client.fullyPaidInvoices}</td>
-                    <td className="px-4 py-3 text-right font-medium text-primary">{formatCurrency(client.totalAmountDue)}</td>
-                    <td className="px-4 py-3 text-right font-medium text-primary">{formatCurrency(client.totalBalance)}</td>
-                  </tr>
-                ))
+                clients.map((client) => {
+                  const isExpanded = expandedClientId === client.clientId;
+                  return (
+                    <>
+                      <tr
+                        key={client.clientId}
+                        onClick={() => handleRowClick(client.clientId)}
+                        className={`cursor-pointer transition-colors ${isExpanded ? "bg-gray-50" : "hover:bg-gray-50"}`}
+                      >
+                        <td className="px-4 py-3 font-medium text-primary max-w-0">
+                          <div className="flex items-center gap-2">
+                            <ChevronDown
+                              className={`h-4 w-4 text-gray-400 shrink-0 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                            />
+                            <span className="block truncate" title={client.clientName}>{client.clientName}</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-right text-gray-600">{client.totalInvoices}</td>
+                        <td className="px-4 py-3 text-right text-red-600">{client.unpaidInvoices}</td>
+                        <td className="px-4 py-3 text-right text-amber-600">{client.partiallyPaidInvoices}</td>
+                        <td className="px-4 py-3 text-right text-emerald-600">{client.fullyPaidInvoices}</td>
+                        <td className="px-4 py-3 text-right font-medium text-primary">{formatCurrency(client.totalAmountDue)}</td>
+                        <td className="px-4 py-3 text-right font-medium text-primary">{formatCurrency(client.totalBalance)}</td>
+                      </tr>
+                      {isExpanded && (
+                        <tr key={`${client.clientId}-accordion`}>
+                          <td colSpan={7} className="p-0 border-b border-gray-100">
+                            <ClientConsultationAccordion
+                              clientId={client.clientId}
+                              clientName={client.clientName}
+                            />
+                          </td>
+                        </tr>
+                      )}
+                    </>
+                  );
+                })
               )}
             </tbody>
           </table>

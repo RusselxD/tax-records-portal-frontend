@@ -105,7 +105,7 @@ export default function InvoiceDetail() {
         <div className="flex items-center gap-2.5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 mb-5">
           <Info className="h-4 w-4 text-amber-500 shrink-0" />
           <p className="text-sm text-amber-700">
-            This client has no portal accounts. Create an account to enable sending invoices via email.
+            This client has no portal accounts. The assigned accountant must set up an account before invoices can be sent via email.
           </p>
         </div>
       )}
