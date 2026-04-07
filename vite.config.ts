@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['upturn.svg'],
+      includeAssets: ['upturn.svg', 'upturn-pwa.png'],
       manifest: {
         name: 'Tax Records Portal',
         short_name: 'Tax Records Portal',
@@ -19,7 +19,7 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'upturn.png',
+            src: 'upturn-pwa.png',
             sizes: '1000x1000',
             type: 'image/png',
           },
