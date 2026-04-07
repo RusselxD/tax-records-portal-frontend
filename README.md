@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/Cloudflare_Workers-F38020?logo=cloudflare&logoColor=white" alt="Cloudflare Workers" />
+  <img src="https://img.shields.io/badge/Cloudflare_Pages-F38020?logo=cloudflare&logoColor=white" alt="Cloudflare Pages" />
 </p>
 
 ---
@@ -21,7 +21,7 @@ Internal web portal for Upturn Business Solutions PH. Manages client onboarding 
 - **Internal Accounting / Billing** -- invoicing and payment tracking
 - **Client** -- self-service portal access
 
-Built with React 19, TypeScript, and Vite. Styled with Tailwind CSS. Deployed on Cloudflare Workers.
+Built with React 19, TypeScript, and Vite. Styled with Tailwind CSS. Deployed on Cloudflare Pages.
 
 ## Tech Stack
 
@@ -37,7 +37,7 @@ Built with React 19, TypeScript, and Vite. Styled with Tailwind CSS. Deployed on
 | Lucide React | Icon library |
 | react-pdf + docx-preview | File previews (PDF, DOCX) |
 | xlsx | Bulk import parsing |
-| Cloudflare Workers + Wrangler | Deployment |
+| Cloudflare Pages | Deployment |
 
 ## Prerequisites
 
@@ -72,8 +72,7 @@ npm run dev
 | `npm run dev` | Start dev server with HMR |
 | `npm run build` | TypeScript check + Vite production build |
 | `npm run lint` | Run ESLint |
-| `npm run preview` | Build and preview locally via Wrangler |
-| `npm run deploy` | Build and deploy to Cloudflare Workers |
+| `npm run preview` | Build and preview locally |
 
 ## Project Structure
 
