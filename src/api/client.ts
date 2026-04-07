@@ -13,8 +13,6 @@ import type {
   CreateClientNoticeRequest,
   ClientNoticeResponse,
   OffboardClientRequest,
-  EndOfEngagementLetterTemplateSummary,
-  EndOfEngagementLetterTemplate,
 } from "../types/client";
 import type { RichTextContent } from "../types/client-info";
 import type {
@@ -266,61 +264,4 @@ export const clientAPI = {
     await apiClient.post(`/clients/${clientId}/send-end-of-engagement-letter`, { templateId });
   },
 
-  // ── Engagement Letter Templates ──
-
-  getEndOfEngagementLetterTemplates: async (): Promise<EndOfEngagementLetterTemplateSummary[]> => {
-    const res = await apiClient.get("/end-of-engagement-letter-templates");
-    return res.data;
-  },
-
-  getEndOfEngagementLetterTemplate: async (id: string): Promise<EndOfEngagementLetterTemplate> => {
-    const res = await apiClient.get(`/end-of-engagement-letter-templates/${id}`);
-    return res.data;
-  },
-
-  createEndOfEngagementLetterTemplate: async (
-    payload: { name: string; body: RichTextContent },
-  ): Promise<EndOfEngagementLetterTemplate> => {
-    const res = await apiClient.post("/end-of-engagement-letter-templates", payload);
-    return res.data;
-  },
-
-  updateEndOfEngagementLetterTemplate: async (
-    id: string,
-    payload: { name: string; body: RichTextContent },
-  ): Promise<EndOfEngagementLetterTemplate> => {
-    const res = await apiClient.put(`/end-of-engagement-letter-templates/${id}`, payload);
-    return res.data;
-  },
-
-  deleteEndOfEngagementLetterTemplate: async (id: string): Promise<void> => {
-    await apiClient.delete(`/end-of-engagement-letter-templates/${id}`);
-  },
-
-  checkEngagementLetter: async (): Promise<{ exists: boolean }> => {
-    const res = await apiClient.get("/clients/me/engagement-letter-exists");
-    return res.data;
-  },
-
-  getEngagementLetters: async (): Promise<{ id: string; name: string }[]> => {
-    const res = await apiClient.get("/clients/me/engagement-letters");
-    return res.data;
-  },
-
-  getMyNotices: async (): Promise<ClientNoticeResponse[]> => {
-    const res = await apiClient.get("/clients/me/notices");
-    return res.data;
-  },
-
-  getMyClientInfoHeader: async (): Promise<ClientInfoHeaderResponse> => {
-    const res = await apiClient.get("/clients/me/info");
-    return res.data;
-  },
-
-  getMyClientInfoSection: async <K extends InfoSectionKey>(
-    sectionKey: K,
-  ): Promise<ClientInfoSections[K]> => {
-    const res = await apiClient.get(`/clients/me/info/${sectionKey}`);
-    return res.data;
-  },
 };

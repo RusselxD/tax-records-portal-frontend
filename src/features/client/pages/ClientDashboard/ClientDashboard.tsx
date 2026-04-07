@@ -6,6 +6,7 @@ import OutstandingBilling from "./components/OutstandingBilling";
 import RecentTaxDocuments from "./components/RecentTaxDocuments";
 import Highlights from "./components/Highlights";
 import ConsultationSummary from "./components/ConsultationSummary";
+import ContactUs from "./components/ContactUs";
 
 export default function ClientDashboard() {
   usePageTitle("Dashboard");
@@ -34,6 +35,9 @@ export default function ClientDashboard() {
         />
         <Highlights highlights={highlights} isLoading={noticesLoading} />
       </div>
+
+      <ContactUs />
     </div>
+
   );
 }

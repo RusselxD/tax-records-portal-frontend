@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { clientAPI } from "../../../../../api/client";
+import { engagementLetterAPI } from "../../../../../api/engagement-letter";
 import { getErrorMessage, isConflictError } from "../../../../../lib/api-error";
 import { useToast } from "../../../../../contexts/ToastContext";
 import type { EndOfEngagementLetterTemplateSummary, EndOfEngagementLetterTemplate } from "../../../../../types/client";
@@ -30,7 +30,7 @@ export function useLetterTemplates() {
   const fetchTemplates = useCallback(async () => {
     setIsLoadingList(true);
     try {
-      const data = await clientAPI.getEndOfEngagementLetterTemplates();
+      const data = await engagementLetterAPI.getTemplates();
       setTemplates(data);
     } catch {
       // silently fail
@@ -46,7 +46,7 @@ export function useLetterTemplates() {
   const handleSelectTemplate = useCallback(async (id: string) => {
     setIsLoadingTemplate(true);
     try {
-      const data = await clientAPI.getEndOfEngagementLetterTemplate(id);
+      const data = await engagementLetterAPI.getTemplate(id);
       setSelectedTemplate(data);
       setView("preview");
     } catch (err) {
@@ -60,7 +60,7 @@ export function useLetterTemplates() {
     if (!selectedTemplate) return;
     setIsSending(true);
     try {
-      await clientAPI.sendEndOfEngagementLetter(clientId, selectedTemplate.id);
+      await engagementLetterAPI.send(clientId, selectedTemplate.id);
       toastSuccess("Letter Sent", "The end-of-engagement letter has been emailed to the client.");
       onSuccess();
       closeModal();
@@ -76,7 +76,7 @@ export function useLetterTemplates() {
     setTemplates((t) => t.filter((item) => item.id !== id));
     setIsDeleting(id);
     try {
-      await clientAPI.deleteEndOfEngagementLetterTemplate(id);
+      await engagementLetterAPI.deleteTemplate(id);
     } catch (err) {
       setTemplates(prev);
       toastError(getErrorMessage(err, "Failed to delete template."));
@@ -96,7 +96,7 @@ export function useLetterTemplates() {
   const handleStartEdit = useCallback(async (id: string) => {
     setIsLoadingTemplate(true);
     try {
-      const data = await clientAPI.getEndOfEngagementLetterTemplate(id);
+      const data = await engagementLetterAPI.getTemplate(id);
       setEditId(data.id);
       setEditName(data.name);
       setEditBody(data.body);
@@ -115,9 +115,9 @@ export function useLetterTemplates() {
     setEditError(null);
     try {
       if (editId) {
-        await clientAPI.updateEndOfEngagementLetterTemplate(editId, { name: editName.trim(), body: editBody });
+        await engagementLetterAPI.updateTemplate(editId, { name: editName.trim(), body: editBody });
       } else {
-        await clientAPI.createEndOfEngagementLetterTemplate({ name: editName.trim(), body: editBody });
+        await engagementLetterAPI.createTemplate({ name: editName.trim(), body: editBody });
       }
       await fetchTemplates();
       setView("list");

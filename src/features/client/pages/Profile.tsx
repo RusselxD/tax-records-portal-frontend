@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Loader2, AlertTriangle } from "lucide-react";
 import usePageTitle from "../../../hooks/usePageTitle";
-import { clientAPI } from "../../../api/client";
+import { clientMeAPI } from "../../../api/client-me";
 import { getErrorMessage } from "../../../lib/api-error";
 import { Button } from "../../../components/common";
 import ClientStatusBadge from "../../../components/common/ClientStatusBadge";
@@ -18,7 +18,7 @@ import OnboardingDetailsPreview from "../../common/components/client-info/sectio
 import SectionCard from "../../common/components/client-info/sections/SectionCard";
 
 const myFetcher: SectionFetcher = (key) =>
-  clientAPI.getMyClientInfoSection(key);
+  clientMeAPI.getInfoSection(key);
 
 export default function Profile() {
   usePageTitle("Profile");
@@ -33,7 +33,7 @@ export default function Profile() {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await clientAPI.getMyClientInfoHeader();
+      const data = await clientMeAPI.getInfoHeader();
       setHeader(data);
     } catch (err) {
       setError(getErrorMessage(err, "Failed to load profile"));

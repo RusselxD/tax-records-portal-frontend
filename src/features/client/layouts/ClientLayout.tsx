@@ -3,7 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { LayoutDashboard, User, FileText, Receipt, FileSignature, ChevronUp } from "lucide-react";
 import MainLayout from "../../../components/layout/MainLayout";
 import { FilePreviewOverlay } from "../../../components/common";
-import { clientAPI } from "../../../api/client";
+import { engagementLetterAPI } from "../../../api/engagement-letter";
 import type { NavItem } from "../../../types/navigation";
 
 const clientNavItems: NavItem[] = [
@@ -49,9 +49,9 @@ export default function ClientLayout() {
     let cancelled = false;
     async function init() {
       try {
-        const res = await clientAPI.checkEngagementLetter();
+        const res = await engagementLetterAPI.checkExists();
         if (cancelled || !res.exists) return;
-        const files = await clientAPI.getEngagementLetters();
+        const files = await engagementLetterAPI.getMyLetters();
         if (!cancelled) setLetterFiles(files);
       } catch {}
     }

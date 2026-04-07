@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { clientAPI } from "../../../../../api/client";
+import { clientMeAPI } from "../../../../../api/client-me";
 import { NOTICE_TYPE } from "../../../../../types/client";
 import type { ClientNoticeResponse } from "../../../../../types/client";
 
@@ -13,7 +13,7 @@ export default function useClientNotices() {
     (async () => {
       setIsLoading(true);
       try {
-        const data = await clientAPI.getMyNotices();
+        const data = await clientMeAPI.getNotices();
         if (!cancelled) setNotices(data);
       } catch {
         // silent — sections show empty state
