@@ -53,17 +53,15 @@ export default function RecentTaxDocuments() {
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-accent" />
           <h2 className="text-sm font-semibold text-primary">
-            Recently Added Tax Documents
+            Recently Added Documents
           </h2>
         </div>
-        <div>
-          <Dropdown
-            options={rangeOptions}
-            value={range}
-            onChange={handleRangeChange}
-            size="sm"
-          />
-        </div>
+        <Dropdown
+          options={rangeOptions}
+          value={range}
+          onChange={handleRangeChange}
+          ghost
+        />
       </div>
 
       {/* Content */}
@@ -87,7 +85,7 @@ export default function RecentTaxDocuments() {
         )}
 
         {!isLoading && !error && entries.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-10 text-center">
+          <div className="flex flex-col items-center justify-center h-full px-5 text-center -mt-4">
             <FolderOpen className="h-8 w-8 text-gray-300 mb-2" />
             <p className="text-sm font-medium text-gray-500">
               No recent documents

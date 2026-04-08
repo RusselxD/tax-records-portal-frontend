@@ -11,9 +11,11 @@ import type {
   DrillDownFilters,
   DrillSelection,
   DrillDownItem,
+  DrillDownLevel,
   TaxRecordEntryResponse,
 } from "../../../../types/tax-record";
 import { DRILL_DOWN_LEVEL } from "../../../../types/tax-record";
+import { useDownload } from "../../../../contexts/DownloadContext";
 import Breadcrumbs from "./components/Breadcrumbs";
 import DrillDownList from "./components/DrillDownList";
 import TaxRecordDetail from "./components/TaxRecordDetail";
@@ -96,6 +98,19 @@ export default function TaxRecords() {
     setSelections((prev) => prev.slice(0, index));
   }, []);
 
+  const { startDownload } = useDownload();
+
+  const handleBulkDownload = useCallback((selectedIds: string[]) => {
+    const filters = buildFilters(selections);
+    startDownload("Tax Records", () =>
+      taxRecordAPI.bulkDownload({
+        level: currentLevel as Exclude<DrillDownLevel, "record">,
+        ...filters,
+        selectedIds,
+      }),
+    );
+  }, [selections, currentLevel, startDownload]);
+
   return (
     <div className="pb-12">
       <Breadcrumbs
@@ -107,7 +122,7 @@ export default function TaxRecords() {
         <div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 mb-5">
           <ShieldAlert className="h-5 w-5 text-amber-600 shrink-0" />
           <p className="text-sm text-amber-800">
-            Your tax records are currently protected and unavailable for download.
+            Your tax records are currently protected and unavailable for preview and download.
           </p>
         </div>
       )}
@@ -143,6 +158,8 @@ export default function TaxRecords() {
           items={items}
           levelLabel={LEVEL_LABELS[currentLevel]}
           onSelect={handleSelect}
+          onBulkDownload={handleBulkDownload}
+          downloadDisabled={isProtected}
         />
       )}
 

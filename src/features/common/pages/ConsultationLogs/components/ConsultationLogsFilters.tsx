@@ -11,14 +11,14 @@ interface ConsultationLogsFiltersProps {
 
 export default function ConsultationLogsFilters({ onNewLog }: ConsultationLogsFiltersProps) {
   const { user } = useAuth();
-  const { filters, setSearch } = useConsultationLogs();
+  const { search, setSearch } = useConsultationLogs();
   const canCreate = hasPermission(user?.permissions, Permission.CONSULTATION_CREATE);
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
       <SearchInput
         placeholder="Search by subject or platform..."
-        value={filters.search || ""}
+        value={search}
         onChange={setSearch}
         className="w-full sm:w-auto"
       />

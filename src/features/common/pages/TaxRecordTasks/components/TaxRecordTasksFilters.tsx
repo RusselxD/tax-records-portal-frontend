@@ -12,14 +12,14 @@ interface TaxRecordTasksFiltersProps {
 
 export default function TaxRecordTasksFilters({ onNewTask, onImport }: TaxRecordTasksFiltersProps) {
   const { user } = useAuth();
-  const { filters, setSearch } = useTaxRecordTasks();
+  const { search, setSearch } = useTaxRecordTasks();
   const canManageTasks = hasPermission(user?.permissions, Permission.TASK_CREATE);
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
       <SearchInput
         placeholder="Search by task name or client..."
-        value={filters.search || ""}
+        value={search}
         onChange={setSearch}
         className="w-full sm:w-auto"
       />

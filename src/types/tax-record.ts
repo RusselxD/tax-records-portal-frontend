@@ -52,6 +52,15 @@ export interface DrillDownFilters {
   period?: Period;
 }
 
+export interface BulkDownloadRequest {
+  level: Exclude<DrillDownLevel, "record">;
+  categoryId?: number;
+  subCategoryId?: number;
+  taskNameId?: number;
+  year?: number;
+  selectedIds: string[];
+}
+
 export interface DrillSelection {
   id: string;
   label: string;

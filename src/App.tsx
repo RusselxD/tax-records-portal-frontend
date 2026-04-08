@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import { Loader2 } from "lucide-react";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ToastProvider } from "./contexts/ToastContext";
+import { DownloadProvider } from "./contexts/DownloadContext";
 import { NotificationsProvider } from "./contexts/NotificationsContext";
 import { useIsMobile } from "./hooks/useMediaQuery";
 import { router } from "./router";
@@ -34,9 +35,11 @@ export default function App() {
     <AuthProvider>
       <NotificationsProvider>
         <ToastProvider>
-          <Suspense fallback={<PageLoader />}>
-            <RouterProvider router={router} />
-          </Suspense>
+          <DownloadProvider>
+            <Suspense fallback={<PageLoader />}>
+              <RouterProvider router={router} />
+            </Suspense>
+          </DownloadProvider>
           <AppToastContainer />
         </ToastProvider>
       </NotificationsProvider>

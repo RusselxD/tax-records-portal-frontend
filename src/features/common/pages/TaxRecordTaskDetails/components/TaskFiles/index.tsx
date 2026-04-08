@@ -44,7 +44,7 @@ export default function TaskFiles() {
 
           {showProofOfFiling && (
             <SingleFileSlot
-              label="Proof of Filing"
+              label="Proof of Filing / Proof of Payment"
               icon={<FileCheck className="h-4 w-4 text-emerald-500" />}
               emptyIcon={<FolderOpen className="h-10 w-10" />}
               file={files?.proofOfFilingFile ?? null}

@@ -31,7 +31,7 @@ export default function TaxRecordDetail({ record, protected: isProtected = false
         <FileCard
           icon={<ShieldCheck className="h-4 w-4 text-emerald-500" />}
           emptyIcon={<ShieldCheck className="h-10 w-10" />}
-          title="Proof of Filing"
+          title="Proof of Filing / Proof of Payment"
           file={record.proofOfFilingFile}
           emptyMessage="No file available"
           disabled={isProtected}

@@ -7,6 +7,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+import { useDebounce } from "../../../../../hooks/useDebounce";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import { usersAPI } from "../../../../../api/users";
 import type { ManagedUser } from "../../../../../types/user";
@@ -39,16 +40,10 @@ export function UserManagementProvider({ children }: { children: ReactNode }) {
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const debouncedSearch = useDebounce(search);
   const [roleFilter, setRoleFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [positionFilter, setPositionFilter] = useState("");
-
-  // Debounce search input
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search), 300);
-    return () => clearTimeout(timer);
-  }, [search]);
 
   // Fetch positions once on mount
   useEffect(() => {

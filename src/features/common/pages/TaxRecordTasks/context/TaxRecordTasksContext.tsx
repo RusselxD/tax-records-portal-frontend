@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { taxRecordTaskAPI } from "../../../../../api/tax-record-task";
+import { useDebounce } from "../../../../../hooks/useDebounce";
 import usePaginatedFetch from "../../../../../hooks/usePaginatedFetch";
 import type {
   TaxRecordTaskListItem,
@@ -24,6 +25,7 @@ interface TaxRecordTasksContextType {
   page: number;
   totalPages: number;
   totalElements: number;
+  search: string;
   filters: TaxRecordTaskFilters;
   sortBy: SortBy | undefined;
   sortDirection: SortDirection | undefined;
@@ -51,6 +53,7 @@ export function TaxRecordTasksProvider({ children }: { children: ReactNode }) {
   const [sortDirection, setSortDirection] = useState<SortDirection | undefined>();
 
   const setSearch = useCallback((v: string) => setSearchState(v), []);
+  const debouncedSearch = useDebounce(search);
   const setClientFilter = useCallback((v: string) => setClientId(v), []);
   const setTaskNameFilter = useCallback((v: string) => setTaskNameId(v), []);
   const setPeriodFilter = useCallback((v: string) => setPeriod(v), []);
@@ -75,7 +78,7 @@ export function TaxRecordTasksProvider({ children }: { children: ReactNode }) {
 
   const filterParams = useMemo(() => {
     const f: Record<string, string | number> = {};
-    if (search) f.search = search;
+    if (debouncedSearch) f.search = debouncedSearch;
     if (clientId) f.clientId = clientId;
     if (taskNameId) f.taskNameId = Number(taskNameId);
     if (period) f.period = period;
@@ -84,11 +87,11 @@ export function TaxRecordTasksProvider({ children }: { children: ReactNode }) {
     if (sortBy) f.sortBy = sortBy;
     if (sortDirection) f.sortDirection = sortDirection;
     return f;
-  }, [search, clientId, taskNameId, period, status, accountantId, sortBy, sortDirection]);
+  }, [debouncedSearch, clientId, taskNameId, period, status, accountantId, sortBy, sortDirection]);
 
   const filters = useMemo<TaxRecordTaskFilters>(() => {
     const f: TaxRecordTaskFilters = { page: 0, size: 20 };
-    if (search) f.search = search;
+    if (debouncedSearch) f.search = debouncedSearch;
     if (clientId) f.clientId = clientId;
     if (taskNameId) f.taskNameId = Number(taskNameId);
     if (period) f.period = period as Period;
@@ -97,7 +100,7 @@ export function TaxRecordTasksProvider({ children }: { children: ReactNode }) {
     if (sortBy) f.sortBy = sortBy;
     if (sortDirection) f.sortDirection = sortDirection;
     return f;
-  }, [search, clientId, taskNameId, period, status, accountantId, sortBy, sortDirection]);
+  }, [debouncedSearch, clientId, taskNameId, period, status, accountantId, sortBy, sortDirection]);
 
   const fetchFn = useCallback(
     (p: { page: number; size: number } & Record<string, unknown>) =>
@@ -110,13 +113,13 @@ export function TaxRecordTasksProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({
-      tasks, isFetching, error, page, totalPages, totalElements, filters,
+      tasks, isFetching, error, page, totalPages, totalElements, search, filters,
       sortBy, sortDirection, setSearch, setClientFilter, setTaskNameFilter,
       setPeriodFilter, setStatusFilter, setAccountantFilter, toggleSort,
       setPage, refetch,
     }),
     [
-      tasks, isFetching, error, page, totalPages, totalElements, filters,
+      tasks, isFetching, error, page, totalPages, totalElements, search, filters,
       sortBy, sortDirection, setSearch, setClientFilter, setTaskNameFilter,
       setPeriodFilter, setStatusFilter, setAccountantFilter, toggleSort,
       setPage, refetch,

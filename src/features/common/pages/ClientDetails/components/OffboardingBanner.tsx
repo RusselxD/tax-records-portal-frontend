@@ -109,7 +109,7 @@ export default function OffboardingBanner({
           </button>
         )}
 
-        {canManage && (
+        {(canManage || isAssignedOos) && (
           <button
             onClick={handleToggleProtection}
             disabled={isToggling}

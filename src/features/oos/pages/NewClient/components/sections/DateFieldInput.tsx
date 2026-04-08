@@ -24,23 +24,27 @@ export default function DateFieldInput({
 }: DateFieldInputProps) {
   const dateValue = normalizeDate(value?.date);
   const isImportant = value?.isImportant ?? false;
+  const isCritical = value?.isCritical ?? false;
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = e.target.value || null;
-    if (!newDate && !isImportant) {
+  const emit = (patch: Partial<DateField>) => {
+    const next = { date: dateValue || null, isImportant, isCritical, ...patch };
+    if (!next.date && !next.isImportant && !next.isCritical) {
       onChange(null);
     } else {
-      onChange({ date: newDate, isImportant });
+      onChange(next);
     }
   };
 
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    emit({ date: e.target.value || null });
+  };
+
   const handleImportantChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newImportant = e.target.checked;
-    if (!dateValue && !newImportant) {
-      onChange(null);
-    } else {
-      onChange({ date: dateValue || null, isImportant: newImportant });
-    }
+    emit({ isImportant: e.target.checked });
+  };
+
+  const handleCriticalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    emit({ isCritical: e.target.checked });
   };
 
   return (
@@ -51,15 +55,26 @@ export default function DateFieldInput({
         value={dateValue}
         onChange={handleDateChange}
       />
-      <label className="mt-1.5 flex items-center gap-1.5 text-xs text-gray-500">
-        <input
-          type="checkbox"
-          checked={isImportant}
-          onChange={handleImportantChange}
-          className="rounded border-gray-300 text-accent focus:ring-accent h-3 w-3"
-        />
-        Mark as important
-      </label>
+      <div className="mt-1.5 flex items-center gap-4">
+        <label className="flex items-center gap-1.5 text-xs text-gray-500">
+          <input
+            type="checkbox"
+            checked={isImportant}
+            onChange={handleImportantChange}
+            className="rounded border-gray-300 text-accent focus:ring-accent h-3 w-3"
+          />
+          Mark as important
+        </label>
+        <label className="flex items-center gap-1.5 text-xs text-gray-500">
+          <input
+            type="checkbox"
+            checked={isCritical}
+            onChange={handleCriticalChange}
+            className="rounded border-gray-300 text-red-500 focus:ring-red-500 h-3 w-3"
+          />
+          Mark as critical
+        </label>
+      </div>
     </div>
   );
 }

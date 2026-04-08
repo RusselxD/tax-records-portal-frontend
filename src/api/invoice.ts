@@ -8,7 +8,7 @@ import type {
   InvoicePaymentResponse,
   CreateInvoicePayload,
   CreateTermPayload,
-  ClientOutstandingInvoice,
+  ClientOutstandingResponse,
   ClientInvoiceListItem,
   ClientInvoiceSidebarPageResponse,
   ClientInvoiceFilter,
@@ -106,7 +106,7 @@ export const invoiceAPI = {
 
   // ── Client-facing ──
 
-  getMyOutstanding: async (): Promise<ClientOutstandingInvoice[]> => {
+  getMyOutstanding: async (): Promise<ClientOutstandingResponse> => {
     const res = await apiClient.get("/invoices/me/outstanding");
     return res.data;
   },

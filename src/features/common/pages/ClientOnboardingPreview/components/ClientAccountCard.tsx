@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UserCircle, Send, Check, UserX } from "lucide-react";
+import { UserCircle, Send, Check, UserX, UserCheck } from "lucide-react";
 import { AccountStatus, Input, Button, ConfirmActionModal, UserAvatar } from "../../../../../components/common";
 import { usersAPI } from "../../../../../api/users";
 import { useToast } from "../../../../../contexts/ToastContext";
@@ -131,6 +131,7 @@ export function AccountRow({
   const [showResendForm, setShowResendForm] = useState(false);
   const [resent, setResent] = useState(false);
   const [showDeactivateConfirm, setShowDeactivateConfirm] = useState(false);
+  const [showReactivateConfirm, setShowReactivateConfirm] = useState(false);
   const [isDeactivated, setIsDeactivated] = useState(status === USER_STATUS.DEACTIVATED);
 
   return (
@@ -161,13 +162,22 @@ export function AccountRow({
               </button>
             )
           )}
-          {canDeactivate && (status === USER_STATUS.ACTIVE || status === USER_STATUS.PENDING) && !isDeactivated && (
+          {canDeactivate && !isDeactivated && (status === USER_STATUS.ACTIVE || status === USER_STATUS.PENDING) && (
             <button
               onClick={() => setShowDeactivateConfirm(true)}
               title="Deactivate account"
               className="p-2 text-gray-400 hover:text-red-500 transition-colors"
             >
               <UserX className="w-4 h-4" />
+            </button>
+          )}
+          {canDeactivate && isDeactivated && (
+            <button
+              onClick={() => setShowReactivateConfirm(true)}
+              title="Reactivate account"
+              className="p-2 text-gray-400 hover:text-emerald-500 transition-colors"
+            >
+              <UserCheck className="w-4 h-4" />
             </button>
           )}
           <AccountStatus status={isDeactivated ? USER_STATUS.DEACTIVATED : status} />
@@ -203,6 +213,25 @@ export function AccountRow({
           }}
           onError={(err) => {
             toastError(getErrorMessage(err, "Failed to deactivate account."));
+          }}
+        />
+      )}
+
+      {showReactivateConfirm && (
+        <ConfirmActionModal
+          setModalOpen={setShowReactivateConfirm}
+          onConfirm={() => usersAPI.changeUserStatus(clientAccount.id, USER_STATUS.ACTIVE)}
+          title="Reactivate Account?"
+          description={`This will reactivate the portal account for ${fullName} (${displayData.email}). They will be able to log in again.`}
+          confirmLabel="Reactivate"
+          loadingLabel="Reactivating..."
+          onSuccess={() => {
+            setIsDeactivated(false);
+            setShowReactivateConfirm(false);
+            toastSuccess("Account Reactivated", `${fullName}'s account has been reactivated.`);
+          }}
+          onError={(err) => {
+            toastError(getErrorMessage(err, "Failed to reactivate account."));
           }}
         />
       )}

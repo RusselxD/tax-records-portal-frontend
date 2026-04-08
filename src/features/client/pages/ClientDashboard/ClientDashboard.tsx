@@ -20,13 +20,10 @@ export default function ClientDashboard() {
 
   return (
     <div className="space-y-4 pb-12">
-      <div className="grid grid-cols-1 lg:grid-cols-3 lg:auto-rows-[18rem] gap-4">
+      <div className="grid grid-cols-1 auto-rows-[18rem] md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-2 xl:gap-4">
         <ImportantDates />
         <ConsultationSummary />
         <OutstandingBilling />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 lg:auto-rows-[23.75rem] gap-4">
         <RecentTaxDocuments />
         <PendingDocumentsAndReminders
           reminders={reminders}
@@ -35,9 +32,7 @@ export default function ClientDashboard() {
         />
         <Highlights highlights={highlights} isLoading={noticesLoading} />
       </div>
-
       <ContactUs />
     </div>
-
   );
 }

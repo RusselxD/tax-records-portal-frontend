@@ -61,7 +61,7 @@ export default function ImportantDates() {
         )}
 
         {!isLoading && !error && sorted.length === 0 && (
-          <div className="flex flex-col items-center justify-center px-5 py-10 text-center">
+          <div className="flex flex-col items-center justify-center h-full px-5 text-center -mt-4">
             <CalendarX2 className="h-8 w-8 text-gray-300 mb-2" />
             <p className="text-sm font-medium text-gray-500">No important dates</p>
             <p className="text-sm text-gray-400 mt-0.5">

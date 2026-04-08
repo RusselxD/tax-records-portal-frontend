@@ -7,8 +7,9 @@ import {
   type ReactNode,
 } from "react";
 import { clientAPI } from "../../../../../api/client";
+import { useDebounce } from "../../../../../hooks/useDebounce";
 import usePaginatedFetch from "../../../../../hooks/usePaginatedFetch";
-import type { ClientListItemResponse } from "../../../../../types/client";
+import type { ClientListItemResponse, ClientStatus } from "../../../../../types/client";
 
 type SortDirection = "ASC" | "DESC";
 
@@ -22,9 +23,11 @@ interface ClientListContextType {
   search: string;
   sortBy: string | undefined;
   sortDirection: SortDirection | undefined;
+  statusFilter: ClientStatus | "";
   setSearch: (value: string) => void;
   setPage: (page: number) => void;
   toggleSort: (column: string) => void;
+  setStatusFilter: (status: ClientStatus | "") => void;
   refetch: () => void;
 }
 
@@ -34,7 +37,11 @@ export function ClientListProvider({ children }: { children: ReactNode }) {
   const [search, setSearchState] = useState("");
   const [sortBy, setSortBy] = useState<string | undefined>(undefined);
   const [sortDirection, setSortDirection] = useState<SortDirection | undefined>(undefined);
+  const [statusFilter, setStatusFilterState] = useState<ClientStatus | "">("");
+
   const setSearch = useCallback((v: string) => setSearchState(v), []);
+  const debouncedSearch = useDebounce(search);
+  const setStatusFilter = useCallback((status: ClientStatus | "") => setStatusFilterState(status), []);
 
   const toggleSort = useCallback((column: string) => {
     setSortBy((prev) => {
@@ -50,12 +57,13 @@ export function ClientListProvider({ children }: { children: ReactNode }) {
   const params = useMemo(
     () => {
       const p: Record<string, string> = {};
-      if (search) p.search = search;
+      if (debouncedSearch) p.search = debouncedSearch;
       if (sortBy) p.sortBy = sortBy;
       if (sortDirection) p.sortDirection = sortDirection;
+      if (statusFilter) p.status = statusFilter;
       return p;
     },
-    [search, sortBy, sortDirection],
+    [debouncedSearch, sortBy, sortDirection, statusFilter],
   );
 
   const { items: clients, isFetching, error, page, totalPages, totalElements, setPage, refetch } =
@@ -64,10 +72,10 @@ export function ClientListProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
       clients, isFetching, error, page, totalPages, totalElements, search,
-      sortBy, sortDirection,
-      setSearch, setPage, toggleSort, refetch,
+      sortBy, sortDirection, statusFilter,
+      setSearch, setPage, toggleSort, setStatusFilter, refetch,
     }),
-    [clients, isFetching, error, page, totalPages, totalElements, search, sortBy, sortDirection, setSearch, setPage, toggleSort, refetch],
+    [clients, isFetching, error, page, totalPages, totalElements, search, sortBy, sortDirection, statusFilter, setSearch, setPage, toggleSort, setStatusFilter, refetch],
   );
 
   return (

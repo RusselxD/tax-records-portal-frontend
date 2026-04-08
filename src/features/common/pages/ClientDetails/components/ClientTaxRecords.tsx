@@ -3,6 +3,7 @@ import { Loader2, AlertTriangle, FolderOpen } from "lucide-react";
 import Breadcrumbs from "../../../../client/pages/TaxRecords/components/Breadcrumbs";
 import { taxRecordAPI } from "../../../../../api/tax-record";
 import { getErrorMessage } from "../../../../../lib/api-error";
+import { useDownload } from "../../../../../contexts/DownloadContext";
 import { Button } from "../../../../../components/common";
 import type { Period } from "../../../../../types/tax-record-task";
 import type {
@@ -10,6 +11,7 @@ import type {
   DrillDownFilters,
   DrillSelection,
   DrillDownItem,
+  DrillDownLevel,
   TaxRecordEntryResponse,
 } from "../../../../../types/tax-record";
 import { DRILL_DOWN_LEVEL } from "../../../../../types/tax-record";
@@ -86,6 +88,19 @@ export default function ClientTaxRecords({ clientId }: { clientId: string }) {
     setSelections((prev) => prev.slice(0, index));
   }, []);
 
+  const { startDownload } = useDownload();
+
+  const handleBulkDownload = useCallback((selectedIds: string[]) => {
+    const filters = buildFilters(selections);
+    startDownload("Tax Records", () =>
+      taxRecordAPI.clientBulkDownload(clientId, {
+        level: currentLevel as Exclude<DrillDownLevel, "record">,
+        ...filters,
+        selectedIds,
+      }),
+    );
+  }, [selections, currentLevel, clientId, startDownload]);
+
   return (
     <div>
       <Breadcrumbs selections={selections} onNavigate={handleBreadcrumbClick} />
@@ -121,6 +136,7 @@ export default function ClientTaxRecords({ clientId }: { clientId: string }) {
           items={items}
           levelLabel={LEVEL_LABELS[currentLevel]}
           onSelect={handleSelect}
+          onBulkDownload={handleBulkDownload}
         />
       )}
 

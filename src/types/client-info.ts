@@ -5,6 +5,7 @@ import type { ProfileReviewStatus, ProfileReviewType } from "./client-profile";
 export interface DateField {
   date: string | null;
   isImportant: boolean;
+  isCritical: boolean;
 }
 
 export interface FileReference {

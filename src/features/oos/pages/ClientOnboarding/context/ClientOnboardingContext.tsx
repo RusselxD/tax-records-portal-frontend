@@ -7,6 +7,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+import { useDebounce } from "../../../../../hooks/useDebounce";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import { oosClientAPI } from "../../../../../api/client";
 import type { ClientOnboardingListItemResponse } from "../../../../../types/client";
@@ -36,14 +37,8 @@ export function ClientOnboardingProvider({
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-
-  // Debounce search input
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search), 300);
-    return () => clearTimeout(timer);
-  }, [search]);
+  const debouncedSearch = useDebounce(search);
 
   const fetchClients = useCallback(async () => {
     setIsFetching(true);

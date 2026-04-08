@@ -9,6 +9,7 @@ import InvoiceStatusBadge from "../../../../../components/common/InvoiceStatusBa
 export default function OutstandingBilling() {
   const navigate = useNavigate();
   const [invoices, setInvoices] = useState<ClientOutstandingInvoice[]>([]);
+  const [totalOutstanding, setTotalOutstanding] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -16,7 +17,10 @@ export default function OutstandingBilling() {
     const fetchInvoices = async () => {
       try {
         const data = await invoiceAPI.getMyOutstanding();
-        if (!cancelled) setInvoices(data);
+        if (!cancelled) {
+          setInvoices(data.invoices);
+          setTotalOutstanding(data.totalOutstanding);
+        }
       } catch (err) {
         console.warn("Failed to load outstanding invoices", err);
       } finally {
@@ -33,7 +37,7 @@ export default function OutstandingBilling() {
         <Receipt className="h-4 w-4 text-accent" />
         <h2 className="text-sm font-semibold text-primary">Outstanding Billing</h2>
         {invoices.length > 0 && (
-          <span className="ml-auto text-xs font-medium text-gray-400">{invoices.length}</span>
+          <span className="ml-auto text-xs font-semibold text-red-500">{formatCurrency(totalOutstanding)}</span>
         )}
       </div>
 
@@ -43,7 +47,7 @@ export default function OutstandingBilling() {
             <Loader2 className="h-5 w-5 animate-spin text-gray-300" />
           </div>
         ) : invoices.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-10 text-center px-4">
+          <div className="flex flex-col items-center justify-center h-full text-center px-4 -mt-4">
             <Receipt className="h-8 w-8 text-gray-200 mb-2" />
             <p className="text-sm text-gray-400">No outstanding invoices</p>
           </div>

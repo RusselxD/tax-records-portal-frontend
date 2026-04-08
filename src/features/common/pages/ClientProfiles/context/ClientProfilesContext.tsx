@@ -8,6 +8,7 @@ import {
 } from "react";
 import { clientAPI } from "../../../../../api/client";
 import usePaginatedFetch from "../../../../../hooks/usePaginatedFetch";
+import { useDebounce } from "../../../../../hooks/useDebounce";
 import type {
   ClientProfileReviewListItem,
   ProfileReviewType,
@@ -39,16 +40,17 @@ export function ClientProfilesProvider({ children }: { children: ReactNode }) {
   const [statusFilter, setStatusFilterState] = useState("");
 
   const setSearch = useCallback((v: string) => setSearchState(v), []);
+  const debouncedSearch = useDebounce(search);
   const setTypeFilter = useCallback((v: string) => setTypeFilterState(v), []);
   const setStatusFilter = useCallback((v: string) => setStatusFilterState(v), []);
 
   const params = useMemo(() => {
     const p: Record<string, string> = {};
-    if (search) p.search = search;
+    if (debouncedSearch) p.search = debouncedSearch;
     if (typeFilter) p.type = typeFilter;
     if (statusFilter) p.status = statusFilter;
     return p;
-  }, [search, typeFilter, statusFilter]);
+  }, [debouncedSearch, typeFilter, statusFilter]);
 
   const fetchFn = useCallback(
     (p: { page: number; size: number } & Record<string, string>) =>

@@ -8,6 +8,7 @@ import {
 } from "react";
 import { consultationAPI } from "../../../../../api/consultation";
 import usePaginatedFetch from "../../../../../hooks/usePaginatedFetch";
+import { useDebounce } from "../../../../../hooks/useDebounce";
 import type {
   ConsultationLogListItem,
   ConsultationLogFilters,
@@ -22,6 +23,7 @@ interface ConsultationLogsContextType {
   page: number;
   totalPages: number;
   totalElements: number;
+  search: string;
   filters: ConsultationLogFilters;
   setSearch: (v: string) => void;
   setClientFilter: (v: string) => void;
@@ -40,27 +42,28 @@ export function ConsultationLogsProvider({ children }: { children: ReactNode }) 
   const [billableType, setBillableType] = useState("");
 
   const setSearch = useCallback((v: string) => setSearchState(v), []);
+  const debouncedSearch = useDebounce(search);
   const setClientFilter = useCallback((v: string) => setClientId(v), []);
   const setStatusFilter = useCallback((v: string) => setStatus(v), []);
   const setBillableFilter = useCallback((v: string) => setBillableType(v), []);
 
   const filterParams = useMemo(() => {
     const f: Record<string, string | number> = {};
-    if (search) f.search = search;
+    if (debouncedSearch) f.search = debouncedSearch;
     if (clientId) f.clientId = clientId;
     if (status) f.status = status;
     if (billableType) f.billableType = billableType;
     return f;
-  }, [search, clientId, status, billableType]);
+  }, [debouncedSearch, clientId, status, billableType]);
 
   const filters = useMemo<ConsultationLogFilters>(() => {
     const f: ConsultationLogFilters = { page: 0, size: 20 };
-    if (search) f.search = search;
+    if (debouncedSearch) f.search = debouncedSearch;
     if (clientId) f.clientId = clientId;
     if (status) f.status = status as ConsultationStatus;
     if (billableType) f.billableType = billableType as BillableType;
     return f;
-  }, [search, clientId, status, billableType]);
+  }, [debouncedSearch, clientId, status, billableType]);
 
   const fetchFn = useCallback(
     (p: { page: number; size: number } & Record<string, unknown>) =>
@@ -73,12 +76,12 @@ export function ConsultationLogsProvider({ children }: { children: ReactNode }) 
 
   const value = useMemo(
     () => ({
-      logs, isFetching, error, page, totalPages, totalElements, filters,
+      logs, isFetching, error, page, totalPages, totalElements, search, filters,
       setSearch, setClientFilter, setStatusFilter, setBillableFilter,
       setPage, refetch,
     }),
     [
-      logs, isFetching, error, page, totalPages, totalElements, filters,
+      logs, isFetching, error, page, totalPages, totalElements, search, filters,
       setSearch, setClientFilter, setStatusFilter, setBillableFilter,
       setPage, refetch,
     ],

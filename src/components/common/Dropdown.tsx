@@ -21,6 +21,8 @@ export interface DropdownProps {
   portal?: boolean;
   /** Renders trigger as a plain column header (no border/bg). Use with placeholder as the column name. */
   headerStyle?: boolean;
+  /** Renders trigger as ghost — no border, no bg, minimal padding. Use inside card headers. */
+  ghost?: boolean;
   /** When provided, each option shows a delete icon on hover. Called with the option's value. */
   onDeleteOption?: (value: string) => void;
 }
@@ -77,6 +79,27 @@ const FilterTrigger = ({
   </button>
 );
 
+const GhostTrigger = ({
+  label,
+  isOpen,
+  onClick,
+}: {
+  label: string;
+  isOpen: boolean;
+  onClick: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary transition-colors"
+  >
+    <span>{label}</span>
+    <ChevronDown
+      className={`w-3 h-3 text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+    />
+  </button>
+);
+
 const FormTrigger = ({
   label,
   isOpen,
@@ -126,6 +149,7 @@ export default function Dropdown({
   className,
   portal = false,
   headerStyle = false,
+  ghost = false,
   onDeleteOption,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -134,7 +158,7 @@ export default function Dropdown({
   const [menuHeight, setMenuHeight] = useState(0);
   const [portalStyle, setPortalStyle] = useState<React.CSSProperties>({});
 
-  const isFormMode = !headerStyle && (label !== undefined || placeholder !== undefined || fullWidth);
+  const isFormMode = !headerStyle && !ghost && (label !== undefined || placeholder !== undefined || fullWidth);
   const selectedOption = options.find((o) => o.value === value);
 
   const displayLabel = headerStyle
@@ -245,14 +269,20 @@ export default function Dropdown({
   );
 
   return (
-    <div className={isFormMode || headerStyle ? "w-full" : ""}>
+    <div className={isFormMode || headerStyle ? "w-full" : ghost ? "" : ""}>
       {label && (
         <label className="mb-1.5 block text-sm font-medium text-primary">
           {label}
         </label>
       )}
       <div className="relative" ref={containerRef}>
-        {headerStyle ? (
+        {ghost ? (
+          <GhostTrigger
+            label={displayLabel}
+            isOpen={isOpen}
+            onClick={handleToggle}
+          />
+        ) : headerStyle ? (
           <HeaderTrigger
             label={displayLabel}
             isOpen={isOpen}

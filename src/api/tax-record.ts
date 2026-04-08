@@ -1,6 +1,7 @@
 import type {
   DrillDownResponse,
   DrillDownFilters,
+  BulkDownloadRequest,
   RecentTaxRecordRange,
   RecentTaxRecordEntryResponse,
   ImportantDateResponse,
@@ -35,4 +36,17 @@ export const taxRecordAPI = {
     return res.data;
   },
 
+  bulkDownload: async (body: BulkDownloadRequest): Promise<Blob> => {
+    const res = await apiClient.post("/tax-records/me/bulk-download", body, {
+      responseType: "blob",
+    });
+    return res.data;
+  },
+
+  clientBulkDownload: async (clientId: string, body: BulkDownloadRequest): Promise<Blob> => {
+    const res = await apiClient.post(`/tax-records/${clientId}/bulk-download`, body, {
+      responseType: "blob",
+    });
+    return res.data;
+  },
 };

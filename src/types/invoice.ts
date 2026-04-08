@@ -142,6 +142,11 @@ export interface ClientOutstandingInvoice {
   isOverdue: boolean;
 }
 
+export interface ClientOutstandingResponse {
+  invoices: ClientOutstandingInvoice[];
+  totalOutstanding: number;
+}
+
 export interface ClientInvoiceListItem {
   id: string;
   invoiceNumber: string;
