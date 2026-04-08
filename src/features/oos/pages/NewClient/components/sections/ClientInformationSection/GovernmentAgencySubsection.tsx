@@ -1,7 +1,7 @@
 import { Input } from "../../../../../../../components/common";
 import type { GovernmentAgencyDetails } from "../../../../../../../types/client-info";
 import DateFieldInput from "../DateFieldInput";
-import FileUploadInput from "../FileUploadInput";
+import MultiFileUploadInput from "../MultiFileUploadInput";
 
 interface GovernmentAgencySubsectionProps {
   data: GovernmentAgencyDetails;
@@ -33,7 +33,7 @@ export default function GovernmentAgencySubsection({
         />
       </div>
 
-      <FileUploadInput
+      <MultiFileUploadInput
         label="Certificates & Documents"
         value={data.certificatesAndDocuments}
         onChange={(v) => update({ certificatesAndDocuments: v })}

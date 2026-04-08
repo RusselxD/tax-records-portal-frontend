@@ -2,7 +2,7 @@ import { Trash2 } from "lucide-react";
 import { Input } from "../../../../../../../components/common";
 import type { BirBranchDetails } from "../../../../../../../types/client-info";
 import DateFieldInput from "../DateFieldInput";
-import FileUploadInput from "../FileUploadInput";
+import MultiFileUploadInput from "../MultiFileUploadInput";
 
 interface BirDetailsSubsectionProps {
   mainBranch: BirBranchDetails;
@@ -84,54 +84,54 @@ function BranchForm({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FileUploadInput
+        <MultiFileUploadInput
           label="BIR Certificate of Registration"
           value={entry.birCertificateOfRegistration}
           onChange={(v) => onChange({ birCertificateOfRegistration: v })}
         />
-        <FileUploadInput
+        <MultiFileUploadInput
           label="BIR Form 1901"
           value={entry.birForm1901}
           onChange={(v) => onChange({ birForm1901: v })}
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FileUploadInput
+        <MultiFileUploadInput
           label="BIR Form 1921 / ATP"
           value={entry.birForm1921Atp}
           onChange={(v) => onChange({ birForm1921Atp: v })}
         />
-        <FileUploadInput
+        <MultiFileUploadInput
           label="BIR Form 1905"
           value={entry.birForm1905}
           onChange={(v) => onChange({ birForm1905: v })}
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FileUploadInput
+        <MultiFileUploadInput
           label="Sample Invoice / Receipts"
           value={entry.sampleInvoiceReceipts}
           onChange={(v) => onChange({ sampleInvoiceReceipts: v })}
         />
-        <FileUploadInput
+        <MultiFileUploadInput
           label="NIRI Poster"
           value={entry.niriPoster}
           onChange={(v) => onChange({ niriPoster: v })}
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FileUploadInput
+        <MultiFileUploadInput
           label="BIR Book of Accounts Stamp"
           value={entry.birBookOfAccountsStamp}
           onChange={(v) => onChange({ birBookOfAccountsStamp: v })}
         />
-        <FileUploadInput
+        <MultiFileUploadInput
           label="BIR Form 2000 DST"
           value={entry.birForm2000Dst}
           onChange={(v) => onChange({ birForm2000Dst: v })}
         />
       </div>
-      <FileUploadInput
+      <MultiFileUploadInput
         label="Contract of Lease"
         value={entry.contractOfLease}
         onChange={(v) => onChange({ contractOfLease: v })}

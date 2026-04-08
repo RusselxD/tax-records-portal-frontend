@@ -5,7 +5,7 @@ import type {
   PermitDetails,
 } from "../../../../../../../../../types/client-info";
 import DateFieldInput from "../../../DateFieldInput";
-import FileUploadInput from "../../../FileUploadInput";
+import MultiFileUploadInput from "../../../MultiFileUploadInput";
 
 function PermitFields({
   label,
@@ -166,66 +166,66 @@ export default function CityHallEntryForm({
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FileUploadInput
+          <MultiFileUploadInput
             label="Mayor's Business Permit"
             value={entry.mayorBusinessPermit}
             onChange={(v) => onUpdate(index, { mayorBusinessPermit: v })}
           />
-          <FileUploadInput
+          <MultiFileUploadInput
             label="Business Permit Plate"
             value={entry.businessPermitPlate}
             onChange={(v) => onUpdate(index, { businessPermitPlate: v })}
           />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FileUploadInput
+          <MultiFileUploadInput
             label="Billing Assessment"
             value={entry.billingAssessment}
             onChange={(v) => onUpdate(index, { billingAssessment: v })}
           />
-          <FileUploadInput
+          <MultiFileUploadInput
             label="Official Receipt of Payment"
             value={entry.officialReceiptOfPayment}
             onChange={(v) => onUpdate(index, { officialReceiptOfPayment: v })}
           />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FileUploadInput
+          <MultiFileUploadInput
             label="Sanitary Permit"
             value={entry.sanitaryPermitFile}
             onChange={(v) => onUpdate(index, { sanitaryPermitFile: v })}
           />
-          <FileUploadInput
+          <MultiFileUploadInput
             label="Fire Permit"
             value={entry.firePermitFile}
             onChange={(v) => onUpdate(index, { firePermitFile: v })}
           />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FileUploadInput
+          <MultiFileUploadInput
             label="Barangay Permit"
             value={entry.barangayPermit}
             onChange={(v) => onUpdate(index, { barangayPermit: v })}
           />
-          <FileUploadInput
+          <MultiFileUploadInput
             label="Community Tax Certificate"
             value={entry.communityTaxCertificate}
             onChange={(v) => onUpdate(index, { communityTaxCertificate: v })}
           />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FileUploadInput
+          <MultiFileUploadInput
             label="Locational Clearance"
             value={entry.locationalClearance}
             onChange={(v) => onUpdate(index, { locationalClearance: v })}
           />
-          <FileUploadInput
+          <MultiFileUploadInput
             label="Environmental Clearance"
             value={entry.environmentalClearance}
             onChange={(v) => onUpdate(index, { environmentalClearance: v })}
           />
         </div>
-        <FileUploadInput
+        <MultiFileUploadInput
           label="Comprehensive General Liability Insurance"
           value={entry.comprehensiveGeneralLiabilityInsurance}
           onChange={(v) => onUpdate(index, { comprehensiveGeneralLiabilityInsurance: v })}

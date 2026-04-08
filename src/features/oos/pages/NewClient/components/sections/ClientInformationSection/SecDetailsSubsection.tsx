@@ -1,7 +1,7 @@
 import { Input } from "../../../../../../../components/common";
 import type { SecDetails } from "../../../../../../../types/client-info";
 import DateFieldInput from "../DateFieldInput";
-import FileUploadInput from "../FileUploadInput";
+import MultiFileUploadInput from "../MultiFileUploadInput";
 
 interface SecDetailsSubsectionProps {
   data: SecDetails;
@@ -59,60 +59,60 @@ export default function SecDetailsSubsection({
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FileUploadInput
+        <MultiFileUploadInput
           label="SEC Certificate of Incorporation"
           value={data.secCertificateOfIncorporation}
           onChange={(v) => update({ secCertificateOfIncorporation: v })}
         />
-        <FileUploadInput
+        <MultiFileUploadInput
           label="Articles of Incorporation"
           value={data.articlesOfIncorporation}
           onChange={(v) => update({ articlesOfIncorporation: v })}
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FileUploadInput
+        <MultiFileUploadInput
           label="Bylaws of Corporation"
           value={data.bylawsOfCorporation}
           onChange={(v) => update({ bylawsOfCorporation: v })}
         />
-        <FileUploadInput
+        <MultiFileUploadInput
           label="Certificate of Authentication"
           value={data.certificateOfAuthentication}
           onChange={(v) => update({ certificateOfAuthentication: v })}
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FileUploadInput
+        <MultiFileUploadInput
           label="Authorize Filer / Secretary Certificate"
           value={data.authorizeFilerSecretaryCertificate}
           onChange={(v) => update({ authorizeFilerSecretaryCertificate: v })}
         />
-        <FileUploadInput
+        <MultiFileUploadInput
           label="SEC Official Receipts"
           value={data.secOfficialReceipts}
           onChange={(v) => update({ secOfficialReceipts: v })}
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FileUploadInput
+        <MultiFileUploadInput
           label="Latest GIS / Appointment of Officer"
           value={data.latestGisOrAppointmentOfOfficer}
           onChange={(v) => update({ latestGisOrAppointmentOfOfficer: v })}
         />
-        <FileUploadInput
+        <MultiFileUploadInput
           label="Stock & Transfer Book"
           value={data.stockAndTransferBook}
           onChange={(v) => update({ stockAndTransferBook: v })}
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FileUploadInput
+        <MultiFileUploadInput
           label="Board Resolutions / Secretary Certificate"
           value={data.boardResolutionsSecretaryCertificate}
           onChange={(v) => update({ boardResolutionsSecretaryCertificate: v })}
         />
-        <FileUploadInput
+        <MultiFileUploadInput
           label="Previous Year AFS & ITR"
           value={data.previousYearAfsAndItr}
           onChange={(v) => update({ previousYearAfsAndItr: v })}

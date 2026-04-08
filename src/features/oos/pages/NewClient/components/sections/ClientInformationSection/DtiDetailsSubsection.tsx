@@ -1,7 +1,7 @@
 import { Input } from "../../../../../../../components/common";
 import type { DtiDetails } from "../../../../../../../types/client-info";
 import DateFieldInput from "../DateFieldInput";
-import FileUploadInput from "../FileUploadInput";
+import MultiFileUploadInput from "../MultiFileUploadInput";
 
 interface DtiDetailsSubsectionProps {
   data: DtiDetails;
@@ -44,17 +44,17 @@ export default function DtiDetailsSubsection({
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <FileUploadInput
+            <MultiFileUploadInput
               label="Business Registration Certificate"
               value={data.dtiBusinessRegistrationCertificate}
               onChange={(v) => update({ dtiBusinessRegistrationCertificate: v })}
             />
-            <FileUploadInput
+            <MultiFileUploadInput
               label="BNRS Undertaking Form"
               value={data.dtiBnrsUndertakingForm}
               onChange={(v) => update({ dtiBnrsUndertakingForm: v })}
             />
-            <FileUploadInput
+            <MultiFileUploadInput
               label="Official Receipt"
               value={data.dtiOfficialReceipt}
               onChange={(v) => update({ dtiOfficialReceipt: v })}
@@ -97,7 +97,7 @@ export default function DtiDetailsSubsection({
               onChange={(v) => update({ bmbeDateOfExpiration: v })}
             />
           </div>
-          <FileUploadInput
+          <MultiFileUploadInput
             label="BMBE Official Receipt"
             value={data.bmbeOfficialReceipt}
             onChange={(v) => update({ bmbeOfficialReceipt: v })}

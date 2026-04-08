@@ -86,15 +86,15 @@ export interface BirBranchDetails {
   typeOfBusiness: string | null;
   classification: string | null;
   dateOfBirRegistration: DateField | null;
-  birCertificateOfRegistration: FileReference | null;
-  birForm1901: FileReference | null;
-  birForm1921Atp: FileReference | null;
-  birForm1905: FileReference | null;
-  sampleInvoiceReceipts: FileReference | null;
-  niriPoster: FileReference | null;
-  birBookOfAccountsStamp: FileReference | null;
-  birForm2000Dst: FileReference | null;
-  contractOfLease: FileReference | null;
+  birCertificateOfRegistration: FileReference[];
+  birForm1901: FileReference[];
+  birForm1921Atp: FileReference[];
+  birForm1905: FileReference[];
+  sampleInvoiceReceipts: FileReference[];
+  niriPoster: FileReference[];
+  birBookOfAccountsStamp: FileReference[];
+  birForm2000Dst: FileReference[];
+  contractOfLease: FileReference[];
 }
 
 export interface BirTaxComplianceDetails {
@@ -124,16 +124,16 @@ export interface DtiDetails {
   dtiRegistrationNo: string | null;
   dtiDateOfRegistration: DateField | null;
   dtiDateOfExpiration: DateField | null;
-  dtiBusinessRegistrationCertificate: FileReference | null;
-  dtiBnrsUndertakingForm: FileReference | null;
-  dtiOfficialReceipt: FileReference | null;
+  dtiBusinessRegistrationCertificate: FileReference[];
+  dtiBnrsUndertakingForm: FileReference[];
+  dtiOfficialReceipt: FileReference[];
 
   // BMBE Compliance
   bmbeTotalAssets: string | null;
   bmbeNo: string | null;
   bmbeDateOfRegistration: DateField | null;
   bmbeDateOfExpiration: DateField | null;
-  bmbeOfficialReceipt: FileReference | null;
+  bmbeOfficialReceipt: FileReference[];
 
   // Others
   others: string | null;
@@ -145,23 +145,23 @@ export interface SecDetails {
   dateOfActualMeetingPerBylaws: DateField | null;
   primaryPurposePerArticles: string | null;
   corporationCategory: string | null;
-  secCertificateOfIncorporation: FileReference | null;
-  articlesOfIncorporation: FileReference | null;
-  bylawsOfCorporation: FileReference | null;
-  certificateOfAuthentication: FileReference | null;
-  authorizeFilerSecretaryCertificate: FileReference | null;
-  secOfficialReceipts: FileReference | null;
-  latestGisOrAppointmentOfOfficer: FileReference | null;
-  stockAndTransferBook: FileReference | null;
-  boardResolutionsSecretaryCertificate: FileReference | null;
-  previousYearAfsAndItr: FileReference | null;
+  secCertificateOfIncorporation: FileReference[];
+  articlesOfIncorporation: FileReference[];
+  bylawsOfCorporation: FileReference[];
+  certificateOfAuthentication: FileReference[];
+  authorizeFilerSecretaryCertificate: FileReference[];
+  secOfficialReceipts: FileReference[];
+  latestGisOrAppointmentOfOfficer: FileReference[];
+  stockAndTransferBook: FileReference[];
+  boardResolutionsSecretaryCertificate: FileReference[];
+  previousYearAfsAndItr: FileReference[];
   others: string | null;
 }
 
 export interface GovernmentAgencyDetails {
   dateOfRegistration: DateField | null;
   registrationNumber: string | null;
-  certificatesAndDocuments: FileReference | null;
+  certificatesAndDocuments: FileReference[];
   others: string | null;
 }
 
@@ -178,17 +178,17 @@ export interface CityHallDetails {
   firePermit: PermitDetails | null;
   sanitaryPermit: PermitDetails | null;
   otherPermit: PermitDetails | null;
-  mayorBusinessPermit: FileReference | null;
-  businessPermitPlate: FileReference | null;
-  billingAssessment: FileReference | null;
-  officialReceiptOfPayment: FileReference | null;
-  sanitaryPermitFile: FileReference | null;
-  firePermitFile: FileReference | null;
-  barangayPermit: FileReference | null;
-  communityTaxCertificate: FileReference | null;
-  locationalClearance: FileReference | null;
-  environmentalClearance: FileReference | null;
-  comprehensiveGeneralLiabilityInsurance: FileReference | null;
+  mayorBusinessPermit: FileReference[];
+  businessPermitPlate: FileReference[];
+  billingAssessment: FileReference[];
+  officialReceiptOfPayment: FileReference[];
+  sanitaryPermitFile: FileReference[];
+  firePermitFile: FileReference[];
+  barangayPermit: FileReference[];
+  communityTaxCertificate: FileReference[];
+  locationalClearance: FileReference[];
+  environmentalClearance: FileReference[];
+  comprehensiveGeneralLiabilityInsurance: FileReference[];
 }
 
 export interface ClientInformation {
