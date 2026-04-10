@@ -12,6 +12,7 @@ import DtiDetailsSubsection from "./DtiDetailsSubsection";
 import SecDetailsSubsection from "./SecDetailsSubsection";
 import GovernmentAgencySubsection from "./GovernmentAgencySubsection";
 import CityHallDetailsSubsection from "./CityHallDetailsSubsection";
+import OtherPermitsSubsection from "./OtherPermitsSubsection";
 
 const ORG_TYPE_OPTIONS = [
   { value: "SOLE_PROPRIETORSHIP", label: "Sole Proprietorship" },
@@ -177,6 +178,13 @@ export default function ClientInformationSection({
         <CityHallDetailsSubsection
           data={data.cityHallDetails}
           onChange={(cityHallDetails) => update({ cityHallDetails })}
+        />
+      </CollapsibleSubsection>
+
+      <CollapsibleSubsection title="Other Permits" defaultOpen={false}>
+        <OtherPermitsSubsection
+          data={data.otherPermits}
+          onChange={(otherPermits) => update({ otherPermits })}
         />
       </CollapsibleSubsection>
     </div>

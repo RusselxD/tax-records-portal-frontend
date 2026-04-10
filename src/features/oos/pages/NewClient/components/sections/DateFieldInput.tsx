@@ -25,10 +25,11 @@ export default function DateFieldInput({
   const dateValue = normalizeDate(value?.date);
   const isImportant = value?.isImportant ?? false;
   const isCritical = value?.isCritical ?? false;
+  const notApplicable = value?.notApplicable ?? false;
 
   const emit = (patch: Partial<DateField>) => {
-    const next = { date: dateValue || null, isImportant, isCritical, ...patch };
-    if (!next.date && !next.isImportant && !next.isCritical) {
+    const next = { date: dateValue || null, isImportant, isCritical, notApplicable, ...patch };
+    if (!next.date && !next.isImportant && !next.isCritical && !next.notApplicable) {
       onChange(null);
     } else {
       onChange(next);
@@ -47,20 +48,35 @@ export default function DateFieldInput({
     emit({ isCritical: e.target.checked });
   };
 
+  const handleNotApplicableChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    emit({ notApplicable: e.target.checked, date: e.target.checked ? null : (dateValue || null) });
+  };
+
   return (
     <div>
       <Input
         label={label}
         type="date"
-        value={dateValue}
+        value={notApplicable ? "" : dateValue}
         onChange={handleDateChange}
+        disabled={notApplicable}
       />
       <div className="mt-1.5 flex items-center gap-4">
         <label className="flex items-center gap-1.5 text-xs text-gray-500">
           <input
             type="checkbox"
+            checked={notApplicable}
+            onChange={handleNotApplicableChange}
+            className="rounded border-gray-300 text-gray-400 focus:ring-gray-400 h-3 w-3"
+          />
+          N/A
+        </label>
+        <label className="flex items-center gap-1.5 text-xs text-gray-500">
+          <input
+            type="checkbox"
             checked={isImportant}
             onChange={handleImportantChange}
+            disabled={notApplicable}
             className="rounded border-gray-300 text-accent focus:ring-accent h-3 w-3"
           />
           Mark as important
@@ -70,6 +86,7 @@ export default function DateFieldInput({
             type="checkbox"
             checked={isCritical}
             onChange={handleCriticalChange}
+            disabled={notApplicable}
             className="rounded border-gray-300 text-red-500 focus:ring-red-500 h-3 w-3"
           />
           Mark as critical

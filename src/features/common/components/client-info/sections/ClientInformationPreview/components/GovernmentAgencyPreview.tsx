@@ -9,7 +9,7 @@ export function agencyHasData(data: GovernmentAgencyDetails): boolean {
   return !!(
     data.dateOfRegistration?.date ||
     data.registrationNumber ||
-    data.certificatesAndDocuments ||
+    data.certificatesAndDocuments?.length > 0 ||
     data.others
   );
 }

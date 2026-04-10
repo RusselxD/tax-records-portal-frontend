@@ -9,6 +9,7 @@ import DtiDetailsPreview, { hasDtiData } from "./components/DtiDetailsPreview";
 import SecDetailsPreview, { hasSecData } from "./components/SecDetailsPreview";
 import GovernmentAgencyPreview, { agencyHasData } from "./components/GovernmentAgencyPreview";
 import CityHallDetailsPreview from "./components/CityHallDetailsPreview";
+import OtherPermitsPreview from "./components/OtherPermitsPreview";
 
 export default function ClientInformationPreview({ data }: { data: ClientInformation }) {
   const hasHeader = !!(
@@ -28,11 +29,12 @@ export default function ClientInformationPreview({ data }: { data: ClientInforma
   const hasPhilhealth = agencyHasData(data.philhealthDetails);
   const hasHdmf = agencyHasData(data.hdmfDetails);
   const hasCityHall = data.cityHallDetails.length > 0;
+  const hasOtherPermits = data.otherPermits?.length > 0;
 
   const hasAnyData =
     hasHeader || hasMainBranch || hasBranches || hasTaxCompliance ||
     hasComplianceBreakdown || hasDti || hasSec ||
-    hasSss || hasPhilhealth || hasHdmf || hasCityHall;
+    hasSss || hasPhilhealth || hasHdmf || hasCityHall || hasOtherPermits;
 
   if (!hasAnyData) return null;
 
@@ -109,6 +111,12 @@ export default function ClientInformationPreview({ data }: { data: ClientInforma
       {hasCityHall && (
         <CollapsibleSubsection title="City Hall Details" defaultOpen={false}>
           <CityHallDetailsPreview data={data.cityHallDetails} />
+        </CollapsibleSubsection>
+      )}
+
+      {hasOtherPermits && (
+        <CollapsibleSubsection title="Other Permits" defaultOpen={false}>
+          <OtherPermitsPreview data={data.otherPermits} />
         </CollapsibleSubsection>
       )}
     </div>

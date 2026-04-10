@@ -8,16 +8,16 @@ export function hasSecData(data: SecDetails): boolean {
     data.dateOfActualMeetingPerBylaws?.date ||
     data.primaryPurposePerArticles ||
     data.corporationCategory ||
-    data.secCertificateOfIncorporation ||
-    data.articlesOfIncorporation ||
-    data.bylawsOfCorporation ||
-    data.certificateOfAuthentication ||
-    data.authorizeFilerSecretaryCertificate ||
-    data.secOfficialReceipts ||
-    data.latestGisOrAppointmentOfOfficer ||
-    data.stockAndTransferBook ||
-    data.boardResolutionsSecretaryCertificate ||
-    data.previousYearAfsAndItr ||
+    data.secCertificateOfIncorporation?.length > 0 ||
+    data.articlesOfIncorporation?.length > 0 ||
+    data.bylawsOfCorporation?.length > 0 ||
+    data.certificateOfAuthentication?.length > 0 ||
+    data.authorizeFilerSecretaryCertificate?.length > 0 ||
+    data.secOfficialReceipts?.length > 0 ||
+    data.latestGisOrAppointmentOfOfficer?.length > 0 ||
+    data.stockAndTransferBook?.length > 0 ||
+    data.boardResolutionsSecretaryCertificate?.length > 0 ||
+    data.previousYearAfsAndItr?.length > 0 ||
     data.others
   );
 }
@@ -29,16 +29,16 @@ export default function SecDetailsPreview({ data }: { data: SecDetails }) {
     data.dateOfActualMeetingPerBylaws?.date ||
     data.primaryPurposePerArticles ||
     data.corporationCategory ||
-    data.secCertificateOfIncorporation ||
-    data.articlesOfIncorporation ||
-    data.bylawsOfCorporation ||
-    data.certificateOfAuthentication ||
-    data.authorizeFilerSecretaryCertificate ||
-    data.secOfficialReceipts ||
-    data.latestGisOrAppointmentOfOfficer ||
-    data.stockAndTransferBook ||
-    data.boardResolutionsSecretaryCertificate ||
-    data.previousYearAfsAndItr ||
+    data.secCertificateOfIncorporation?.length > 0 ||
+    data.articlesOfIncorporation?.length > 0 ||
+    data.bylawsOfCorporation?.length > 0 ||
+    data.certificateOfAuthentication?.length > 0 ||
+    data.authorizeFilerSecretaryCertificate?.length > 0 ||
+    data.secOfficialReceipts?.length > 0 ||
+    data.latestGisOrAppointmentOfOfficer?.length > 0 ||
+    data.stockAndTransferBook?.length > 0 ||
+    data.boardResolutionsSecretaryCertificate?.length > 0 ||
+    data.previousYearAfsAndItr?.length > 0 ||
     data.others
   );
 

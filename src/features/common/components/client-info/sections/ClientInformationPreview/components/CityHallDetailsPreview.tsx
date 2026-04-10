@@ -18,17 +18,17 @@ function cityHasData(city: CityHallDetails): boolean {
     permitHasData(city.firePermit) ||
     permitHasData(city.sanitaryPermit) ||
     permitHasData(city.otherPermit) ||
-    city.mayorBusinessPermit ||
-    city.businessPermitPlate ||
-    city.billingAssessment ||
-    city.officialReceiptOfPayment ||
-    city.sanitaryPermitFile ||
-    city.firePermitFile ||
-    city.barangayPermit ||
-    city.communityTaxCertificate ||
-    city.locationalClearance ||
-    city.environmentalClearance ||
-    city.comprehensiveGeneralLiabilityInsurance
+    city.mayorBusinessPermit?.length > 0 ||
+    city.businessPermitPlate?.length > 0 ||
+    city.billingAssessment?.length > 0 ||
+    city.officialReceiptOfPayment?.length > 0 ||
+    city.sanitaryPermitFile?.length > 0 ||
+    city.firePermitFile?.length > 0 ||
+    city.barangayPermit?.length > 0 ||
+    city.communityTaxCertificate?.length > 0 ||
+    city.locationalClearance?.length > 0 ||
+    city.environmentalClearance?.length > 0 ||
+    city.comprehensiveGeneralLiabilityInsurance?.length > 0
   );
 }
 

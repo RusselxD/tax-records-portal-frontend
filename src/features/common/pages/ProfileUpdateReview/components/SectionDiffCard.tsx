@@ -121,11 +121,11 @@ function AddedItem({ change }: { change: DiffAddedChange }) {
         <div key={i} className="grid grid-cols-[2fr_3fr] gap-4 px-5 py-2.5 pl-10 items-start">
           <span className="text-sm text-gray-500 leading-relaxed">{f.field}</span>
           <div>
-            {f.newFileId && f.value ? (
-              <DiffFileRow fileId={f.newFileId} fileName={f.value} variant="new" />
+            {f.newFileId && f.new ? (
+              <DiffFileRow fileId={f.newFileId} fileName={f.new} variant="new" />
             ) : (
               <span className="text-sm text-primary bg-green-50 rounded px-2.5 py-1.5 leading-relaxed break-words inline-block">
-                {f.value}
+                {f.new}
               </span>
             )}
           </div>
@@ -137,13 +137,23 @@ function AddedItem({ change }: { change: DiffAddedChange }) {
 
 function RemovedItem({ change }: { change: DiffRemovedChange }) {
   return (
-    <div className="flex items-center gap-2 px-5 py-3 bg-red-50/50 border-t border-gray-100">
-      <Minus className="w-3 h-3 text-red-500" />
-      <span className="text-xs font-semibold text-red-600 uppercase tracking-wider">
-        Removed
-      </span>
-      <span className="text-sm font-medium text-gray-500 line-through">{change.itemLabel}</span>
-    </div>
+    <>
+      <div className="flex items-center gap-2 px-5 py-2.5 bg-red-50/50 border-t border-gray-100">
+        <Minus className="w-3 h-3 text-red-500" />
+        <span className="text-xs font-semibold text-red-600 uppercase tracking-wider">
+          Removed
+        </span>
+        <span className="text-sm font-medium text-gray-500 line-through">{change.itemLabel}</span>
+      </div>
+      {change.fields?.map((f, i) => (
+        <div key={i} className="grid grid-cols-[2fr_3fr] gap-4 px-5 py-2.5 pl-10 items-start">
+          <span className="text-sm text-gray-500 leading-relaxed">{f.field}</span>
+          <span className="text-sm text-gray-500 bg-red-50 rounded px-2.5 py-1.5 leading-relaxed break-words inline-block">
+            {f.value}
+          </span>
+        </div>
+      ))}
+    </>
   );
 }
 

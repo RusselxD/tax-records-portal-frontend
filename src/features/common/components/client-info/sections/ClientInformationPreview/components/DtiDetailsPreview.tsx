@@ -7,14 +7,14 @@ export function hasDtiData(data: DtiDetails): boolean {
     data.dtiRegistrationNo ||
     data.dtiDateOfRegistration?.date ||
     data.dtiDateOfExpiration?.date ||
-    data.dtiBusinessRegistrationCertificate ||
-    data.dtiBnrsUndertakingForm ||
-    data.dtiOfficialReceipt ||
+    data.dtiBusinessRegistrationCertificate?.length > 0 ||
+    data.dtiBnrsUndertakingForm?.length > 0 ||
+    data.dtiOfficialReceipt?.length > 0 ||
     data.bmbeTotalAssets ||
     data.bmbeNo ||
     data.bmbeDateOfRegistration?.date ||
     data.bmbeDateOfExpiration?.date ||
-    data.bmbeOfficialReceipt ||
+    data.bmbeOfficialReceipt?.length > 0 ||
     data.others
   );
 }
@@ -24,9 +24,9 @@ export default function DtiDetailsPreview({ data }: { data: DtiDetails }) {
     data.dtiRegistrationNo ||
     data.dtiDateOfRegistration?.date ||
     data.dtiDateOfExpiration?.date ||
-    data.dtiBusinessRegistrationCertificate ||
-    data.dtiBnrsUndertakingForm ||
-    data.dtiOfficialReceipt
+    data.dtiBusinessRegistrationCertificate?.length > 0 ||
+    data.dtiBnrsUndertakingForm?.length > 0 ||
+    data.dtiOfficialReceipt?.length > 0
   );
 
   const hasBmbe = !!(
@@ -34,7 +34,7 @@ export default function DtiDetailsPreview({ data }: { data: DtiDetails }) {
     data.bmbeNo ||
     data.bmbeDateOfRegistration?.date ||
     data.bmbeDateOfExpiration?.date ||
-    data.bmbeOfficialReceipt
+    data.bmbeOfficialReceipt?.length > 0
   );
 
   if (!hasDti && !hasBmbe && !data.others) return null;

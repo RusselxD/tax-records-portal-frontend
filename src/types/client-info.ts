@@ -6,6 +6,7 @@ export interface DateField {
   date: string | null;
   isImportant: boolean;
   isCritical: boolean;
+  notApplicable: boolean;
 }
 
 export interface FileReference {
@@ -191,6 +192,14 @@ export interface CityHallDetails {
   comprehensiveGeneralLiabilityInsurance: FileReference[];
 }
 
+export interface OtherPermitDetails {
+  _uid?: string;
+  governmentAgency: string | null;
+  registrationNumber: string | null;
+  dateOfRegistration: DateField | null;
+  dateOfExpiration: DateField | null;
+}
+
 export interface ClientInformation {
   registeredName: string | null;
   tradeName: string | null;
@@ -206,6 +215,7 @@ export interface ClientInformation {
   philhealthDetails: GovernmentAgencyDetails;
   hdmfDetails: GovernmentAgencyDetails;
   cityHallDetails: CityHallDetails[];
+  otherPermits: OtherPermitDetails[];
 }
 
 // Section 3: Corporate Officer Information

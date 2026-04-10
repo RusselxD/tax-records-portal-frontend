@@ -16,15 +16,15 @@ export function branchHasData(branch: BirBranchDetails): boolean {
     branch.typeOfBusiness ||
     branch.classification ||
     branch.dateOfBirRegistration?.date ||
-    branch.birCertificateOfRegistration ||
-    branch.birForm1901 ||
-    branch.birForm1921Atp ||
-    branch.birForm1905 ||
-    branch.sampleInvoiceReceipts ||
-    branch.niriPoster ||
-    branch.birBookOfAccountsStamp ||
-    branch.birForm2000Dst ||
-    branch.contractOfLease
+    branch.birCertificateOfRegistration?.length > 0 ||
+    branch.birForm1901?.length > 0 ||
+    branch.birForm1921Atp?.length > 0 ||
+    branch.birForm1905?.length > 0 ||
+    branch.sampleInvoiceReceipts?.length > 0 ||
+    branch.niriPoster?.length > 0 ||
+    branch.birBookOfAccountsStamp?.length > 0 ||
+    branch.birForm2000Dst?.length > 0 ||
+    branch.contractOfLease?.length > 0
   );
 }
 
