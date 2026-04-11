@@ -7,19 +7,22 @@ import type { CardField } from "../../../../../components/common/ResponsiveTable
 import { useClientOnboarding } from "../context/ClientOnboardingContext";
 import type { ClientOnboardingListItemResponse } from "../../../../../types/client";
 
-const HEADERS = [
+const BASE_HEADERS = [
   { label: "Client Name", className: "w-[30%] min-w-[200px]" },
   { label: "Email", className: "w-[20%] min-w-[180px]" },
   { label: "Status", className: "w-[12%] min-w-[130px]" },
   { label: "Date Created", className: "w-[12%] min-w-[100px]" },
   { label: "Last Updated", className: "w-[12%] min-w-[100px]" },
-  { label: "Actions", className: "w-[10%] min-w-[80px]" },
 ];
+const ACTIONS_HEADER = { label: "Actions", className: "w-[10%] min-w-[80px]" };
 
-const TableHeader = () => (
+const getHeaders = (showActions: boolean) =>
+  showActions ? [...BASE_HEADERS, ACTIONS_HEADER] : BASE_HEADERS;
+
+const TableHeader = ({ showActions }: { showActions: boolean }) => (
   <thead>
     <tr className="border-b border-gray-200">
-      {HEADERS.map((header) => (
+      {getHeaders(showActions).map((header) => (
         <th
           key={header.label}
           className={`th-label ${header.className}`}
@@ -36,27 +39,50 @@ const reviewState = {
   backTo: "/oos/client-onboarding",
 };
 
+function StatusCell({ client }: { client: ClientOnboardingListItemResponse }) {
+  if (client.handedOff) {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-medium text-sky-700">
+        <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
+        Handed Off
+      </span>
+    );
+  }
+  return <ClientStatusBadge status={client.status} />;
+}
+
+function getRowNavPath(client: ClientOnboardingListItemResponse): string | null {
+  if (client.handedOff) {
+    return `/oos/client-snapshot/${client.id}`;
+  }
+  if (client.hasActiveTask) {
+    const taskId = client.activeTaskId ?? client.lastTaskId;
+    return taskId
+      ? `/oos/client-preview/${taskId}`
+      : `/oos/client-details/${client.id}`;
+  }
+  return null;
+}
+
 function ActionButtons({
-  clientId,
-  isHandedOff,
-  hasActiveTask,
-  activeTaskId,
-  lastTaskId,
+  client,
+  rowClickable,
 }: {
-  clientId: string;
-  isHandedOff: boolean;
-  hasActiveTask: boolean;
-  activeTaskId: string | null;
-  lastTaskId: string | null;
+  client: ClientOnboardingListItemResponse;
+  rowClickable: boolean;
 }) {
   const navigate = useNavigate();
 
-  if (isHandedOff) {
+  // Row handles navigation (desktop single-button cases) — no icon needed.
+  if (rowClickable) return null;
+
+  // Row is not clickable — buttons own their navigation.
+  if (client.handedOff) {
     return (
       <div className="flex items-center gap-2">
         <button
           onClick={() =>
-            navigate(`/oos/client-snapshot/${clientId}`, { state: reviewState })
+            navigate(`/oos/client-snapshot/${client.id}`, { state: reviewState })
           }
           className="p-2 text-gray-400 hover:text-accent transition-colors"
         >
@@ -70,18 +96,18 @@ function ActionButtons({
     <div className="flex items-center gap-2">
       <button
         onClick={() => {
-          const taskId = activeTaskId ?? lastTaskId;
+          const taskId = client.activeTaskId ?? client.lastTaskId;
           taskId
             ? navigate(`/oos/client-preview/${taskId}`, { state: reviewState })
-            : navigate(`/oos/client-details/${clientId}`, { state: reviewState });
+            : navigate(`/oos/client-details/${client.id}`, { state: reviewState });
         }}
         className="p-2 text-gray-400 hover:text-accent transition-colors"
       >
         <Eye className="w-4 h-4" />
       </button>
-      {!hasActiveTask && (
+      {!client.hasActiveTask && (
         <button
-          onClick={() => navigate(`/oos/new-client/${clientId}`)}
+          onClick={() => navigate(`/oos/new-client/${client.id}`)}
           className="p-2 text-gray-400 hover:text-accent transition-colors"
         >
           <SquarePen className="w-4 h-4" />
@@ -93,54 +119,74 @@ function ActionButtons({
 
 const ClientRow = ({
   client,
+  showActions,
 }: {
   client: ClientOnboardingListItemResponse;
-}) => (
-  <tr className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50/50 transition-colors">
-    <td className="px-4 py-4 text-sm font-medium text-primary max-w-0">
-      <span className="block truncate" title={client.name || undefined}>
-        {client.name || <span className="text-gray-400 italic">Unnamed Client</span>}
-      </span>
-    </td>
-    <td className="px-4 py-4 text-sm text-gray-600 max-w-0">
-      <span className="block truncate" title={client.email || undefined}>
-        {client.email || <span className="text-gray-400 italic">No email</span>}
-      </span>
-    </td>
-    <td className="px-4 py-4 whitespace-nowrap">
-      <ClientStatusBadge status={client.status} />
-    </td>
-    <td className="px-4 py-4 text-sm text-gray-600 whitespace-nowrap">
-      {formatDate(client.createdAt)}
-    </td>
-    <td className="px-4 py-4 text-sm text-gray-600 whitespace-nowrap">
-      {formatDate(client.updatedAt)}
-    </td>
-    <td className="px-4 py-4 whitespace-nowrap">
-      <ActionButtons clientId={client.id} isHandedOff={client.handedOff} hasActiveTask={client.hasActiveTask} activeTaskId={client.activeTaskId} lastTaskId={client.lastTaskId} />
-    </td>
-  </tr>
-);
+  showActions: boolean;
+}) => {
+  const navigate = useNavigate();
+  const rowNav = getRowNavPath(client);
+  const handleRowClick = rowNav
+    ? () => navigate(rowNav, { state: reviewState })
+    : undefined;
 
-const TableSkeleton = () => (
-  <tbody>
-    {Array.from({ length: 5 }).map((_, i) => (
-      <tr key={i} className="border-b border-gray-100">
-        {Array.from({ length: HEADERS.length }).map((_, j) => (
-          <td key={j} className="px-4 py-4">
-            <div className="h-4 w-24 rounded skeleton" />
-          </td>
-        ))}
-      </tr>
-    ))}
-  </tbody>
-);
+  return (
+    <tr
+      onClick={handleRowClick}
+      className={`border-b border-gray-100 last:border-b-0 hover:bg-gray-50/50 transition-colors ${
+        handleRowClick ? "cursor-pointer" : ""
+      }`}
+    >
+      <td className="px-4 py-4 text-sm font-medium text-primary max-w-0">
+        <span className="block truncate" title={client.name || undefined}>
+          {client.name || <span className="text-gray-400 italic">Unnamed Client</span>}
+        </span>
+      </td>
+      <td className="px-4 py-4 text-sm text-gray-600 max-w-0">
+        <span className="block truncate" title={client.email || undefined}>
+          {client.email || <span className="text-gray-400 italic">No email</span>}
+        </span>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap">
+        <StatusCell client={client} />
+      </td>
+      <td className="px-4 py-4 text-sm text-gray-600 whitespace-nowrap">
+        {formatDate(client.createdAt)}
+      </td>
+      <td className="px-4 py-4 text-sm text-gray-600 whitespace-nowrap">
+        {formatDate(client.updatedAt)}
+      </td>
+      {showActions && (
+        <td className="px-4 py-4 whitespace-nowrap">
+          <ActionButtons client={client} rowClickable={!!handleRowClick} />
+        </td>
+      )}
+    </tr>
+  );
+};
 
-const EmptyState = () => (
+const TableSkeleton = ({ showActions }: { showActions: boolean }) => {
+  const columnCount = getHeaders(showActions).length;
+  return (
+    <tbody>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <tr key={i} className="border-b border-gray-100">
+          {Array.from({ length: columnCount }).map((_, j) => (
+            <td key={j} className="px-4 py-4">
+              <div className="h-4 w-24 rounded skeleton" />
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  );
+};
+
+const EmptyState = ({ showActions }: { showActions: boolean }) => (
   <tbody>
     <tr>
       <td
-        colSpan={HEADERS.length}
+        colSpan={getHeaders(showActions).length}
         className="px-4 py-12 text-center text-sm text-gray-500"
       >
         No clients found.
@@ -162,7 +208,7 @@ export default function ClientOnboardingTable() {
       },
       {
         label: "Status",
-        value: <ClientStatusBadge status={client.status} />,
+        value: <StatusCell client={client} />,
       },
       {
         label: "Date Created",
@@ -190,13 +236,7 @@ export default function ClientOnboardingTable() {
 
   const renderActions = useCallback(
     (client: ClientOnboardingListItemResponse) => (
-      <ActionButtons
-        clientId={client.id}
-        isHandedOff={client.handedOff}
-        hasActiveTask={client.hasActiveTask}
-        activeTaskId={client.activeTaskId}
-        lastTaskId={client.lastTaskId}
-      />
+      <ActionButtons client={client} rowClickable={false} />
     ),
     [],
   );
@@ -215,6 +255,8 @@ export default function ClientOnboardingTable() {
     );
   }
 
+  const showActions = clients.some((c) => getRowNavPath(c) === null);
+
   return (
     <div className="rounded-lg bg-white custom-shadow">
       <ResponsiveTable
@@ -227,15 +269,15 @@ export default function ClientOnboardingTable() {
         emptyMessage="No clients found."
       >
         <table className="w-full table-fixed">
-          <TableHeader />
+          <TableHeader showActions={showActions} />
           {isFetching ? (
-            <TableSkeleton />
+            <TableSkeleton showActions={showActions} />
           ) : clients.length === 0 ? (
-            <EmptyState />
+            <EmptyState showActions={showActions} />
           ) : (
             <tbody>
               {clients.map((client) => (
-                <ClientRow key={client.id} client={client} />
+                <ClientRow key={client.id} client={client} showActions={showActions} />
               ))}
             </tbody>
           )}

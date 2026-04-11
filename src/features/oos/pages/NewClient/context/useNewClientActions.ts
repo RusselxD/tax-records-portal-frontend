@@ -137,16 +137,11 @@ export default function useNewClientActions({
           "The client has been submitted for review.",
         );
         navigate("/oos/client-onboarding");
-      } catch (err) {
-        toastError(
-          "Submission failed",
-          getErrorMessage(err, "Something went wrong. Please try again."),
-        );
       } finally {
         setIsSubmitting(false);
       }
     },
-    [clientIdRef, navigate, setIsSubmitting, toastSuccess, toastError],
+    [clientIdRef, navigate, setIsSubmitting, toastSuccess],
   );
 
   const discardDraft = useCallback(async () => {

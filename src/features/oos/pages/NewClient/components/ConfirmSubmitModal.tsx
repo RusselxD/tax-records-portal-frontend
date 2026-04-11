@@ -1,7 +1,7 @@
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { ConfirmActionModal, CommentEditor, cleanupCommentImages } from "../../../../../components/common";
 import { useNewClient } from "../context/NewClientContext";
-import { useToast } from "../../../../../contexts/ToastContext";
+import { deriveClientDisplayName } from "../../../../../lib/formatters";
 import type { RichTextContent } from "../../../../../types/client-info";
 
 const EMPTY_DOC: RichTextContent = { type: "doc", content: [] };
@@ -21,26 +21,26 @@ interface ConfirmSubmitModalProps {
 export default function ConfirmSubmitModal({
   setModalOpen,
 }: ConfirmSubmitModalProps) {
-  const { submitForReview, header } = useNewClient();
-  const { toastError } = useToast();
+  const { submitForReview, header, sections } = useNewClient();
   const [comment, setComment] = useState<RichTextContent>(EMPTY_DOC);
+  const submittedRef = useRef(false);
 
-  const clientName = header?.displayName || "Unnamed Client";
-  const hasClientName = !!header?.displayName?.trim();
+  const derivedName = deriveClientDisplayName(
+    sections.clientInformation?.registeredName,
+    sections.clientInformation?.tradeName,
+  );
+  const clientName =
+    derivedName || header?.displayName?.trim() || "Unnamed Client";
 
   const handleClose: Dispatch<SetStateAction<boolean>> = (val) => {
     const open = typeof val === "function" ? val(true) : val;
-    if (!open) cleanupCommentImages(comment);
+    if (!open && !submittedRef.current) cleanupCommentImages(comment);
     setModalOpen(val);
   };
 
   const handleConfirm = async () => {
-    if (!hasClientName) {
-      toastError("Required fields missing", "Client must have a name before submitting.");
-      setModalOpen(false);
-      return;
-    }
     await submitForReview(hasContent(comment) ? comment : null);
+    submittedRef.current = true;
   };
 
   return (

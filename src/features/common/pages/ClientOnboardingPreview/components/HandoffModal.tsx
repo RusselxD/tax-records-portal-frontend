@@ -14,6 +14,25 @@ interface HandoffModalProps {
   onConflict: () => void;
 }
 
+const ACK_ITEMS = [
+  { key: "onboardingComplete", label: "All onboarding steps completed" },
+  { key: "permanentFilesTracked", label: "Permanent files requested and tracked" },
+  { key: "drivesAndTemplates", label: "Drives and templates setup completed" },
+  { key: "collaborationSetup", label: "Collaboration setup established" },
+  { key: "readyForMre", label: "Client ready for full MRE servicing" },
+] as const;
+
+type AckKey = (typeof ACK_ITEMS)[number]["key"];
+type AckState = Record<AckKey, boolean>;
+
+const INITIAL_ACKS: AckState = {
+  onboardingComplete: false,
+  permanentFilesTracked: false,
+  drivesAndTemplates: false,
+  collaborationSetup: false,
+  readyForMre: false,
+};
+
 export default function HandoffModal({
   clientId,
   creatorId,
@@ -24,6 +43,7 @@ export default function HandoffModal({
 }: HandoffModalProps) {
   const [csdOosIds, setCsdOosIds] = useState<string[]>([]);
   const [qtdId, setQtdId] = useState(currentQtdId ?? "");
+  const [acks, setAcks] = useState<AckState>(INITIAL_ACKS);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -60,7 +80,12 @@ export default function HandoffModal({
     label: a.displayName,
   }));
 
-  const canSubmit = csdOosIds.length > 0 && !!qtdId && !isSubmitting;
+  const allAcked = ACK_ITEMS.every((item) => acks[item.key]);
+  const canSubmit = csdOosIds.length > 0 && !!qtdId && allAcked && !isSubmitting;
+
+  const toggleAck = (key: AckKey) => {
+    setAcks((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -125,6 +150,31 @@ export default function HandoffModal({
           onChange={setQtdId}
           placeholder="Select an accountant"
         />
+
+        <div className="rounded-md border border-gray-200 bg-gray-50 px-4 py-3">
+          <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-2">
+            Handoff Checklist
+          </p>
+          <p className="text-xs text-gray-500 mb-3">
+            Confirm each item before handing off this client.
+          </p>
+          <ul className="space-y-2">
+            {ACK_ITEMS.map((item) => (
+              <li key={item.key}>
+                <label className="flex items-start gap-2 cursor-pointer text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 h-4 w-4 accent-accent cursor-pointer"
+                    checked={acks[item.key]}
+                    onChange={() => toggleAck(item.key)}
+                    disabled={isSubmitting}
+                  />
+                  <span className="leading-relaxed">{item.label}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         <p className="text-xs text-gray-500 italic">
           This will create an archive snapshot of the current profile, assign the

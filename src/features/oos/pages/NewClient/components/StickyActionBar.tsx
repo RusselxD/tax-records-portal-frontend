@@ -2,17 +2,29 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../../../components/common";
 import JumpToSectionDropdown from "../../../../../components/common/JumpToSectionDropdown";
+import { deriveClientDisplayName } from "../../../../../lib/formatters";
 import { useNewClient, SECTIONS } from "../context/NewClientContext";
 import ConfirmDiscardModal from "./ConfirmDiscardModal";
 import ConfirmSubmitModal from "./ConfirmSubmitModal";
 
 export default function StickyActionBar() {
   const navigate = useNavigate();
-  const { scrollToSection, globalSaveStatus, isSubmitting, isDiscarding, isEditMode, isMreCodeValid } = useNewClient();
+  const { scrollToSection, globalSaveStatus, isSubmitting, isDiscarding, isEditMode, isMreCodeValid, header, sections } = useNewClient();
   const [showDiscard, setShowDiscard] = useState(false);
   const [showSubmit, setShowSubmit] = useState(false);
 
   const isSaving = globalSaveStatus === "saving";
+  const hasClientName =
+    !!deriveClientDisplayName(
+      sections.clientInformation?.registeredName,
+      sections.clientInformation?.tradeName,
+    ) || !!header?.displayName?.trim();
+
+  const submitDisabledReason = !hasClientName
+    ? "Enter a registered name or trade name in Client Information before submitting."
+    : !isMreCodeValid
+      ? "Enter a valid MRE code in Main Details before submitting."
+      : undefined;
 
   return (
     <>
@@ -42,9 +54,9 @@ export default function StickyActionBar() {
             <JumpToSectionDropdown sections={SECTIONS} onSelect={scrollToSection} />
             <Button
               onClick={() => setShowSubmit(true)}
-              disabled={isSaving || isSubmitting || !isMreCodeValid}
+              disabled={isSaving || isSubmitting || !!submitDisabledReason}
               isLoading={isSubmitting}
-              title={!isMreCodeValid ? "Enter a valid MRE code in Main Details before submitting." : undefined}
+              title={submitDisabledReason}
             >
               {isSaving ? "Saving..." : "Submit for Review"}
             </Button>
