@@ -89,7 +89,7 @@ export default function Billings() {
         />
         <Button onClick={() => navigate(createUrl)} className="w-full sm:w-auto shrink-0">
           <Plus className="h-4 w-4 mr-1.5" />
-          Create Invoice
+          Create Memorandum
         </Button>
       </div>
 

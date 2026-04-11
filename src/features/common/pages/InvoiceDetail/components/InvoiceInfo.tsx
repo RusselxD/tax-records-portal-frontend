@@ -19,7 +19,7 @@ export default function InvoiceInfo({ invoice }: { invoice: InvoiceDetailRespons
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4">
-        <Field label="Invoice Date" value={formatDate(invoice.invoiceDate)} />
+        <Field label="Memorandum Date" value={formatDate(invoice.invoiceDate)} />
         <Field label="Terms" value={invoice.terms.name} />
         <Field label="Due Date" value={formatDate(invoice.dueDate)} />
         <Field label="Description" value={invoice.description || "—"} />
@@ -38,7 +38,7 @@ export default function InvoiceInfo({ invoice }: { invoice: InvoiceDetailRespons
 
       {invoice.attachments?.length > 0 && (
         <div className="mt-5 pt-5 border-t border-gray-100">
-          <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Attachments</p>
+          <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Memorandum</p>
           <div className="space-y-1.5">
             {invoice.attachments.map((file) => (
               <FileRow key={file.id} name={file.name} onClick={() => setPreviewFile(file)} />

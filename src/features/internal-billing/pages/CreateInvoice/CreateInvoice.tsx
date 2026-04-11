@@ -192,7 +192,7 @@ export default function CreateInvoice() {
               placeholder="Select a client"
             />
             <Input
-              label="Invoice Number"
+              label="Memorandum No."
               value={invoiceNumber}
               onChange={(e) => setInvoiceNumber(e.target.value)}
               placeholder="e.g. INV-2026-001"
@@ -280,7 +280,7 @@ export default function CreateInvoice() {
             {clientId && (
               <div className="flex flex-col">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Attachments <span className="text-gray-400 font-normal">(optional)</span>
+                  Memorandum
                 </label>
                 <div
                   onDrop={(e) => { e.preventDefault(); setDragging(false); if (e.dataTransfer.files.length > 0) handleDropFiles(e.dataTransfer.files); }}
@@ -342,7 +342,7 @@ export default function CreateInvoice() {
               Cancel
             </Button>
             <Button type="submit" disabled={!canSubmit}>
-              Create Invoice
+              Create Memorandum
             </Button>
           </div>
         </form>
@@ -352,9 +352,9 @@ export default function CreateInvoice() {
         <ConfirmActionModal
           setModalOpen={setShowConfirm}
           onConfirm={handleConfirmCreate}
-          title="Create Invoice?"
-          description={`Create invoice ${invoiceNumber.trim()} for ${formatCurrency(parseFloat(amountDue))}?`}
-          confirmLabel="Create Invoice"
+          title="Create Memorandum?"
+          description={`Create memorandum ${invoiceNumber.trim()} for ${formatCurrency(parseFloat(amountDue))}?`}
+          confirmLabel="Create Memorandum"
           loadingLabel="Creating..."
           onSuccess={() => setShowConfirm(false)}
           onError={(err) => {
