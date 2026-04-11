@@ -105,7 +105,7 @@ Used for creating and editing client profiles.
 
 - Sections are partial in edit mode (loaded on demand)
 - Sections are complete in template/create mode (all loaded at once)
-- Accountant IDs are populated reactively via `useEffect` when header + mainDetails are both loaded
+- Accountants live on a separate `client.accountants` join, not inside `mainDetails` JSONB. Read them from `header.accountants` (or `GET /clients/{id}/summary`). The `mainDetails` PATCH body still accepts `qtdAccountantId` as a write-only field — backend routes it to the join, keeping the creator OOS — and the `NewClientContext` mirrors the QTD ID from `header.accountants.qtd` into `mainDetails` on load so the picker can hydrate
 
 ## Profile Update Flow
 

@@ -8,7 +8,7 @@ import ConfirmSubmitModal from "./ConfirmSubmitModal";
 
 export default function StickyActionBar() {
   const navigate = useNavigate();
-  const { scrollToSection, globalSaveStatus, isSubmitting, isDiscarding, isEditMode } = useNewClient();
+  const { scrollToSection, globalSaveStatus, isSubmitting, isDiscarding, isEditMode, isMreCodeValid } = useNewClient();
   const [showDiscard, setShowDiscard] = useState(false);
   const [showSubmit, setShowSubmit] = useState(false);
 
@@ -42,8 +42,9 @@ export default function StickyActionBar() {
             <JumpToSectionDropdown sections={SECTIONS} onSelect={scrollToSection} />
             <Button
               onClick={() => setShowSubmit(true)}
-              disabled={isSaving || isSubmitting}
+              disabled={isSaving || isSubmitting || !isMreCodeValid}
               isLoading={isSubmitting}
+              title={!isMreCodeValid ? "Enter a valid MRE code in Main Details before submitting." : undefined}
             >
               {isSaving ? "Saving..." : "Submit for Review"}
             </Button>

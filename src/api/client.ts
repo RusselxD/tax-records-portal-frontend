@@ -76,6 +76,15 @@ export const oosClientAPI = {
   deleteClient: async (clientId: string): Promise<void> => {
     await apiClient.delete(`/clients/${clientId}`);
   },
+
+  validateMreCode: async (
+    code: string,
+    clientId?: string,
+  ): Promise<{ isValid: boolean }> => {
+    const params = buildParams({ code, clientId });
+    const res = await apiClient.get("/clients/validate-mre-code", { params });
+    return res.data;
+  },
 };
 
 // Shared / Common endpoints (used across multiple roles)
@@ -138,8 +147,11 @@ export const clientAPI = {
     await apiClient.post(`/clients/${clientId}/activate`, payload);
   },
 
-  handoffClient: async (clientId: string): Promise<void> => {
-    await apiClient.post(`/clients/${clientId}/handoff`);
+  handoffClient: async (
+    clientId: string,
+    payload: { csdOosAccountantIds: string[]; qtdAccountantId: string },
+  ): Promise<void> => {
+    await apiClient.post(`/clients/${clientId}/handoff`, payload);
   },
 
   getArchiveSnapshot: async (

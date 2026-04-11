@@ -65,6 +65,11 @@ export function NewClientProvider({
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDiscarding, setIsDiscarding] = useState(false);
+  const [isMreCodeValid, setIsMreCodeValid] = useState(false);
+
+  const setMreCodeValid = useCallback((valid: boolean) => {
+    setIsMreCodeValid(valid);
+  }, []);
 
   const clientIdRef = useRef<string | null>(editClientId ?? null);
   const creatingClientRef = useRef<Promise<string> | null>(null);
@@ -175,22 +180,18 @@ export function NewClientProvider({
     return () => { cancelled = true; };
   }, [editClientId]);
 
-  // Populate accountant IDs into mainDetails once both header and section are loaded
+  // Populate QTD accountant ID into mainDetails once both header and section are loaded.
+  // Csd/oos is no longer a section field — it lives only in the join exposed via header.accountants.
   useEffect(() => {
     if (!header || sectionLoadStatus.mainDetails !== "loaded") return;
     setSections((prev) => {
       if (!prev.mainDetails) return prev;
       const md = { ...prev.mainDetails };
-      let changed = false;
-      if (header.accountants?.csdOos?.length && !md.csdOosAccountantIds?.length) {
-        md.csdOosAccountantIds = header.accountants.csdOos.map((a) => a.id);
-        changed = true;
-      }
       if (header.accountants?.qtd?.length && !md.qtdAccountantId) {
         md.qtdAccountantId = header.accountants.qtd[0]?.id ?? null;
-        changed = true;
+        return { ...prev, mainDetails: md };
       }
-      return changed ? { ...prev, mainDetails: md } : prev;
+      return prev;
     });
   }, [header, sectionLoadStatus.mainDetails]);
 
@@ -265,6 +266,8 @@ export function NewClientProvider({
     updateHeaderAccountants,
     isSubmitting,
     isDiscarding,
+    isMreCodeValid,
+    setMreCodeValid,
   // eslint-disable-next-line react-hooks/exhaustive-deps -- sectionRefs is a stable ref, never changes
   }), [
     header, sections, isLoading, fetchError, clientId, isEditMode,
@@ -272,6 +275,7 @@ export function NewClientProvider({
     sectionLoadStatus, loadSection, updateSection, toggleSection,
     scrollToSection, submitForReview, discardDraft, retrySection,
     uploadFile, updateHeaderAccountants, isSubmitting, isDiscarding,
+    isMreCodeValid, setMreCodeValid,
   ]);
 
   return (
@@ -342,6 +346,8 @@ export function NewClientShimProvider({
     updateHeaderAccountants,
     isSubmitting: false,
     isDiscarding: false,
+    isMreCodeValid: false,
+    setMreCodeValid: () => {},
   }), [clientId, uploadFile, updateHeaderAccountants]);
 
   return (

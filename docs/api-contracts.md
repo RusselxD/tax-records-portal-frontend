@@ -83,7 +83,7 @@ Source: `src/api/client.ts`
 | GET | `/clients/active` | Active clients lookup (Manager: all; QTD/OOS/CSD: assigned only) | -- | `LookupResponse[]` |
 | GET | `/clients/{clientId}/accountants` | Accountants assigned to a client | -- | `ClientAccountantResponse[]` |
 | GET | `/clients/assigned` | Current user's assigned clients | Query: `page`, `size` | `AssignedClientsResponse` |
-| POST | `/clients` | Create new client (OOS) | -- | `CreateClientResponse` (201) |
+| POST | `/clients` | Create new client (OOS) — backend auto-assigns the creating OOS as the sole initial accountant | -- | `CreateClientResponse` (201) |
 | DELETE | `/clients/{clientId}` | Delete client draft | -- | void (204) |
 | PATCH | `/clients/{clientId}/status` | Change client status (Manager only) | `{ status }` | void (204) |
 | GET | `/clients/{clientId}/summary` | Client summary card data | -- | `ClientSummaryResponse` |
@@ -100,9 +100,10 @@ Source: `src/api/client.ts`
 | Method | Path | Description | Params / Body | Response |
 |--------|------|-------------|---------------|----------|
 | GET | `/clients/info-template` | Full info template (create mode) | -- | `ClientInfoResponse` |
-| GET | `/clients/{clientId}/info` | Client info header | -- | `ClientInfoHeaderResponse` |
-| GET | `/clients/{clientId}/info/{sectionKey}` | Single section data | -- | `ClientInfoSections[K]` |
-| PATCH | `/clients/{clientId}/info/{sectionKey}` | Update section | section data | void |
+| GET | `/clients/{clientId}/info` | Client info header (includes `creatorId`) | -- | `ClientInfoHeaderResponse` |
+| GET | `/clients/{clientId}/info/{sectionKey}` | Single section data — `mainDetails` does NOT include accountant fields (read accountants from `/clients/{id}/summary` or header) | -- | `ClientInfoSections[K]` |
+| PATCH | `/clients/{clientId}/info/{sectionKey}` | Update section — `mainDetails` body still accepts `qtdAccountantId` (backend routes it to the accountants join, keeping the creator OOS); `csdOosAccountantIds` is no longer accepted | section data | void |
+| GET | `/clients/validate-mre-code` | Validate MRE code format + uniqueness | Query: `code` (required), `clientId` (optional UUID — pass when editing to exclude own record) | `{ isValid: boolean }` |
 
 ### Client Info (Client-facing "me" endpoints)
 
@@ -130,10 +131,10 @@ Source: `src/api/client.ts`
 
 ### Handoff & Archive
 
-| Method | Path | Description | Response |
-|--------|------|-------------|----------|
-| POST | `/clients/{clientId}/handoff` | Handoff client | void |
-| GET | `/clients/{clientId}/archive-snapshot` | Archive snapshot (OOS post-handoff) | `ArchiveSnapshotResponse` |
+| Method | Path | Description | Body | Response |
+|--------|------|-------------|------|----------|
+| POST | `/clients/{clientId}/handoff` | Handoff client — replaces creator OOS with the chosen accountants. `csdOosAccountantIds` must be non-empty and must NOT include the client's creator. Errors: 400 if creator included, ID is wrong role, client already handed off, or no onboarding profile exists | `{ csdOosAccountantIds: string[], qtdAccountantId: string }` | void |
+| GET | `/clients/{clientId}/archive-snapshot` | Archive snapshot (OOS post-handoff) — captures client state at the moment of handoff | -- | `ArchiveSnapshotResponse` |
 
 ### Account Activation
 

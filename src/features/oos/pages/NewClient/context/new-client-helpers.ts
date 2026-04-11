@@ -63,4 +63,6 @@ export interface NewClientContextType {
   }) => void;
   isSubmitting: boolean;
   isDiscarding: boolean;
+  isMreCodeValid: boolean;
+  setMreCodeValid: (valid: boolean) => void;
 }

@@ -63,6 +63,7 @@ function snapshotToHeader(snapshot: ArchiveSnapshotResponse): ClientInfoHeaderRe
     pocEmail: null,
     isProfileApproved: true,
     handedOff: true,
+    creatorId: null,
     accountants: {
       csdOos: snapshot.assignedCsdOosAccountants,
       qtd: snapshot.assignedQtdAccountants,

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Input, Dropdown, MultiSelect } from "../../../../../../components/common";
+import { Input, Dropdown } from "../../../../../../components/common";
 import type {
   MainDetails,
   AssignedAccountant,
@@ -8,6 +8,7 @@ import { usersAPI } from "../../../../../../api/users";
 import type { AccountantListItemResponse } from "../../../../../../types/user";
 import DateFieldInput from "./DateFieldInput";
 import { useNewClient } from "../../context/NewClientContext";
+import useMreCodeValidation from "./useMreCodeValidation";
 
 function resolveAccountants(
   ids: string[] | null,
@@ -22,50 +23,45 @@ function resolveAccountants(
 interface MainDetailsSectionProps {
   data: MainDetails;
   onChange: (data: MainDetails) => void;
-  hideAccountants?: boolean;
+  hideQtdAccountant?: boolean;
 }
 
 export default function MainDetailsSection({
   data,
   onChange,
-  hideAccountants = false,
+  hideQtdAccountant = false,
 }: MainDetailsSectionProps) {
-  const { updateHeaderAccountants } = useNewClient();
+  const { updateHeaderAccountants, clientId, setMreCodeValid } = useNewClient();
+
+  const mreValidation = useMreCodeValidation(data.mreCode, clientId);
+
+  useEffect(() => {
+    setMreCodeValid(mreValidation.isValid);
+  }, [mreValidation.isValid, setMreCodeValid]);
+
+  useEffect(() => {
+    return () => setMreCodeValid(false);
+  }, [setMreCodeValid]);
 
   const update = (fields: Partial<MainDetails>) =>
     onChange({ ...data, ...fields });
 
-  const [csdOosAccountants, setCsdOosAccountants] = useState<
-    AccountantListItemResponse[]
-  >([]);
   const [qtdAccountants, setQtdAccountants] = useState<
     AccountantListItemResponse[]
   >([]);
 
   useEffect(() => {
-    if (hideAccountants) return;
+    if (hideQtdAccountant) return;
     let cancelled = false;
-    async function fetchCsdOos() {
-      try {
-        const data = await usersAPI.getAccountants("CSD,OOS");
-        if (!cancelled) setCsdOosAccountants(data);
-      } catch {}
-    }
     async function fetchQtd() {
       try {
         const data = await usersAPI.getAccountants("QTD");
         if (!cancelled) setQtdAccountants(data);
       } catch {}
     }
-    fetchCsdOos();
     fetchQtd();
     return () => { cancelled = true; };
-  }, [hideAccountants]);
-
-  const csdOosOptions = csdOosAccountants.map((a) => ({
-    value: a.id,
-    label: a.displayName,
-  }));
+  }, [hideQtdAccountant]);
 
   const qtdOptions = qtdAccountants.map((a) => ({
     value: a.id,
@@ -80,6 +76,7 @@ export default function MainDetailsSection({
           value={data.mreCode ?? ""}
           onChange={(e) => update({ mreCode: e.target.value || null })}
           placeholder="Enter MRE code"
+          error={mreValidation.error ?? undefined}
         />
         <DateFieldInput
           label="Commencement of Work"
@@ -88,21 +85,8 @@ export default function MainDetailsSection({
         />
       </div>
 
-      {!hideAccountants && (
+      {!hideQtdAccountant && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <MultiSelect
-            label="CSD / OOS Accountants"
-            options={csdOosOptions}
-            value={data.csdOosAccountantIds ?? []}
-            onChange={(v) => {
-              const ids = v.length ? v : null;
-              update({ csdOosAccountantIds: ids });
-              updateHeaderAccountants({
-                csdOos: resolveAccountants(ids, csdOosAccountants),
-              });
-            }}
-            placeholder="Select accountants"
-          />
           <Dropdown
             label="QTD Accountant"
             options={qtdOptions}

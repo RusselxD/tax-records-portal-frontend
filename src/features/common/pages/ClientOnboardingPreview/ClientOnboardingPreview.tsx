@@ -89,7 +89,12 @@ function InfoReviewContent() {
       )}
 
       {canManageOnboarding && (header?.isProfileApproved ?? false) && !(header?.handedOff) && (
-        <HandoffCard clientId={clientId} onSuccess={refetch} />
+        <HandoffCard
+          clientId={clientId}
+          creatorId={header?.creatorId ?? null}
+          currentQtdId={header?.accountants?.qtd?.[0]?.id ?? null}
+          onSuccess={refetch}
+        />
       )}
 
       {header && (

@@ -10,7 +10,8 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { getErrorMessage } from "../../../../../lib/api-error";
-import { clientAPI } from "../../../../../api/client";
+import { clientAPI, oosClientAPI } from "../../../../../api/client";
+import { MRE_CODE_REGEX } from "../../../../oos/pages/NewClient/components/sections/useMreCodeValidation";
 import { useToast } from "../../../../../contexts/ToastContext";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { getRolePrefix } from "../../../../../constants/roles";
@@ -203,7 +204,31 @@ export function EditClientProfileProvider({
         // Start with whatever is already loaded in state
         const merged: Partial<ClientInfoSections> = { ...sectionsRef.current };
 
-        // Fetch any sections the user never opened
+        // Ensure mainDetails is loaded first so we can validate the MRE code
+        // before doing any further work.
+        if (!merged.mainDetails) {
+          const mainDetails = await clientAPI.getClientInfoSection(clientId, "mainDetails");
+          merged.mainDetails = mainDetails;
+          setSections((prev) => ({ ...prev, mainDetails }));
+          setSectionLoadStatus((prev) => ({ ...prev, mainDetails: "loaded" as const }));
+          loadingRef.current.add("mainDetails");
+        }
+
+        // Validate MRE code: local regex first, then server duplicate check.
+        const mreCode = (merged.mainDetails.mreCode ?? "").trim();
+        if (!mreCode || !MRE_CODE_REGEX.test(mreCode)) {
+          scrollToSection("mainDetails");
+          throw new Error(
+            "The MRE Code in Main Details is invalid. It must be MRE- followed by at least 3 digits (e.g. MRE-001).",
+          );
+        }
+        const { isValid } = await oosClientAPI.validateMreCode(mreCode, clientId);
+        if (!isValid) {
+          scrollToSection("mainDetails");
+          throw new Error("The MRE Code in Main Details is already in use by another client.");
+        }
+
+        // Fetch any remaining sections the user never opened
         const unloaded = SECTION_KEYS.filter((k) => !merged[k]);
         if (unloaded.length > 0) {
           const fetched = await Promise.all(
@@ -235,7 +260,7 @@ export function EditClientProfileProvider({
         setIsSubmitting(false);
       }
     },
-    [clientId, user, navigate, toastSuccess],
+    [clientId, user, navigate, toastSuccess, scrollToSection],
   );
 
   const value = useMemo(

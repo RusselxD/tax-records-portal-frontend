@@ -92,7 +92,7 @@ Note: Because transitions are free-form, any status can move to any other. The d
 5. **If rejected** -- OOS corrects and resubmits. The review cycle repeats until approved.
 6. **On approval** -- profile becomes live data, `isProfileApproved` flag is set on the client.
 7. **OOS creates client portal account** -- sends activation email (counted as "Clients Activated").
-8. **OOS performs handoff** -- assigns CSD/OOS and QTD accountants, creates a frozen archive snapshot.
+8. **OOS performs handoff** -- in the handoff modal, picks the new CSD/OOS accountants (creator excluded from the list) and the QTD (pre-populated with the current QTD, re-pickable). On submit, the creator OOS is removed and replaced with the chosen accountants, and a frozen archive snapshot is created.
 9. **Manager sets status to ACTIVE_CLIENT**.
 
 ### Review cycle diagram
@@ -132,9 +132,11 @@ These two concepts are **decoupled**:
 ## Handoff
 
 - **Endpoint:** `POST /clients/{clientId}/handoff`
-- **What it does:**
-  - Assigns CSD/OOS and QTD accountants to the client.
-  - Creates a frozen archive snapshot of the client profile at that point in time.
+- **Body:** `{ csdOosAccountantIds: string[], qtdAccountantId: string }`. `csdOosAccountantIds` must be non-empty and must NOT include the client's `creatorId` — the handoff modal filters the picker on `header.creatorId`, and the backend validates server-side too.
+- **Initial accountant state:** when a client is created via `POST /clients`, the backend auto-assigns the calling OOS as the sole CSD/OOS accountant. The QTD is set later via the `mainDetails` PATCH (which accepts `qtdAccountantId` and routes it to the accountants join).
+- **What handoff does:**
+  - Replaces the creator OOS with the chosen CSD/OOS accountants and the chosen QTD on the `client.accountants` join.
+  - Creates a frozen archive snapshot of the client profile, capturing state at the moment of handoff.
 - **What it does NOT do:** transition client status. Status changes remain Manager-only.
 - **After handoff:**
   - OOS sees the frozen snapshot (route: `/oos/client-snapshot/:id`), unless also assigned as an accountant.

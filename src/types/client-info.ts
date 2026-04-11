@@ -72,7 +72,6 @@ export interface PendingActionItem {
 export interface MainDetails {
   mreCode: string | null;
   commencementOfWork: DateField | null;
-  csdOosAccountantIds?: string[] | null;
   qtdAccountantId?: string | null;
 }
 
@@ -333,6 +332,7 @@ export interface ClientInfoHeaderResponse {
   pocEmail: string | null;
   isProfileApproved: boolean;
   handedOff: boolean;
+  creatorId: string | null;
   accountants: ClientInfoHeaderAccountants;
   taskReview: ClientInfoHeaderTaskReview;
   offboarding: ClientInfoHeaderOffboarding;

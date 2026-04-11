@@ -51,7 +51,7 @@ function SectionBody({ sectionKey }: { sectionKey: InfoSectionKey }) {
         <MainDetailsSection
           data={data}
           onChange={(d) => updateSection("mainDetails", d)}
-          hideAccountants
+          hideQtdAccountant
         />
       );
     }
