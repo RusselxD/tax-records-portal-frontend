@@ -21,6 +21,11 @@ export default function RecordDetails({ record }: RecordDetailsProps) {
         <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
           Record Details
         </h2>
+        {record.version != null && (
+          <span className="inline-flex items-center rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-xs font-semibold text-primary">
+            v{record.version}
+          </span>
+        )}
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-5">

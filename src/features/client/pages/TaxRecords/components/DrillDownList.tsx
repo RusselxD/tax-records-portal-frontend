@@ -110,9 +110,20 @@ export default function DrillDownList({
         {items.map((item) => {
           const isSelected = selectedIds.has(String(item.id));
           return (
-            <div
+            <button
               key={String(item.id)}
-              className={`flex items-center w-full px-5 py-4 bg-white border rounded-lg transition-colors group ${
+              onClick={() =>
+                selectMode
+                  ? setSelectedIds((prev) => {
+                      const next = new Set(prev);
+                      const key = String(item.id);
+                      if (next.has(key)) next.delete(key);
+                      else next.add(key);
+                      return next;
+                    })
+                  : onSelect(item)
+              }
+              className={`flex items-center w-full px-5 py-4 bg-white border rounded-lg transition-colors group text-left ${
                 isSelected ? "border-accent/50 bg-accent/5" : "border-gray-200 hover:bg-gray-50 hover:border-gray-300"
               }`}
             >
@@ -125,31 +136,16 @@ export default function DrillDownList({
                   className="rounded border-gray-300 text-accent focus:ring-accent h-3.5 w-3.5 mr-3 shrink-0 cursor-pointer"
                 />
               )}
-              <button
-                onClick={() =>
-                  selectMode
-                    ? setSelectedIds((prev) => {
-                        const next = new Set(prev);
-                        const key = String(item.id);
-                        if (next.has(key)) next.delete(key);
-                        else next.add(key);
-                        return next;
-                      })
-                    : onSelect(item)
-                }
-                className="flex items-center justify-between flex-1 min-w-0 text-left"
-              >
-                <span className="text-sm font-medium text-primary leading-relaxed min-w-0 truncate pr-3">
-                  {item.label}
+              <span className="text-sm font-medium text-primary leading-relaxed min-w-0 truncate pr-3 flex-1">
+                {item.label}
+              </span>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-medium text-gray-700 bg-gray-100 rounded-full px-2.5 py-1">
+                  {item.count} {item.count === 1 ? "record" : "records"}
                 </span>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs font-medium text-gray-700 bg-gray-100 rounded-full px-2.5 py-1">
-                    {item.count} {item.count === 1 ? "record" : "records"}
-                  </span>
-                  <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-accent transition-colors" />
-                </div>
-              </button>
-            </div>
+                <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-accent transition-colors" />
+              </div>
+            </button>
           );
         })}
       </div>

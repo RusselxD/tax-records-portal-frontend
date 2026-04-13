@@ -104,11 +104,11 @@ export default function RecentTaxDocuments() {
                 onClick={() => navigate("/client/tax-records", {
                   state: {
                     selections: [
-                      { id: String(entry.categoryId), label: entry.categoryName },
-                      { id: String(entry.subCategoryId), label: entry.subCategoryName },
-                      { id: String(entry.taskNameId), label: entry.taskName },
-                      { id: String(entry.year), label: String(entry.year) },
-                      { id: entry.period, label: periodLabels[entry.period] ?? entry.period },
+                      { id: String(entry.categoryId), label: entry.categoryName, kind: "category" },
+                      { id: String(entry.subCategoryId), label: entry.subCategoryName, kind: "subCategory" },
+                      { id: String(entry.taskNameId), label: entry.taskName, kind: "taskName" },
+                      { id: String(entry.year), label: String(entry.year), kind: "year" },
+                      { id: entry.period, label: periodLabels[entry.period] ?? entry.period, kind: "period" },
                     ] as DrillSelection[],
                   },
                 })}

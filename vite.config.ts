@@ -7,21 +7,28 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['upturn.svg', 'upturn-pwa.png'],
+      includeAssets: ['upturn.svg', 'upturn-pwa.png', 'upturn-pwa-maskable.png'],
       manifest: {
         name: 'Tax Records Portal',
         short_name: 'Tax Records Portal',
         description: 'Tax Records Portal',
         theme_color: '#031731',
-        background_color: '#ffffff',
+        background_color: '#031731',
         display: 'standalone',
         scope: '/',
         start_url: '/',
         icons: [
           {
             src: 'upturn-pwa.png',
-            sizes: '1000x1000',
+            sizes: '512x512',
             type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: 'upturn-pwa-maskable.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
           },
         ],
       },

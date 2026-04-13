@@ -6,6 +6,7 @@ export const DRILL_DOWN_LEVEL = {
   TASK_NAME: "taskName",
   YEAR: "year",
   PERIOD: "period",
+  VERSION: "version",
   RECORD: "record",
 } as const;
 
@@ -25,6 +26,7 @@ export interface TaxRecordEntryResponse {
   taskName: string;
   year: number;
   period: Period;
+  version: number | null;
   workingFiles: { type: "file" | "link"; fileId: string; fileName: string; url: string | null; label: string | null }[];
   outputFile: { id: string; name: string } | null;
   proofOfFilingFile: { id: string; name: string } | null;
@@ -50,10 +52,11 @@ export interface DrillDownFilters {
   taskNameId?: number;
   year?: number;
   period?: Period;
+  version?: number;
 }
 
 export interface BulkDownloadRequest {
-  level: Exclude<DrillDownLevel, "record">;
+  level: Exclude<DrillDownLevel, "record" | "version">;
   categoryId?: number;
   subCategoryId?: number;
   taskNameId?: number;
@@ -64,6 +67,7 @@ export interface BulkDownloadRequest {
 export interface DrillSelection {
   id: string;
   label: string;
+  kind: DrillDownLevel;
 }
 
 export interface ImportantDateResponse {
