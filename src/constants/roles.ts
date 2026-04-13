@@ -9,6 +9,7 @@ export const UserRole = {
   CSD: "CSD",
   BILLING: "BILLING",
   CLIENT: "CLIENT",
+  VIEWER: "VIEWER",
 } as const;
 
 export type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
@@ -23,6 +24,7 @@ export const roleRoutePrefix: Record<UserRoleType, string> = {
   [UserRole.CSD]: "/csd",
   [UserRole.BILLING]: "/internal-billing",
   [UserRole.CLIENT]: "/client",
+  [UserRole.VIEWER]: "/viewer",
 };
 
 /**
@@ -35,6 +37,7 @@ export const roleDashboardMap: Record<UserRoleType, string> = {
   [UserRole.CSD]: "/csd/dashboard",
   [UserRole.BILLING]: "/internal-billing/clients",
   [UserRole.CLIENT]: "/client/dashboard",
+  [UserRole.VIEWER]: "/viewer/clients",
 };
 
 /**

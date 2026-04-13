@@ -59,6 +59,11 @@ export default function UserFormModal({
     addPosition,
   } = useFormOptions();
 
+  // VIEWER is a shared read-only role with no position requirement.
+  // Matches backend's display name for the Viewer role.
+  const selectedRoleName = roles.find((r) => String(r.id) === roleId)?.name;
+  const isViewerRole = selectedRoleName === "Viewer";
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSubmitError(null);
@@ -69,11 +74,17 @@ export default function UserFormModal({
       email,
       roleId,
       positionId,
+      !isViewerRole,
     );
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
     const cleanTitles = titles.filter((t) => t.title.trim());
+    const submittedPositionId = isViewerRole
+      ? null
+      : positionId
+        ? Number(positionId)
+        : null;
 
     setIsSubmitting(true);
     try {
@@ -85,7 +96,7 @@ export default function UserFormModal({
           lastName: lastName.trim(),
           email: email.trim(),
           roleId: Number(roleId),
-          positionId: positionId ? Number(positionId) : null,
+          positionId: submittedPositionId,
           titles: cleanTitles,
         });
         toastSuccess("User Updated", "The user's details have been saved.");
@@ -95,7 +106,7 @@ export default function UserFormModal({
           lastName: lastName.trim(),
           email: email.trim(),
           roleId: Number(roleId),
-          positionId: Number(positionId),
+          positionId: submittedPositionId,
           titles: cleanTitles.length > 0 ? cleanTitles : undefined,
         });
         toastSuccess(
@@ -162,7 +173,7 @@ export default function UserFormModal({
           error={errors.email}
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className={`grid grid-cols-1 gap-4 ${isViewerRole ? "" : "sm:grid-cols-2"}`}>
           <Dropdown
             portal
             label="Role"
@@ -174,39 +185,41 @@ export default function UserFormModal({
             error={errors.roleId}
             fullWidth
           />
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-sm font-medium text-primary">
-                Position
-              </label>
-              {!isCreatingPosition && (
-                <button
-                  type="button"
-                  onClick={() => setIsCreatingPosition(true)}
-                  className="flex items-center gap-0.5 text-xs font-medium text-accent hover:text-accent-hover transition-colors"
-                >
-                  <Plus className="w-3 h-3" />
-                  New
-                </button>
-              )}
+          {!isViewerRole && (
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-sm font-medium text-primary">
+                  Position
+                </label>
+                {!isCreatingPosition && (
+                  <button
+                    type="button"
+                    onClick={() => setIsCreatingPosition(true)}
+                    className="flex items-center gap-0.5 text-xs font-medium text-accent hover:text-accent-hover transition-colors"
+                  >
+                    <Plus className="w-3 h-3" />
+                    New
+                  </button>
+                )}
+              </div>
+              <Dropdown
+                portal
+                options={positions.map((p) => ({
+                  label: p.name,
+                  value: String(p.id),
+                }))}
+                value={positionId}
+                onChange={setPositionId}
+                placeholder="Select a position"
+                disabled={positionsLoading || isCreatingPosition}
+                error={errors.positionId}
+                fullWidth
+              />
             </div>
-            <Dropdown
-              portal
-              options={positions.map((p) => ({
-                label: p.name,
-                value: String(p.id),
-              }))}
-              value={positionId}
-              onChange={setPositionId}
-              placeholder="Select a position"
-              disabled={positionsLoading || isCreatingPosition}
-              error={errors.positionId}
-              fullWidth
-            />
-          </div>
+          )}
         </div>
 
-        {isCreatingPosition && (
+        {!isViewerRole && isCreatingPosition && (
           <PositionInlineCreate
             onCreated={(created) => {
               addPosition(created);

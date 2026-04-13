@@ -4,7 +4,7 @@ import { Pencil, ArrowUpRight, Settings2, FileText, User, MessageSquareText, Use
 import { CLIENT_STATUS } from "../../../../types/client";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import NotFound from "../../../../pages/NotFound";
-import { getRolePrefix } from "../../../../constants/roles";
+import { getRolePrefix, UserRole } from "../../../../constants/roles";
 import { Permission, hasPermission } from "../../../../constants";
 import { useAuth } from "../../../../contexts/AuthContext";
 import {
@@ -67,6 +67,7 @@ function ClientDetailsContent() {
 
   if (notFound) return <NotFound inline />;
 
+  const isViewer = user?.roleKey === UserRole.VIEWER;
   const isSnapshot = mode === "snapshot";
   const isOnboarding = status === CLIENT_STATUS.ONBOARDING;
   const hasPendingUpdate = header?.taskReview?.hasActiveTask;
@@ -110,7 +111,7 @@ function ClientDetailsContent() {
   // Show tabs only in live mode for non-onboarding clients
   const showTabs = !isSnapshot && !isOnboarding && !isLoading && !error;
 
-  const sidebar = (
+  const sidebar = isViewer ? undefined : (
     <>
       {isSnapshot || isOnboarding ? (
         <ActivityLogs taskId={header?.taskReview?.activeTaskId ?? null} />
@@ -123,7 +124,7 @@ function ClientDetailsContent() {
     </>
   );
 
-  const mainDetailsAction = canEditProfile ? (
+  const mainDetailsAction = isViewer ? undefined : canEditProfile ? (
     <button
       onClick={() => navigate(`/${prefix}/client-edit/${clientId}`)}
       className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-accent transition-colors"
@@ -145,7 +146,7 @@ function ClientDetailsContent() {
     </button>
   ) : undefined;
 
-  const reassignAction = canReassign ? (
+  const reassignAction = !isViewer && canReassign ? (
     <button
       onClick={() => setReassignModalOpen(true)}
       className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-accent transition-colors"
@@ -221,7 +222,7 @@ function ClientDetailsContent() {
 
         {/* Profile tab (default) */}
         <div className={`space-y-3 ${activeTab === "profile" || !showTabs ? "" : "hidden"}`}>
-          {!isSnapshot && isAssignedAccountant &&
+          {!isViewer && !isSnapshot && isAssignedAccountant &&
             (header?.isProfileApproved ?? false) &&
             clientAccounts.length === 0 && (
               <ActivateAccountCard
@@ -231,7 +232,7 @@ function ClientDetailsContent() {
               />
             )}
 
-          {clientAccounts.length > 0 && (
+          {!isViewer && clientAccounts.length > 0 && (
             <ClientAccountsSection
               clientId={clientId}
               accounts={clientAccounts}

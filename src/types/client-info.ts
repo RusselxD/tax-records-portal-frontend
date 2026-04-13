@@ -38,7 +38,7 @@ export type BookOfAccountsType = "MANUAL" | "LOOSE_LEAF" | "CAS";
 export interface AssignedAccountant {
   id: string;
   displayName: string;
-  position: string;
+  position: string | null;
   role: string;
   roleKey: string;
 }

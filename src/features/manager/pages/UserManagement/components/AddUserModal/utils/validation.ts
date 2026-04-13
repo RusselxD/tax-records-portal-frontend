@@ -12,6 +12,7 @@ export const validate = (
   email: string,
   roleId: string,
   positionId: string,
+  positionRequired: boolean = true,
 ): FormErrors => {
   const errors: FormErrors = {};
   if (!firstName.trim()) errors.firstName = "First name is required.";
@@ -22,6 +23,6 @@ export const validate = (
     errors.email = "Enter a valid email address.";
   }
   if (!roleId) errors.roleId = "Please select a role.";
-  if (!positionId) errors.positionId = "Please select a position.";
+  if (positionRequired && !positionId) errors.positionId = "Please select a position.";
   return errors;
 };

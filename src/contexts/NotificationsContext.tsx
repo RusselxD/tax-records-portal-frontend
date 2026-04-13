@@ -33,7 +33,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!user || user.roleKey === UserRole.CLIENT) return;
+    if (!user || user.roleKey === UserRole.CLIENT || user.roleKey === UserRole.VIEWER) return;
     let cancelled = false;
 
     (async () => {

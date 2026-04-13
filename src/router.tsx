@@ -11,6 +11,7 @@ import {
   qtdRoutes,
   billingRoutes,
   clientRoutes,
+  viewerRoutes,
 } from "./router/index";
 
 export const router = createBrowserRouter([
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
       qtdRoutes,
       billingRoutes,
       clientRoutes,
+      viewerRoutes,
     ],
   },
   // Catch-all 404

@@ -21,7 +21,7 @@ export interface ManagedUser {
   email: string;
   roleName: string;
   roleId: number;
-  position: string;
+  position: string | null;
   positionId: number | null;
   profileUrl: string;
   status: UserStatus;
@@ -33,7 +33,7 @@ export interface CreateUserRequest {
   lastName: string;
   email: string;
   roleId: number;
-  positionId: number;
+  positionId: number | null;
   titles?: UserTitle[];
 }
 
@@ -59,7 +59,7 @@ export interface SetPasswordRequest {
 export interface AccountantListItemResponse {
   id: string;
   displayName: string;
-  position: string;
+  position: string | null;
   role: string;
   roleKey: string;
 }

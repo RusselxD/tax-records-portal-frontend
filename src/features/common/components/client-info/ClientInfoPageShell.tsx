@@ -13,7 +13,7 @@ interface ClientInfoPageShellProps {
   refetch: () => void;
   headerActions?: ReactNode;
   banner?: ReactNode;
-  sidebar: ReactNode;
+  sidebar?: ReactNode;
   children: ReactNode;
 }
 
@@ -119,15 +119,19 @@ export default function ClientInfoPageShell({
         {banner}
       </ClientInfoHeader>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_21rem] gap-3 items-start">
-        <div className="min-w-0 space-y-3">
-          {children}
-        </div>
+      {sidebar ? (
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_21rem] gap-3 items-start">
+          <div className="min-w-0 space-y-3">
+            {children}
+          </div>
 
-        <div className="lg:sticky lg:top-6 space-y-3">
-          {sidebar}
+          <div className="lg:sticky lg:top-6 space-y-3">
+            {sidebar}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="min-w-0 space-y-3">{children}</div>
+      )}
     </div>
   );
 }

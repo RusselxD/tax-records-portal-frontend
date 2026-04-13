@@ -21,6 +21,7 @@ const roleStyles: Record<string, string> = {
   "Onboarding, Offboarding & Support": "bg-amber-50 text-amber-700 border border-amber-200",
   "Internal Accounting / Billing": "bg-teal-50 text-teal-700 border border-teal-200",
   "Manager": "bg-rose-50 text-rose-700 border border-rose-200",
+  "Viewer": "bg-slate-50 text-slate-700 border border-slate-200",
 };
 
 const RoleBadge = ({ role }: { role: string }) => (
@@ -38,6 +39,7 @@ const roleOptions = [
   { label: "Quality, Training & Development", value: "QTD" },
   { label: "Client Service Delivery", value: "CSD" },
   { label: "Internal Accounting / Billing", value: "BILLING" },
+  { label: "Viewer", value: "VIEWER" },
 ];
 
 const statusOptions = [
@@ -224,7 +226,11 @@ function UserRow({ user }: { user: ManagedUser }) {
           <RoleBadge role={user.roleName} />
         </td>
         <td className="px-4 py-4 text-sm text-gray-600 max-w-0">
-          <span className="block truncate" title={user.position}>{user.position}</span>
+          {user.position ? (
+            <span className="block truncate" title={user.position}>{user.position}</span>
+          ) : (
+            <span className="text-gray-400">—</span>
+          )}
         </td>
         <td className="px-4 py-4">
           <AccountStatus status={user.status} />
@@ -348,7 +354,7 @@ export default function UserTable() {
   const secondaryFields = useCallback(
     (user: ManagedUser): CardField[] => [
       { label: "Email", value: user.email },
-      { label: "Position", value: user.position },
+      { label: "Position", value: user.position ?? "—" },
     ],
     [],
   );
