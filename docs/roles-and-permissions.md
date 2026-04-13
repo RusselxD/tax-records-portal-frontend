@@ -1,6 +1,6 @@
 # Roles and Permissions
 
-## The 6 Roles
+## The 7 Roles
 
 | Role Key   | Display Name                        | Description                                                                 |
 |------------|-------------------------------------|-----------------------------------------------------------------------------|
@@ -9,6 +9,7 @@
 | `QTD`      | Quality, Training & Development     | Reviews profiles and tasks, manages task creation                           |
 | `CSD`      | Client Service Delivery             | Works on assigned tasks, manages client profiles                            |
 | `BILLING`  | Internal Accounting / Billing       | Manages invoices and payments                                               |
+| `VIEWER`   | Viewer                              | Shared read-only stakeholder account -- browses clients, tax records, consultations |
 | `CLIENT`   | Client                              | Client portal access, views their records and invoices                      |
 
 Defined in `src/constants/roles.ts` as the `UserRole` constant object.
@@ -33,6 +34,7 @@ Maps each role key to its URL route prefix:
 | `QTD`      | `/qtd`               |
 | `CSD`      | `/csd`               |
 | `BILLING`  | `/internal-billing`  |
+| `VIEWER`   | `/viewer`            |
 | `CLIENT`   | `/client`            |
 
 ### getDashboardUrl(roleKey)
@@ -46,7 +48,10 @@ Returns the default landing page for each role:
 | `QTD`      | `/qtd/dashboard`             |
 | `CSD`      | `/csd/dashboard`             |
 | `BILLING`  | `/internal-billing/clients`  |
+| `VIEWER`   | `/viewer/clients`            |
 | `CLIENT`   | `/client/dashboard`          |
+
+Note: VIEWER has no dashboard -- it lands directly on the client list.
 
 ## Permissions
 
@@ -222,6 +227,21 @@ if (hasPermission(user.permissions, Permission.CLIENT_MANAGE)) {
 | User Profile            | Yes    | Own profile settings                     |
 | Help                    | Yes    | Help page                                |
 
+### Viewer (`/viewer`)
+
+| Page                    | Shared | Description                              |
+|-------------------------|--------|------------------------------------------|
+| Client List             | Yes    | All clients (read-only)                  |
+| Client Details          | Yes    | Profile, Tax Records, Consultations tabs (read-only) |
+| User Profile            | Yes    | Own profile settings                     |
+| Help                    | Yes    | Help page                                |
+
+VIEWER is a shared read-only stakeholder account. The landing page is the client list -- there is no dashboard. Within `ClientDetails`, write-oriented UI is hidden: Edit Profile, Reassign, Change Status, Activate Account, Handoff, Offboarding actions, Client Notices, and the right-side Tasks/Billing widgets. The Tax Records tab (including versioned drill-down and bulk download) and Consultations tab are fully accessible.
+
+Because VIEWER is shared, `position` can be `null`. The Add/Edit User modal hides the Position dropdown when the selected role is "Viewer", and `ManagedUser.position` / `CreateUserRequest.positionId` / `AccountantListItemResponse.position` / `AssignedAccountant.position` are all nullable. `NotificationsContext` skips the unread-count fetch for VIEWER, and `TopNav` hides the notification bell (same pattern as CLIENT and BILLING). `TopNav` already shows `user.name` rather than a first-name greeting, so the shared account is safe by default.
+
+Key files: `src/features/viewer/layouts/ViewerLayout.tsx`, `src/router/viewerRoutes.tsx`, and the `isViewer` gates in `src/features/common/pages/ClientDetails/ClientDetails.tsx`.
+
 ### Billing (`/internal-billing`)
 
 | Page                    | Shared | Description                              |
@@ -271,3 +291,14 @@ if (hasPermission(user.permissions, Permission.CLIENT_REASSIGN)) {
 ```
 
 Task-level actions (edit, submit, approve, reject, etc.) are controlled by server-computed `TaskActions` flags on the task detail response, not by frontend permission checks. The backend considers the user's role, assignment, and task status to compute 11 boolean action flags (`canEdit`, `canSubmit`, `canApprove`, `canReject`, etc.).
+
+## VIEWER Role Permissions
+
+VIEWER holds exactly four permissions, all of which already exist for other roles:
+
+- `client.view.all`
+- `client_info.view.all`
+- `tax_records.view.all`
+- `consultation.view.all`
+
+No new permission constants were introduced. VIEWER relies on existing gates throughout the UI; additional `roleKey === UserRole.VIEWER` checks are added only where a parent component would otherwise mount a child that fires a write-oriented or tasks/billing fetch (which would 403).

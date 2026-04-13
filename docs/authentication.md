@@ -10,7 +10,7 @@ The backend issues JWTs containing the following claims:
 | `email` | `string` | User email address |
 | `name` | `string` | Formatted name with titles (e.g. "CPA John Doe, MBA") |
 | `role` | `string` | Display name (e.g. "Manager", "Quality, Training & Development") |
-| `roleKey` | `UserRoleType` | Logic key used for routing and guards (`MANAGER`, `OOS`, `QTD`, `CSD`, `BILLING`, `CLIENT`) |
+| `roleKey` | `UserRoleType` | Logic key used for routing and guards (`MANAGER`, `OOS`, `QTD`, `CSD`, `BILLING`, `VIEWER`, `CLIENT`) |
 | `permissions` | `string[]` | Permission strings for component-level access control |
 | `position` | `string \| null` | Job position title |
 | `status` | `string` | Account status (e.g. "ACTIVE", "DEACTIVATED") |

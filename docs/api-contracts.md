@@ -266,8 +266,21 @@ Source: `src/api/tax-record.ts`
 |--------|------|-------------|--------|----------|
 | GET | `/tax-records/me/drill-down` | Drill-down for current user | Query: `DrillDownFilters` (via `buildParams`) | `DrillDownResponse` |
 | GET | `/tax-records/client/{clientId}/drill-down` | Drill-down for specific client | Query: `DrillDownFilters` (via `buildParams`) | `DrillDownResponse` |
+| POST | `/tax-records/me/bulk-download` | Bulk download (self) | Body: `BulkDownloadRequest` | blob (zip) |
+| POST | `/tax-records/{clientId}/bulk-download` | Bulk download (specific client) | Body: `BulkDownloadRequest` | blob (zip) |
 | GET | `/tax-records/me/recent` | Recent entries | Query: `range` (default `"7d"`) | `RecentTaxRecordEntryResponse[]` |
 | GET | `/tax-records/me/important-dates` | Important dates | -- | `ImportantDateResponse[]` |
+
+`DrillDownFilters`: `{ categoryId?, subCategoryId?, taskNameId?, year?, period?, version? }`. The `version` param targets a specific entry when a drill-down key (category+subCategory+taskName+year+period) has 2+ versions.
+
+`DrillDownResponse` is a union:
+
+- `{ level: "category" | "subCategory" | "taskName" | "year" | "period" | "version", items: DrillDownItem[], taxRecordsProtected? }`
+- `{ level: "record", record: TaxRecordEntryResponse, taxRecordsProtected? }`
+
+The `"version"` items level is conditional -- it only appears when a period has 2+ entries. Single-entry periods return the record directly. See [features/tax-records.md](features/tax-records.md) for details.
+
+`TaxRecordEntryResponse` includes a nullable `version: number | null` field -- render a `v{n}` badge only when non-null.
 
 ---
 

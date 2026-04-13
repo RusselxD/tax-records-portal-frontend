@@ -12,13 +12,14 @@
 
 ## Overview
 
-Internal web portal for Upturn Business Solutions PH. Manages client onboarding and offboarding, tax record task workflows, invoicing, consultation logging, and performance analytics across six user roles:
+Internal web portal for Upturn Business Solutions PH. Manages client onboarding and offboarding, tax record task workflows, invoicing, consultation logging, and performance analytics across seven user roles:
 
 - **Manager** -- full administrative control
 - **Onboarding, Offboarding & Support (OOS)** -- client setup and support
 - **Quality, Training & Development (QTD)** -- profile review and quality assurance
 - **Client Service Delivery (CSD)** -- day-to-day client servicing
 - **Internal Accounting / Billing** -- invoicing and payment tracking
+- **Viewer** -- shared read-only stakeholder account (clients, tax records, consultations)
 - **Client** -- self-service portal access
 
 Built with React 19, TypeScript, and Vite. Styled with Tailwind CSS. Deployed on Cloudflare Pages.
@@ -108,7 +109,7 @@ Detailed documentation is available in [`docs/`](docs/):
 
 - [Architecture](docs/architecture.md) -- App structure, patterns, state management
 - [Authentication](docs/authentication.md) -- JWT flow, guards, token refresh
-- [Roles & Permissions](docs/roles-and-permissions.md) -- 6 roles, 33 permissions, route access
+- [Roles & Permissions](docs/roles-and-permissions.md) -- 7 roles, 33 permissions, route access
 - [Client Lifecycle](docs/client-lifecycle.md) -- Onboarding, Active, Offboarding, Inactive
 - [Task Workflow](docs/task-workflow.md) -- Tax record task statuses, files, review cycle
 - [Code Conventions](docs/conventions.md) -- Component patterns, styling, naming rules
@@ -122,6 +123,7 @@ Detailed documentation is available in [`docs/`](docs/):
 - [Consultation Hours](docs/features/consultation-hours.md)
 - [Notifications](docs/features/notifications.md)
 - [Analytics](docs/features/analytics.md)
+- [Tax Records](docs/features/tax-records.md)
 
 ## Dev Notes
 

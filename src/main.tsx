@@ -7,6 +7,7 @@ import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
 import "./styles/global.css";
 import "react-toastify/dist/ReactToastify.css";
+import "./lib/pwa-install";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>

@@ -8,9 +8,10 @@ import { oosSections } from "./content/oos";
 import { qtdSections } from "./content/qtd";
 import { managerSections } from "./content/manager";
 import { billingSections } from "./content/billing";
+import { installSection } from "./content/install";
 import type { HelpSection } from "./types";
 
-function getSections(roleKey: string): HelpSection[] {
+function getRoleSections(roleKey: string): HelpSection[] {
   switch (roleKey) {
     case UserRole.MANAGER:
       return managerSections;
@@ -25,6 +26,10 @@ function getSections(roleKey: string): HelpSection[] {
     default:
       return [];
   }
+}
+
+function getSections(roleKey: string): HelpSection[] {
+  return [installSection, ...getRoleSections(roleKey)];
 }
 
 function SectionAccordion({ section }: { section: HelpSection }) {
