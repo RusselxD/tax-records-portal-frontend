@@ -92,11 +92,12 @@ export default function PersonalInfoCard() {
   const cancelEdit = () => setIsEditing(false);
 
   const handleSave = async () => {
+    const payload = { ...form, titles: form.titles.filter((t) => t.title.trim()) };
     setIsSaving(true);
     try {
-      const res = await usersAPI.updateMe(form);
+      const res = await usersAPI.updateMe(payload);
       refreshFromToken(res.accessToken);
-      setProfile((prev) => prev ? { ...prev, ...form, name: res.name, email: res.email } : prev);
+      setProfile((prev) => prev ? { ...prev, ...payload, name: res.name, email: res.email } : prev);
       setIsEditing(false);
       toastSuccess("Profile updated.");
     } catch (err) {

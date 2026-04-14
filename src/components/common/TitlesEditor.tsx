@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Plus, X } from "lucide-react";
 import type { UserTitle } from "../../types/user";
 
@@ -8,21 +8,26 @@ interface Props {
 }
 
 export default function TitlesEditor({ titles, onChange }: Props) {
-  const [input, setInput] = useState("");
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [focusIndex, setFocusIndex] = useState<number | null>(null);
 
-  const add = () => {
-    const trimmed = input.trim();
-    if (!trimmed) return;
-    onChange([...titles, { title: trimmed, prefix: false }]);
-    setInput("");
+  useEffect(() => {
+    if (focusIndex == null) return;
+    inputRefs.current[focusIndex]?.focus();
+    setFocusIndex(null);
+  }, [focusIndex]);
+
+  const addRow = () => {
+    onChange([...titles, { title: "", prefix: false }]);
+    setFocusIndex(titles.length);
+  };
+
+  const updateRow = (i: number, patch: Partial<UserTitle>) => {
+    onChange(titles.map((t, idx) => (idx === i ? { ...t, ...patch } : t)));
   };
 
   const remove = (i: number) => {
     onChange(titles.filter((_, idx) => idx !== i));
-  };
-
-  const togglePrefix = (i: number) => {
-    onChange(titles.map((t, idx) => (idx === i ? { ...t, prefix: !t.prefix } : t)));
   };
 
   return (
@@ -36,39 +41,39 @@ export default function TitlesEditor({ titles, onChange }: Props) {
           <div key={i} className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => togglePrefix(i)}
-              className="text-xs px-2 py-1 rounded border border-gray-300 text-gray-600 hover:border-gray-400 transition-colors w-16 text-center shrink-0"
+              onClick={() => updateRow(i, { prefix: !t.prefix })}
+              className="text-xs px-2 py-1.5 rounded-md border border-gray-300 text-gray-600 hover:border-gray-400 transition-colors w-16 text-center shrink-0 leading-5"
             >
               {t.prefix ? "Prefix" : "Suffix"}
             </button>
-            <span className="text-sm text-gray-700 flex-1">{t.title}</span>
+            <input
+              ref={(el) => {
+                inputRefs.current[i] = el;
+              }}
+              type="text"
+              value={t.title}
+              onChange={(e) => updateRow(i, { title: e.target.value })}
+              placeholder="e.g. CPA, Atty."
+              className="flex-1 text-sm border border-gray-300 rounded-md px-3 py-1.5 placeholder-gray-400 focus:outline-none focus:ring-1 focus:border-primary/40 focus:ring-primary/20"
+            />
             <button
               type="button"
               onClick={() => remove(i)}
-              className="text-gray-400 hover:text-red-500 transition-colors"
+              className="p-1 text-gray-400 hover:text-red-500 transition-colors"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
         ))}
 
-        <div className="flex items-center gap-2 mt-1">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), add())}
-            placeholder="e.g. CPA, Atty."
-            className="flex-1 text-sm border border-gray-300 rounded-md px-3 py-1.5 placeholder-gray-400 focus:outline-none focus:ring-1 focus:border-primary/40 focus:ring-primary/20"
-          />
-          <button
-            type="button"
-            onClick={add}
-            className="p-1.5 rounded-md border border-gray-300 text-gray-500 hover:border-gray-400 hover:text-primary transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={addRow}
+          className="flex items-center gap-1 text-xs font-medium text-accent hover:text-accent-hover transition-colors w-fit mt-1"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          Add title
+        </button>
       </div>
     </div>
   );
