@@ -156,7 +156,9 @@ export const managerSections: HelpSection[] = [
         <P>
           Click the edit icon on any active or deactivated user to update their
           details. You can change their first name, last name, email, role,
-          position, and titles.
+          position, and titles. Changing the email changes the address the
+          employee uses to log in — the modal shows an inline warning when the
+          email is modified.
         </P>
 
         <Heading>Resending Activation</Heading>
@@ -353,6 +355,20 @@ export const managerSections: HelpSection[] = [
           profile organized into expandable sections, along with a task list
           and summary sidebar.
         </P>
+        <Heading>Managing Client Portal Accounts</Heading>
+        <P>
+          The Client Accounts card on the client details page lists all portal
+          accounts for the client. You can add another account, resend an
+          activation email for pending accounts, deactivate or reactivate any
+          account, and edit the first name, last name, or email of an active
+          account (pencil icon on the row). Assigned CSD/OOS/QTD accountants
+          can also edit active accounts for clients assigned to them.
+        </P>
+        <Tip>
+          Changing an active account's email changes the address the client
+          uses to log in. The edit form shows an inline warning when the email
+          is modified — coordinate with the client before saving.
+        </Tip>
         <Heading>Changing Client Status</Heading>
         <P>
           As a Manager, you're the only role that can change a client's status.

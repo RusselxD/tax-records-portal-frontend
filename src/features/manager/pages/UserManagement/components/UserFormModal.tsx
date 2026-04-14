@@ -4,7 +4,7 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import { Plus } from "lucide-react";
+import { Plus, AlertTriangle } from "lucide-react";
 import { getErrorMessage } from "../../../../../lib/api-error";
 import {
   Modal,
@@ -163,15 +163,26 @@ export default function UserFormModal({
           />
         </div>
 
-        <Input
-          id="email"
-          type="email"
-          label="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder={isEdit ? undefined : "john.doe@company.com"}
-          error={errors.email}
-        />
+        <div>
+          <Input
+            id="email"
+            type="email"
+            label="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={isEdit ? undefined : "john.doe@company.com"}
+            error={errors.email}
+          />
+          {isEdit && email.trim() !== user?.email && (
+            <div className="mt-2 flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+              <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+              <span>
+                The employee will log in with the new email after saving. Make
+                sure they're aware of the change.
+              </span>
+            </div>
+          )}
+        </div>
 
         <div className={`grid grid-cols-1 gap-4 ${isViewerRole ? "" : "sm:grid-cols-2"}`}>
           <Dropdown

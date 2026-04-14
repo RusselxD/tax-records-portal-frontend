@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UserCircle, Send, Check, UserX, UserCheck } from "lucide-react";
+import { UserCircle, Send, Check, UserX, UserCheck, Pencil, AlertTriangle } from "lucide-react";
 import { AccountStatus, Input, Button, ConfirmActionModal, UserAvatar } from "../../../../../components/common";
 import { usersAPI } from "../../../../../api/users";
 import { useToast } from "../../../../../contexts/ToastContext";
@@ -8,6 +8,96 @@ import { hasPermission, Permission } from "../../../../../constants/permissions"
 import { getErrorMessage } from "../../../../../lib/api-error";
 import type { ClientAccountResponse } from "../../../../../types/client";
 import { USER_STATUS } from "../../../../../types/user";
+
+interface EditResult {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+function EditAccountForm({
+  clientAccount,
+  onClose,
+  onSuccess,
+}: {
+  clientAccount: ClientAccountResponse;
+  onClose: () => void;
+  onSuccess: (updated: EditResult) => void;
+}) {
+  const { toastError } = useToast();
+  const [firstName, setFirstName] = useState(clientAccount.firstName);
+  const [lastName, setLastName] = useState(clientAccount.lastName);
+  const [email, setEmail] = useState(clientAccount.email);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const emailChanged = email.trim() !== clientAccount.email;
+  const hasChanges =
+    firstName.trim() !== clientAccount.firstName ||
+    lastName.trim() !== clientAccount.lastName ||
+    emailChanged;
+  const canSubmit = firstName.trim() && lastName.trim() && email.trim() && hasChanges;
+
+  const handleSubmit = async () => {
+    if (!canSubmit) return;
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: email.trim(),
+      };
+      await usersAPI.updateClientAccount(clientAccount.id, payload);
+      onSuccess(payload);
+    } catch (err) {
+      toastError(getErrorMessage(err, "Failed to update account. Please try again."));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="px-6 py-4 border-t border-gray-100 space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Input
+          label="First Name"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          placeholder="First name"
+        />
+        <Input
+          label="Last Name"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          placeholder="Last name"
+        />
+      </div>
+      <Input
+        label="Email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email address"
+      />
+      {emailChanged && (
+        <div className="flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+          <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+          <span>
+            The client will log in with the new email after saving. Make sure
+            they're aware of the change.
+          </span>
+        </div>
+      )}
+      <div className="flex justify-end gap-2 pt-1">
+        <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit} isLoading={isSubmitting} disabled={!canSubmit}>
+          Save Changes
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 interface ResendResult {
   firstName: string;
@@ -113,13 +203,17 @@ export default function ClientAccountCard({ clientAccount }: { clientAccount: Cl
 /** Row without card wrapper — used inside ClientAccountsSection */
 export function AccountRow({
   clientAccount,
+  canEdit,
   onDeactivated,
 }: {
   clientAccount: ClientAccountResponse;
+  /** If unset, falls back to the USER_CREATE permission check. */
+  canEdit?: boolean;
   onDeactivated?: () => void;
 }) {
   const { user } = useAuth();
   const canDeactivate = hasPermission(user?.permissions, Permission.USER_CREATE);
+  const editGate = canEdit ?? canDeactivate;
   const { toastSuccess, toastError } = useToast();
   const [displayData, setDisplayData] = useState({
     firstName: clientAccount.firstName,
@@ -129,10 +223,12 @@ export function AccountRow({
   const { profileUrl, status } = clientAccount;
   const fullName = `${displayData.firstName} ${displayData.lastName}`;
   const [showResendForm, setShowResendForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
   const [resent, setResent] = useState(false);
   const [showDeactivateConfirm, setShowDeactivateConfirm] = useState(false);
   const [showReactivateConfirm, setShowReactivateConfirm] = useState(false);
   const [isDeactivated, setIsDeactivated] = useState(status === USER_STATUS.DEACTIVATED);
+  const showEditButton = editGate && status === USER_STATUS.ACTIVE && !isDeactivated;
 
   return (
     <>
@@ -147,6 +243,15 @@ export function AccountRow({
         </div>
 
         <div className="flex items-center gap-2">
+          {showEditButton && !showEditForm && (
+            <button
+              onClick={() => setShowEditForm(true)}
+              title="Edit account details"
+              className="p-2 text-gray-400 hover:text-accent transition-colors"
+            >
+              <Pencil className="w-4 h-4" />
+            </button>
+          )}
           {status === USER_STATUS.PENDING && !showResendForm && (
             resent ? (
               <span className="p-1 text-emerald-500">
@@ -192,6 +297,18 @@ export function AccountRow({
             if (updated) setDisplayData(updated);
             setShowResendForm(false);
             setResent(true);
+          }}
+        />
+      )}
+
+      {showEditForm && (
+        <EditAccountForm
+          clientAccount={{ ...clientAccount, ...displayData }}
+          onClose={() => setShowEditForm(false)}
+          onSuccess={(updated) => {
+            setDisplayData(updated);
+            setShowEditForm(false);
+            toastSuccess("Account Updated", "The account details have been saved.");
           }}
         />
       )}

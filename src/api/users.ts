@@ -97,6 +97,13 @@ export const usersAPI = {
     await apiClient.post(`/users/${userId}/resend-activation`, data ?? {});
   },
 
+  updateClientAccount: async (
+    userId: string,
+    data: { firstName?: string; lastName?: string; email?: string },
+  ): Promise<void> => {
+    await apiClient.patch(`/users/client-account/${userId}`, data);
+  },
+
   uploadAvatar: async (file: File): Promise<{ profileUrl: string; accessToken: string }> => {
     const formData = new FormData();
     formData.append("file", file);

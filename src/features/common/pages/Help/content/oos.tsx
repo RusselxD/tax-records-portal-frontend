@@ -268,6 +268,18 @@ export const oosSections: HelpSection[] = [
           resend the activation email from the client account card. You can
           also update the client's name or email before resending.
         </P>
+        <Heading>Editing an Active Account</Heading>
+        <P>
+          After a client has activated their account, you can still edit their
+          first name, last name, or email from the Client Accounts card on
+          Client Details (pencil icon on the row). This is available to
+          assigned CSD, OOS, and QTD accountants, as well as to Managers.
+        </P>
+        <Tip>
+          Changing the email changes the address the client uses to log in.
+          The system shows an inline warning when you edit the email —
+          coordinate with the client before saving.
+        </Tip>
       </>
     ),
   },

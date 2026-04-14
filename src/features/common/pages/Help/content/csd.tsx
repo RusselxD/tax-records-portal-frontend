@@ -199,6 +199,15 @@ export const csdSections: HelpSection[] = [
           On the right side, you'll find a summary card with the client's key
           info and a list of their tax record tasks.
         </P>
+        <Heading>Editing the Client's Portal Account</Heading>
+        <P>
+          On the Client Accounts card, you can click the pencil icon on any
+          active account to update the client's first name, last name, or
+          email. This is available for clients assigned to you. Changing the
+          email changes the address the client uses to log in — the form
+          shows a warning when you edit the email, so coordinate with the
+          client before saving.
+        </P>
       </>
     ),
   },

@@ -85,7 +85,7 @@ function InfoReviewContent() {
       )}
 
       {clientAccounts.length > 0 && (
-        <ClientAccountsSection clientId={clientId} accounts={clientAccounts} onRefresh={refetch} />
+        <ClientAccountsSection clientId={clientId} accounts={clientAccounts} canEdit={canManageOnboarding} onRefresh={refetch} />
       )}
 
       {canManageOnboarding && (header?.isProfileApproved ?? false) && !(header?.handedOff) && (

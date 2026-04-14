@@ -10,12 +10,14 @@ import { AccountRow } from "../../ClientOnboardingPreview/components/ClientAccou
 interface ClientAccountsSectionProps {
   clientId: string;
   accounts: ClientAccountResponse[];
+  canEdit: boolean;
   onRefresh: () => void;
 }
 
 export default function ClientAccountsSection({
   clientId,
   accounts,
+  canEdit,
   onRefresh,
 }: ClientAccountsSectionProps) {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -29,7 +31,7 @@ export default function ClientAccountsSection({
 
       <div className="divide-y divide-gray-100">
         {accounts.map((account) => (
-          <AccountRow key={account.id} clientAccount={account} />
+          <AccountRow key={account.id} clientAccount={account} canEdit={canEdit} />
         ))}
       </div>
 

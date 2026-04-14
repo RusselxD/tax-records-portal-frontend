@@ -73,8 +73,14 @@ function ClientDetailsContent() {
   const hasPendingUpdate = header?.taskReview?.hasActiveTask;
   const isAssignedAccountant =
     header?.accountants?.csdOos?.some((a) => a.id === user?.id) ?? false;
+  const isAssignedToClient =
+    isAssignedAccountant ||
+    (header?.accountants?.qtd?.some((a) => a.id === user?.id) ?? false);
   const canEditProfile =
     !isOnboarding && !isSnapshot && isAssignedAccountant && !hasPendingUpdate;
+  const canEditClientAccount =
+    !isSnapshot &&
+    (isAssignedToClient || hasPermission(user?.permissions, Permission.USER_CREATE));
 
   const canReview = hasPermission(
     user?.permissions,
@@ -242,6 +248,7 @@ function ClientDetailsContent() {
             <ClientAccountsSection
               clientId={clientId}
               accounts={clientAccounts}
+              canEdit={canEditClientAccount}
               onRefresh={refetch}
             />
           )}
