@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, User, FileText, Receipt, FileSignature, ChevronUp } from "lucide-react";
+import { LayoutDashboard, User, FileText, Receipt, FileSignature, ChevronUp, Download } from "lucide-react";
 import MainLayout from "../../../components/layout/MainLayout";
 import { FilePreviewOverlay } from "../../../components/common";
 import { engagementLetterAPI } from "../../../api/engagement-letter";
+import { usePwaInstall } from "../../../hooks/usePwaInstall";
 import type { NavItem } from "../../../types/navigation";
 
 const clientNavItems: NavItem[] = [
@@ -59,18 +60,35 @@ export default function ClientLayout() {
     return () => { cancelled = true; };
   }, []);
 
-  const engagementLetterAction = letterFiles.length > 0
-    ? <EngagementLetterPopover files={letterFiles} />
-    : null;
-
   return (
     <MainLayout
       navItems={clientNavItems}
       pageTitle={pageTitle}
-      sidebarBottomAction={engagementLetterAction}
+      sidebarBottomAction={<ClientSidebarBottomActions letterFiles={letterFiles} />}
     >
       <Outlet />
     </MainLayout>
+  );
+}
+
+function ClientSidebarBottomActions({ letterFiles }: { letterFiles: { id: string; name: string }[] }) {
+  const { canInstall, install } = usePwaInstall();
+
+  if (!canInstall && letterFiles.length === 0) return null;
+
+  return (
+    <div className="space-y-1">
+      {canInstall && (
+        <button
+          onClick={install}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors text-white/70 hover:bg-white/10 hover:text-white w-full"
+        >
+          <Download className="w-4 h-4" />
+          <span>Install App</span>
+        </button>
+      )}
+      {letterFiles.length > 0 && <EngagementLetterPopover files={letterFiles} />}
+    </div>
   );
 }
 
