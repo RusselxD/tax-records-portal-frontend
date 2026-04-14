@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { getRolePrefix } from "../../../../../constants/roles";
+import { hasPermission, Permission } from "../../../../../constants/permissions";
 import { useEditClientProfile } from "../context/EditClientProfileContext";
 import BreadcrumbNav from "../../../../../components/common/BreadcrumbNav";
 
@@ -10,12 +11,15 @@ export default function EditClientHeader() {
   const { clientId, header } = useEditClientProfile();
   const prefix = getRolePrefix(user?.roleKey ?? "");
   const clientName = header?.displayName || "Client";
+  const clientsLabel = hasPermission(user?.permissions, Permission.CLIENT_VIEW_ALL)
+    ? "Client List"
+    : "Assigned Clients";
 
   return (
     <div className="mb-8">
       <BreadcrumbNav
         items={[
-          { label: "Client List", onClick: () => navigate(`/${prefix}/clients`) },
+          { label: clientsLabel, onClick: () => navigate(`/${prefix}/clients`) },
           { label: clientName, onClick: () => navigate(`/${prefix}/client-details/${clientId}`) },
           { label: "Edit Profile" },
         ]}

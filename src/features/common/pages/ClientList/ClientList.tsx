@@ -9,7 +9,7 @@ export default function ClientList() {
   const { user } = useAuth();
   const canViewAll = hasPermission(user?.permissions, Permission.CLIENT_VIEW_ALL);
 
-  usePageTitle(canViewAll ? "Client List" : "My Clients");
+  usePageTitle(canViewAll ? "Client List" : "Assigned Clients");
 
   return (
     <ClientListProvider>

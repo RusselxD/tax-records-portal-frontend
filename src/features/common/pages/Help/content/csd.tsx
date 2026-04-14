@@ -174,10 +174,10 @@ export const csdSections: HelpSection[] = [
     ),
   },
 
-  // ─── Client List ───
+  // ─── Assigned Clients ───
   {
     id: "clients",
-    title: "Client List",
+    title: "Assigned Clients",
     subtitle: "Your assigned clients and their details",
     icon: Users,
     iconBg: "bg-violet-50",
@@ -185,7 +185,7 @@ export const csdSections: HelpSection[] = [
     content: (
       <>
         <P>
-          The Client List shows all clients assigned to you. You can see each
+          Assigned Clients shows all clients assigned to you. You can see each
           client's status, how many tasks are pending or overdue, and their
           nearest deadline.
         </P>

@@ -173,7 +173,7 @@ if (hasPermission(user.permissions, Permission.CLIENT_MANAGE)) {
 |-------------------------|--------|------------------------------------------|
 | Dashboard               | Yes    | Accountant dashboard                     |
 | Tasks                   | Yes    | Own assigned tasks                       |
-| Client List             | Yes    | Assigned clients                         |
+| Assigned Clients        | Yes    | Assigned clients                         |
 | Client Onboarding       | No     | Onboarding queue                         |
 | Client Offboarding      | No     | Offboarding queue                        |
 | New Client (create)     | No     | Create new client profile                |
@@ -197,7 +197,7 @@ if (hasPermission(user.permissions, Permission.CLIENT_MANAGE)) {
 |-------------------------|--------|------------------------------------------|
 | QTD Dashboard           | No     | QTD-specific dashboard                   |
 | Tasks                   | Yes    | Task management view                     |
-| Client List             | Yes    | Assigned clients                         |
+| Assigned Clients        | Yes    | Assigned clients                         |
 | Client Profiles         | Yes    | Profile review queue                     |
 | Client Preview          | Yes    | Review client info for approval          |
 | Client Details          | Yes    | Full client information view             |
@@ -215,7 +215,7 @@ if (hasPermission(user.permissions, Permission.CLIENT_MANAGE)) {
 |-------------------------|--------|------------------------------------------|
 | Dashboard               | Yes    | Accountant dashboard                     |
 | Tasks                   | Yes    | Own assigned tasks                       |
-| Client List             | Yes    | Assigned clients                         |
+| Assigned Clients        | Yes    | Assigned clients                         |
 | Client Details          | Yes    | Full client information view             |
 | Edit Client Profile     | Yes    | Edit client info sections                |
 | Profile Update Review   | Yes    | Review profile update submissions        |

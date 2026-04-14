@@ -5,6 +5,7 @@ import { Button, CommentPreview } from "../../../../components/common";
 import NotFound from "../../../../pages/NotFound";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { getRolePrefix } from "../../../../constants/roles";
+import { hasPermission, Permission } from "../../../../constants/permissions";
 import { PROFILE_REVIEW_STATUS } from "../../../../types/client-profile";
 import { ActivityLogs } from "../../components/client-info";
 import {
@@ -29,6 +30,9 @@ function ProfileUpdateReviewContent() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const prefix = getRolePrefix(user?.roleKey ?? "");
+  const clientsLabel = hasPermission(user?.permissions, Permission.CLIENT_VIEW_ALL)
+    ? "Client List"
+    : "Assigned Clients";
   const {
     taskId,
     clientId,
@@ -95,7 +99,7 @@ function ProfileUpdateReviewContent() {
       {/* Breadcrumb */}
       <BreadcrumbNav
         items={[
-          { label: "Client List", onClick: () => navigate(`/${prefix}/clients`) },
+          { label: clientsLabel, onClick: () => navigate(`/${prefix}/clients`) },
           { label: review.clientName, onClick: () => navigate(`/${prefix}/client-details/${clientId}`) },
           { label: "Profile Update Review" },
         ]}

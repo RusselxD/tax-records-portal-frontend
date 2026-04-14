@@ -26,7 +26,7 @@ const oosNavItems: NavItem[] = [
   },
   {
     id: "clients",
-    label: "Client List",
+    label: "Assigned Clients",
     path: "/oos/clients",
     icon: Users,
   },
@@ -65,7 +65,7 @@ const oosNavItems: NavItem[] = [
 const pageTitles: Record<string, string> = {
   "/oos/dashboard": "Dashboard",
   "/oos/tasks": "Task List",
-  "/oos/clients": "Client List",
+  "/oos/clients": "Assigned Clients",
   "/oos/client-onboarding": "Client Onboarding",
   "/oos/client-offboarding": "Client Offboarding",
   "/oos/analytics": "My Analytics",

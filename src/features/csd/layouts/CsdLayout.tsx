@@ -24,7 +24,7 @@ const csdNavItems: NavItem[] = [
   },
   {
     id: "clients",
-    label: "Client List",
+    label: "Assigned Clients",
     path: "/csd/clients",
     icon: Users,
   },
@@ -51,7 +51,7 @@ const csdNavItems: NavItem[] = [
 const pageTitles: Record<string, string> = {
   "/csd/dashboard": "Dashboard",
   "/csd/tasks": "Task List",
-  "/csd/clients": "Client List",
+  "/csd/clients": "Assigned Clients",
   "/csd/analytics": "My Analytics",
   "/csd/consultation-logs": "Consultation Logs",
   "/csd/notifications": "Notifications",

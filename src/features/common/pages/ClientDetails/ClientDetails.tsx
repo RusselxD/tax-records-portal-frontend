@@ -89,9 +89,15 @@ function ClientDetailsContent() {
     !isOnboarding &&
     hasPermission(user?.permissions, Permission.REMINDER_CREATE);
   const prefix = getRolePrefix(user?.roleKey ?? "");
+  const canViewAllClients = hasPermission(user?.permissions, Permission.CLIENT_VIEW_ALL);
 
   const backLabel =
-    state.backLabel || (isSnapshot ? "Client Onboarding" : "Client List");
+    state.backLabel ||
+    (isSnapshot
+      ? "Client Onboarding"
+      : canViewAllClients
+        ? "Client List"
+        : "Assigned Clients");
   const backTo = state.backTo || "..";
 
   const isOffboarding = status === CLIENT_STATUS.OFFBOARDING;

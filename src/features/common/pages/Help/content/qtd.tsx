@@ -54,20 +54,20 @@ export const qtdSections: HelpSection[] = [
     ),
   },
 
-  // ─── Client List ───
+  // ─── Assigned Clients ───
   {
     id: "clients",
-    title: "Client List",
-    subtitle: "View clients and their details",
+    title: "Assigned Clients",
+    subtitle: "View your assigned clients and their details",
     icon: Users,
     iconBg: "bg-violet-50",
     iconColor: "text-violet-600",
     content: (
       <>
         <P>
-          The Client List shows clients you have visibility into. You can see
-          each client's status, task counts (total, pending, overdue), and
-          nearest deadline.
+          Assigned Clients shows clients you have visibility into as a QTD
+          reviewer. You can see each client's status, task counts (total,
+          pending, overdue), and nearest deadline.
         </P>
         <Heading>Client Details</Heading>
         <P>

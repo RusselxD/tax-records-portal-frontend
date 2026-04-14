@@ -11,7 +11,7 @@ const qtdNavItems: NavItem[] = [
   },
   {
     id: "clients",
-    label: "Client List",
+    label: "Assigned Clients",
     path: "/qtd/clients",
     icon: Users,
   },
@@ -43,7 +43,7 @@ const qtdNavItems: NavItem[] = [
 
 const pageTitles: Record<string, string> = {
   "/qtd/dashboard": "Dashboard",
-  "/qtd/clients": "Client List",
+  "/qtd/clients": "Assigned Clients",
   "/qtd/client-profiles": "Client Profiles",
   "/qtd/tasks": "Task Management",
   "/qtd/consultation-logs": "Consultation Logs",

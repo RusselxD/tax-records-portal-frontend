@@ -474,10 +474,10 @@ export const oosSections: HelpSection[] = [
     ),
   },
 
-  // ─── Client List ───
+  // ─── Assigned Clients ───
   {
     id: "clients",
-    title: "Client List",
+    title: "Assigned Clients",
     subtitle: "Your assigned clients and their details",
     icon: Users,
     iconBg: "bg-violet-50",
@@ -485,7 +485,7 @@ export const oosSections: HelpSection[] = [
     content: (
       <>
         <P>
-          The Client List shows all clients assigned to you as an accountant
+          Assigned Clients shows all clients assigned to you as an accountant
           (post-handoff). This is separate from the Client Onboarding list,
           which shows clients you created and onboarded.
         </P>
