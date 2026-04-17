@@ -219,7 +219,7 @@ export function EditClientProfileProvider({
         if (!mreCode || !MRE_CODE_REGEX.test(mreCode)) {
           scrollToSection("mainDetails");
           throw new Error(
-            "The MRE Code in Main Details is invalid. It must be MRE- followed by at least 3 digits (e.g. MRE-001).",
+            "The MRE Code in Main Details is invalid. It must be MRE- or EU- followed by at least 3 digits (e.g. MRE-001, EU-001).",
           );
         }
         const { isValid } = await oosClientAPI.validateMreCode(mreCode, clientId);

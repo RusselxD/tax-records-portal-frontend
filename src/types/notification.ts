@@ -13,10 +13,6 @@ type NotificationType =
   | "CONSULTATION_REJECTED";
 type ReferenceType = "TASK" | "TAX_RECORD_TASK" | "CLIENT" | "CLIENT_INFO" | "CLIENT_INFO_EDIT" | "CONSULTATION_LOG";
 
-export interface UnreadNotificationsCountResponse{
-  unread: number;
-}
-
 export interface NotificationListItemResponse {
   id: string;
   type: NotificationType;

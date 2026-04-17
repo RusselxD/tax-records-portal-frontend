@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import { CheckCheck } from "lucide-react";
 import usePageTitle from "../../../../hooks/usePageTitle";
 import { notificationAPI } from "../../../../api/notification";
-import { useNotifications } from "../../../../contexts/NotificationsContext";
 import { useToast } from "../../../../contexts/ToastContext";
 import { getErrorMessage } from "../../../../lib/api-error";
 import NotificationList from "./components/NotificationList";
@@ -12,7 +11,6 @@ type FilterTab = "all" | "unread";
 
 export default function Notifications() {
   usePageTitle("Notifications");
-  const { refetchUnreadCount } = useNotifications();
   const { toastError } = useToast();
 
   const [notifications, setNotifications] = useState<NotificationListItemResponse[]>([]);
@@ -70,12 +68,11 @@ export default function Notifications() {
 
     try {
       await notificationAPI.deleteNotification(id);
-      refetchUnreadCount();
     } catch (err) {
       setNotifications(snapshot);
       toastError(getErrorMessage(err, "Failed to delete notification."));
     }
-  }, [refetchUnreadCount, toastError]);
+  }, [toastError]);
 
   const handleMarkAllRead = useCallback(async () => {
     // Optimistic: mark all read immediately, revert on failure
@@ -87,12 +84,11 @@ export default function Notifications() {
 
     try {
       await notificationAPI.markAllAsRead();
-      refetchUnreadCount();
     } catch (err) {
       setNotifications(snapshot);
       toastError(getErrorMessage(err, "Failed to mark all as read."));
     }
-  }, [refetchUnreadCount, toastError]);
+  }, [toastError]);
 
   const handleFilterChange = (tab: FilterTab) => {
     if (tab === filter) return;

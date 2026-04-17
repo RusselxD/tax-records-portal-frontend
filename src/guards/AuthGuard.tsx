@@ -1,5 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import NotificationToastStack from "../components/common/NotificationToastStack";
 
 function SplashScreen() {
   return (
@@ -37,5 +38,10 @@ export function AuthGuard() {
     return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
 
-  return <Outlet />;
+  return (
+    <>
+      <Outlet />
+      <NotificationToastStack />
+    </>
+  );
 }

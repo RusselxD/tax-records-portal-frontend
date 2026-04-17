@@ -1,8 +1,5 @@
 import apiClient from "./axios-config";
-import type {
-  NotificationScrollResponse,
-  UnreadNotificationsCountResponse,
-} from "../types";
+import type { NotificationScrollResponse } from "../types";
 
 const PAGE_SIZE = 15;
 
@@ -16,12 +13,6 @@ export const notificationAPI = {
     const res = await apiClient.get("/notifications/mine", { params });
     return res.data;
   },
-
-  countUnreadNotifications:
-    async (): Promise<UnreadNotificationsCountResponse> => {
-      const res = await apiClient.get("/notifications/unread-count");
-      return res.data;
-    },
 
   markNotificationAsRead: async (notificationId: string): Promise<void> => {
     await apiClient.patch(`/notifications/${notificationId}/read`);

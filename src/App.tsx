@@ -6,6 +6,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { ToastProvider } from "./contexts/ToastContext";
 import { DownloadProvider } from "./contexts/DownloadContext";
 import { NotificationsProvider } from "./contexts/NotificationsContext";
+import { WebSocketProvider } from "./contexts/WebSocketContext";
 import { useIsMobile } from "./hooks/useMediaQuery";
 import { router } from "./router";
 
@@ -33,16 +34,18 @@ function PageLoader() {
 export default function App() {
   return (
     <AuthProvider>
-      <NotificationsProvider>
-        <ToastProvider>
-          <DownloadProvider>
-            <Suspense fallback={<PageLoader />}>
-              <RouterProvider router={router} />
-            </Suspense>
-          </DownloadProvider>
-          <AppToastContainer />
-        </ToastProvider>
-      </NotificationsProvider>
+      <WebSocketProvider>
+        <NotificationsProvider>
+          <ToastProvider>
+            <DownloadProvider>
+              <Suspense fallback={<PageLoader />}>
+                <RouterProvider router={router} />
+              </Suspense>
+            </DownloadProvider>
+            <AppToastContainer />
+          </ToastProvider>
+        </NotificationsProvider>
+      </WebSocketProvider>
     </AuthProvider>
   );
 }

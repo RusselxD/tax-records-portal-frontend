@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { oosClientAPI } from "../../../../../../api/client";
 
-export const MRE_CODE_REGEX = /^MRE-\d{3,}$/;
+export const MRE_CODE_REGEX = /^(MRE|EU)-\d{3,}$/;
 
 type BackendStatus =
   | { kind: "idle" }
@@ -66,7 +66,7 @@ export default function useMreCodeValidation(
 
   const errorMessage =
     status === "invalid-format"
-      ? "Invalid format. Must be MRE- followed by at least 3 digits (e.g. MRE-001)."
+      ? "Invalid format. Must be MRE- or EU- followed by at least 3 digits (e.g. MRE-001, EU-001)."
       : status === "invalid-taken"
         ? "This MRE code is already in use."
         : status === "error"

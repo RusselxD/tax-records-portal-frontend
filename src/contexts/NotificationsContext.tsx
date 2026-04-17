@@ -7,54 +7,65 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
-import { useAuth } from "./AuthContext";
-import { UserRole } from "../constants";
-import { notificationAPI } from "../api/notification";
+import { useWebSocket, type WebSocketMessage } from "./WebSocketContext";
+import type { NotificationListItemResponse } from "../types/notification";
+
+interface LiveNotification {
+  /** Unique key for the toast (notification id + enqueuedAt to allow duplicates) */
+  key: string;
+  notification: NotificationListItemResponse;
+}
 
 interface NotificationsContextType {
   unreadCount: number;
   decrementUnread: () => void;
-  refetchUnreadCount: () => void;
+  liveNotifications: LiveNotification[];
+  dismissLiveNotification: (key: string) => void;
 }
 
 const NotificationsContext = createContext<NotificationsContextType | null>(null);
 
-export function NotificationsProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
-  const [unreadCount, setUnreadCount] = useState(0);
+const LIVE_QUEUE_CAP = 3;
 
-  const fetchUnreadCount = useCallback(async () => {
-    try {
-      const { unread } = await notificationAPI.countUnreadNotifications();
-      setUnreadCount(unread);
-    } catch {
-      // fail silently — badge is non-critical
-    }
-  }, []);
+export function NotificationsProvider({ children }: { children: ReactNode }) {
+  const { subscribe } = useWebSocket();
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [liveNotifications, setLiveNotifications] = useState<LiveNotification[]>([]);
 
   useEffect(() => {
-    if (!user || user.roleKey === UserRole.CLIENT || user.roleKey === UserRole.VIEWER) return;
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const { unread } = await notificationAPI.countUnreadNotifications();
-        if (!cancelled) setUnreadCount(unread);
-      } catch {
-        // fail silently — badge is non-critical
+    return subscribe("UNREAD_COUNT_UPDATE", (msg: WebSocketMessage) => {
+      if (typeof msg.payload === "number") {
+        setUnreadCount(msg.payload);
       }
-    })();
+    });
+  }, [subscribe]);
 
-    return () => { cancelled = true; };
-  }, [user]);
+  useEffect(() => {
+    return subscribe("NEW_NOTIFICATION", (msg: WebSocketMessage) => {
+      const notification = msg.payload as NotificationListItemResponse;
+      if (!notification?.id) return;
+      const entry: LiveNotification = {
+        key: `${notification.id}-${Date.now()}`,
+        notification,
+      };
+      setLiveNotifications((prev) => {
+        const next = [...prev, entry];
+        return next.length > LIVE_QUEUE_CAP ? next.slice(-LIVE_QUEUE_CAP) : next;
+      });
+    });
+  }, [subscribe]);
 
   const decrementUnread = useCallback(() => {
     setUnreadCount((prev) => Math.max(0, prev - 1));
   }, []);
 
+  const dismissLiveNotification = useCallback((key: string) => {
+    setLiveNotifications((prev) => prev.filter((n) => n.key !== key));
+  }, []);
+
   const value = useMemo(
-    () => ({ unreadCount, decrementUnread, refetchUnreadCount: fetchUnreadCount }),
-    [unreadCount, decrementUnread, fetchUnreadCount],
+    () => ({ unreadCount, decrementUnread, liveNotifications, dismissLiveNotification }),
+    [unreadCount, decrementUnread, liveNotifications, dismissLiveNotification],
   );
 
   return (
