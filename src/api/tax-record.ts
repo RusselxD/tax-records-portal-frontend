@@ -5,6 +5,8 @@ import type {
   RecentTaxRecordRange,
   RecentTaxRecordEntryResponse,
   ImportantDateResponse,
+  TaxRecordEntryResponse,
+  OverrideTaxRecordEntryPayload,
 } from "../types/tax-record";
 import apiClient from "./axios-config";
 import { buildParams } from "./api-utils";
@@ -48,5 +50,33 @@ export const taxRecordAPI = {
       responseType: "blob",
     });
     return res.data;
+  },
+
+  overrideEntry: async (
+    id: string,
+    payload: OverrideTaxRecordEntryPayload,
+  ): Promise<TaxRecordEntryResponse> => {
+    const form = new FormData();
+    payload.removedWorkingFileIds.forEach((fid) => form.append("removedWorkingFileIds", fid));
+    payload.newWorkingFiles.forEach((file) => form.append("newWorkingFiles", file));
+    if (payload.newWorkingLinks.length > 0) {
+      form.append("newWorkingLinks", JSON.stringify(payload.newWorkingLinks));
+    }
+    form.append("outputFileAction", payload.outputFileAction);
+    if (payload.outputFileAction === "replace" && payload.outputFile) {
+      form.append("outputFile", payload.outputFile);
+    }
+    form.append("proofFileAction", payload.proofFileAction);
+    if (payload.proofFileAction === "replace" && payload.proofFile) {
+      form.append("proofFile", payload.proofFile);
+    }
+    const res = await apiClient.patch(`/tax-record-entries/${id}`, form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return res.data;
+  },
+
+  deleteEntry: async (id: string): Promise<void> => {
+    await apiClient.delete(`/tax-record-entries/${id}`);
   },
 };

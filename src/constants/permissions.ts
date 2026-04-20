@@ -25,6 +25,7 @@ export const Permission = {
   // Tax records
   TAX_RECORDS_VIEW_OWN: "tax_records.view.own",
   TAX_RECORDS_VIEW_ALL: "tax_records.view.all",
+  TAX_RECORDS_OVERRIDE: "tax_records.override",
 
   // Tasks
   TASK_CREATE: "task.create",

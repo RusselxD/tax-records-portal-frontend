@@ -77,6 +77,18 @@ export interface ImportantDateResponse {
 
 export type RecentTaxRecordRange = "7d" | "30d" | "3m";
 
+export type OverrideFileAction = "keep" | "replace";
+
+export interface OverrideTaxRecordEntryPayload {
+  removedWorkingFileIds: string[];
+  newWorkingFiles: File[];
+  newWorkingLinks: { url: string; label: string }[];
+  outputFileAction: OverrideFileAction;
+  outputFile?: File;
+  proofFileAction: OverrideFileAction;
+  proofFile?: File;
+}
+
 export interface RecentTaxRecordEntryResponse {
   id: string;
   categoryId: number;

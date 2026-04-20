@@ -8,6 +8,7 @@ import {
   Flag,
   CheckCircle,
   Undo2,
+  ShieldAlert,
 } from "lucide-react";
 import { formatDateTime } from "../../../../../lib/formatters";
 import { useAuth } from "../../../../../contexts/AuthContext";
@@ -31,6 +32,7 @@ const actionConfig: Record<
   APPROVED_FOR_FILING: { label: "Approved for filing", icon: FileCheck, color: "text-indigo-600", bg: "bg-indigo-100" },
   FILED: { label: "Marked as filed", icon: Flag, color: "text-purple-600", bg: "bg-purple-100" },
   COMPLETED: { label: "Completed", icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-100" },
+  OVERRIDE_EDITED: { label: "Overridden (edited)", icon: ShieldAlert, color: "text-rose-600", bg: "bg-rose-100" },
 };
 
 function LogEntry({

@@ -99,6 +99,15 @@ export default function ClientTaxRecords({ clientId }: { clientId: string }) {
     setSelections((prev) => prev.slice(0, index));
   }, []);
 
+  const handleOverrideEdited = useCallback(() => {
+    fetchLevel(selections);
+  }, [fetchLevel, selections]);
+
+  const handleOverrideDeleted = useCallback(() => {
+    // Step back one level so the now-deleted record isn't shown.
+    setSelections((prev) => prev.slice(0, -1));
+  }, []);
+
   const { startDownload } = useDownload();
 
   const handleBulkDownload = useCallback((selectedIds: string[]) => {
@@ -153,7 +162,11 @@ export default function ClientTaxRecords({ clientId }: { clientId: string }) {
       )}
 
       {!isLoading && !error && isRecordLevel && record && (
-        <TaxRecordDetail record={record} />
+        <TaxRecordDetail
+          record={record}
+          onOverrideEdited={handleOverrideEdited}
+          onOverrideDeleted={handleOverrideDeleted}
+        />
       )}
     </div>
   );
