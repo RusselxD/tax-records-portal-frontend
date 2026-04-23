@@ -3,6 +3,7 @@ import {
   Check,
   X,
   ClipboardList,
+  ClipboardPlus,
   UserCheck,
   UserX,
   UserMinus,
@@ -27,4 +28,7 @@ export const notificationTypeConfig: Record<
   CONSULTATION_SUBMITTED: { icon: MessageSquareText, color: "text-blue-600", bg: "bg-blue-100" },
   CONSULTATION_APPROVED: { icon: MessageSquareText, color: "text-emerald-600", bg: "bg-emerald-100" },
   CONSULTATION_REJECTED: { icon: MessageSquareText, color: "text-red-500", bg: "bg-red-100" },
+  TAX_RECORD_TASK_REQUEST_SUBMITTED: { icon: ClipboardPlus, color: "text-blue-600", bg: "bg-blue-100" },
+  TAX_RECORD_TASK_REQUEST_APPROVED: { icon: Check, color: "text-emerald-600", bg: "bg-emerald-100" },
+  TAX_RECORD_TASK_REQUEST_REJECTED: { icon: X, color: "text-red-500", bg: "bg-red-100" },
 };

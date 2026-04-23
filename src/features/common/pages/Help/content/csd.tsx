@@ -1,6 +1,7 @@
 import {
   LayoutDashboard,
   ClipboardList,
+  ClipboardPlus,
   Users,
   BarChart2,
   Bell,
@@ -169,6 +170,77 @@ export const csdSections: HelpSection[] = [
         <Tip>
           Check the Activity Log on the right side of the task details page to
           see the full history of actions and reviewer comments.
+        </Tip>
+      </>
+    ),
+  },
+
+  // ─── Task Requests ───
+  {
+    id: "task-requests",
+    title: "Task Requests",
+    subtitle: "Propose new tasks for a reviewer to create",
+    icon: ClipboardPlus,
+    iconBg: "bg-indigo-50",
+    iconColor: "text-indigo-600",
+    content: (
+      <>
+        <P>
+          If a client needs a new tax record task that isn't yet in the system,
+          you can propose it. A reviewer (QTD or Manager) checks your request
+          and, if approved, creates the task and assigns it back to you by
+          default.
+        </P>
+        <Heading>Submitting a Request</Heading>
+        <P>There are two entry points:</P>
+        <BulletList
+          items={[
+            "From a client's details page — click the + Request button in the Tasks sidebar card. The client is pre-filled.",
+            "From the Task Requests page — click + New Request at the top. You'll pick the client from a dropdown.",
+          ]}
+        />
+        <P>
+          In the form, choose the category, sub-category, and task name, then
+          set the year and period. Notes are optional — use them to give the
+          reviewer context (e.g., why the task is needed or any special
+          handling).
+        </P>
+        <P>
+          You can't propose a new category, sub-category, or task name from
+          here — only existing ones. If what you need doesn't exist, coordinate
+          with QTD first.
+        </P>
+        <Heading>Tracking Your Requests</Heading>
+        <P>
+          Open Task Requests in the sidebar to see all requests you've
+          submitted. The tabs group them by status:
+        </P>
+        <StatusTable
+          rows={[
+            {
+              status: "Pending",
+              color: "bg-amber-50 text-amber-700",
+              description:
+                "Waiting for a reviewer to decide. You'll be notified when a decision is made.",
+            },
+            {
+              status: "Approved",
+              color: "bg-emerald-50 text-emerald-700",
+              description:
+                "The reviewer approved it and the task was created. Click the approved-notification or the request's \"View Task\" link to jump to the new task.",
+            },
+            {
+              status: "Rejected",
+              color: "bg-red-50 text-red-700",
+              description:
+                "The reviewer sent it back with a reason. Rejections are terminal — read the feedback and file a new request if still needed.",
+            },
+          ]}
+        />
+        <Tip>
+          You can't have two pending requests for the same client, task name,
+          year, and period at the same time. Wait for the first to be decided
+          before resubmitting.
         </Tip>
       </>
     ),
@@ -450,6 +522,8 @@ export const csdSections: HelpSection[] = [
             "Task Approved — your submission was approved by a reviewer.",
             "Task Rejected — your submission was rejected. Check the comments for feedback.",
             "Task Completed — a task you worked on has been marked as completed.",
+            "Task Request Approved — your task request was approved; clicking it opens the newly created task.",
+            "Task Request Rejected — your task request was rejected; clicking it shows the reason.",
             "Client Handoff — a client has been handed off and assigned to you.",
           ]}
         />

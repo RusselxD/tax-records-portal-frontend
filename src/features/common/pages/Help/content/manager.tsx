@@ -5,6 +5,7 @@ import {
   Building2,
   UserCheck,
   ClipboardList,
+  ClipboardPlus,
   Bell,
   UserCircle,
   FileText,
@@ -465,6 +466,87 @@ export const managerSections: HelpSection[] = [
     ),
   },
 
+  // ─── Task Requests ───
+  {
+    id: "task-requests",
+    title: "Task Requests",
+    subtitle: "Review proposed tasks from CSD and OOS",
+    icon: ClipboardPlus,
+    iconBg: "bg-indigo-50",
+    iconColor: "text-indigo-600",
+    content: (
+      <>
+        <P>
+          CSD and OOS accountants can propose new tax record tasks when they
+          spot something that needs to be tracked. QTD is the primary reviewer,
+          but as a Manager you share the same review capability — useful for
+          covering QTD absence or handling escalations.
+        </P>
+        <P>
+          The sidebar badge on Task Requests shows how many are pending — it
+          updates live when a new request arrives.
+        </P>
+
+        <Heading>Reviewing a Request</Heading>
+        <Steps
+          items={[
+            "Open Task Requests from the sidebar — Pending tab is the default.",
+            "Click a row to open the request. You'll see the proposed client, category, sub-category, task name, year/period, and any notes from the requester.",
+            "Decide: Approve creates the task and assigns it to the requester. Reject sends the request back with your reason.",
+          ]}
+        />
+
+        <Heading>Approving a Request</Heading>
+        <P>The approve action is a small form, not just a confirm. You set:</P>
+        <BulletList
+          items={[
+            "Deadline — required. This is the deadline for the newly created task.",
+            "Assigned To — defaults to the requester. You can reassign to a teammate if someone else should execute the work; multiple assignees are allowed.",
+          ]}
+        />
+
+        <Heading>Rejecting a Request</Heading>
+        <P>
+          Rejections are terminal — the requester cannot edit and resubmit;
+          they must file a new request. Provide a clear reason (optional but
+          recommended, 1000-char max) so they can refile cleanly. You cannot
+          edit the proposed fields at approval — if something's wrong, reject
+          with feedback and let them refile.
+        </P>
+
+        <Heading>Request Statuses</Heading>
+        <StatusTable
+          rows={[
+            {
+              status: "Pending",
+              color: "bg-amber-50 text-amber-700",
+              description:
+                "Waiting for review. Approve or reject.",
+            },
+            {
+              status: "Approved",
+              color: "bg-emerald-50 text-emerald-700",
+              description:
+                "Approved and the task was created. The requester gets a notification linking directly to the new task.",
+            },
+            {
+              status: "Rejected",
+              color: "bg-red-50 text-red-700",
+              description:
+                "Rejected with feedback. The requester can file a new request if still needed.",
+            },
+          ]}
+        />
+
+        <Tip>
+          The system blocks duplicate pending requests for the same client,
+          task name, year, and period — so you won't see two pending requests
+          for the exact same slot.
+        </Tip>
+      </>
+    ),
+  },
+
   // ─── Task Overview ───
   {
     id: "tasks",
@@ -775,6 +857,7 @@ export const managerSections: HelpSection[] = [
             "Task Rejected — a task was rejected.",
             "Task Filed — an accountant marked a task as filed.",
             "Task Completed — a task was completed.",
+            "Task Request Submitted — CSD or OOS proposed a new task for review.",
             "Client Handoff — a client was handed off by OOS.",
             "Profile Submitted — a client profile was submitted for review.",
             "Offboarding Assigned — an OOS accountant was assigned to offboard a client.",

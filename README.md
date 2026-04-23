@@ -109,7 +109,7 @@ Detailed documentation is available in [`docs/`](docs/):
 
 - [Architecture](docs/architecture.md) -- App structure, patterns, state management
 - [Authentication](docs/authentication.md) -- JWT flow, guards, token refresh
-- [Roles & Permissions](docs/roles-and-permissions.md) -- 7 roles, 33 permissions, route access
+- [Roles & Permissions](docs/roles-and-permissions.md) -- 7 roles, 35 permissions, route access
 - [Client Lifecycle](docs/client-lifecycle.md) -- Onboarding, Active, Offboarding, Inactive
 - [Task Workflow](docs/task-workflow.md) -- Tax record task statuses, files, review cycle
 - [Code Conventions](docs/conventions.md) -- Component patterns, styling, naming rules
@@ -124,6 +124,7 @@ Detailed documentation is available in [`docs/`](docs/):
 - [Notifications](docs/features/notifications.md)
 - [Analytics](docs/features/analytics.md)
 - [Tax Records](docs/features/tax-records.md)
+- [Task Requests](docs/features/task-requests.md)
 
 ## Dev Notes
 
@@ -138,6 +139,7 @@ Detailed documentation is available in [`docs/`](docs/):
 - Invoice void is irreversible -- existing payments are preserved but no new payments can be applied.
 - Outstanding balance is computed in real-time (not denormalized) via native SQL.
 - Tax records protection blocks ALL file downloads for client portal users (not just tax record files). Internal employee users are unaffected.
+- Task request approval returns the full `TaxRecordTaskRequestDetailResponse`, which has two ids: `id` (the request) and `resultingTaskId` (the spawned task). Always deep-link to the task via `resultingTaskId` — navigating to `/tax-record-tasks/{request.id}` will 404.
 - The `SECTIONS` constant in `src/types/client-info.ts` is the single source of truth for section keys and labels -- never define them inline.
 - All context provider values must be wrapped in `useMemo`, callbacks in `useCallback`, and data-fetching `useEffect`s must use a `cancelled` flag with cleanup return.
 - No test framework yet -- Vitest recommended. Highest-value targets: contexts (TaxRecordTaskDetails, ClientDetails, UserManagement, ClientOnboarding).

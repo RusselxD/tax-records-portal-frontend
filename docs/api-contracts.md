@@ -258,6 +258,47 @@ Source: `src/api/tax-record-task.ts`
 
 ---
 
+## Tax Record Task Requests
+
+Source: `src/api/tax-record-task-request.ts`. See [features/task-requests.md](features/task-requests.md) for the full feature overview.
+
+| Method | Path | Description | Params / Body | Response |
+|--------|------|-------------|---------------|----------|
+| GET | `/tax-record-task-requests` | Paginated list (scoped server-side: requesters see own, reviewers see all) | Query: `TaxRecordTaskRequestFilters` -- `page`, `size`, `status`, `clientId`, `requesterId` | `TaxRecordTaskRequestPageResponse` |
+| GET | `/tax-record-task-requests/{id}` | Get request detail | -- | `TaxRecordTaskRequestDetailResponse` |
+| POST | `/tax-record-task-requests` | Submit a new request (CSD/OOS) | `CreateTaxRecordTaskRequestPayload` -- `{ clientId, categoryId, subCategoryId, taskNameId, year, period, notes? }` | `CreateTaxRecordTaskRequestResponse` (201) |
+| POST | `/tax-record-task-requests/{id}/approve` | Approve & spawn task (QTD/Manager) | `ApproveTaxRecordTaskRequestPayload` -- `{ deadline, assignedToIds? }` (defaults to `[requesterId]`) | `TaxRecordTaskRequestDetailResponse` (includes `resultingTaskId`) |
+| POST | `/tax-record-task-requests/{id}/reject` | Reject (QTD/Manager) | `RejectTaxRecordTaskRequestPayload` -- `{ reason? }` (trimmed, max 1000 chars) | void |
+
+Sorting: default `submittedAt DESC`. `submittedAt` is the only sortable field in v1.
+
+Duplicate detection: 409 when a `PENDING` request with the same `(clientId, taskNameId, year, period)` already exists.
+
+### Response shape
+
+```ts
+TaxRecordTaskRequestDetailResponse {
+  id: string,                                  // request id (stable)
+  status: "PENDING" | "APPROVED" | "REJECTED",
+  notes: string | null,
+  rejectionReason: string | null,
+  clientId, clientDisplayName,
+  categoryId, categoryName,
+  subCategoryId, subCategoryName,
+  taskNameId, taskName,
+  year: number, period: Period,
+  requester: { id, name },
+  submittedAt,
+  decidedAt: string | null,
+  decidedBy: { id, name } | null,
+  resultingTaskId: string | null               // spawned task id, set after APPROVED
+}
+```
+
+**Important**: `id` is the request id; `resultingTaskId` is the spawned task's id. For post-approval deep-links to the task, always use `resultingTaskId` (navigating to `/tax-record-tasks/{request.id}` will 404).
+
+---
+
 ## Tax Records
 
 Source: `src/api/tax-record.ts`

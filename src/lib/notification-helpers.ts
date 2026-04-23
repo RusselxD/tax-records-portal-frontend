@@ -35,6 +35,8 @@ export function getNotificationHref(
       return `${basePath}/task-details/${notification.referenceId}`;
     case "TAX_RECORD_TASK":
       return `${basePath}/tax-record-task/${notification.referenceId}`;
+    case "TAX_RECORD_TASK_REQUEST":
+      return `${basePath}/task-requests/${notification.referenceId}`;
     case "CONSULTATION_LOG":
       return `${basePath}/consultation-logs/${notification.referenceId}`;
     default:

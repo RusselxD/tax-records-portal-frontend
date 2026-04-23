@@ -1,6 +1,6 @@
 /**
  * Permission key constants matching backend RolePermissionSeeder.
- * 33 active permissions — keep in sync with backend seeder.
+ * 35 active permissions — keep in sync with backend seeder.
  */
 export const Permission = {
   // User management
@@ -33,6 +33,10 @@ export const Permission = {
   TASK_VIEW_ALL: "task.view.all",
   TASK_EXECUTE: "task.execute",
   TASK_REVIEW: "task.review",
+
+  // Tax record task requests
+  TAX_RECORD_TASK_REQUEST_CREATE: "tax_records.task_request.create",
+  TAX_RECORD_TASK_REQUEST_REVIEW: "tax_records.task_request.review",
 
   // Billing
   BILLING_MANAGE: "billing.manage",

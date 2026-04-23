@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { ClipboardList, Loader2 } from "lucide-react";
+import { ClipboardList, Loader2, Plus } from "lucide-react";
 import { SidebarCard } from "../../../components/client-info";
 import { taxRecordTaskAPI } from "../../../../../api/tax-record-task";
 import { getErrorMessage } from "../../../../../lib/api-error";
@@ -8,6 +8,7 @@ import { useAuth } from "../../../../../contexts/AuthContext";
 import { Permission, hasPermission } from "../../../../../constants";
 import type { ClientTaxRecordTaskItem } from "../../../../../types/tax-record-task";
 import ClientTaskItem from "./ClientTaskItem";
+import RequestTaskModal from "../../TaxRecordTaskRequests/components/RequestTaskModal";
 
 function TasksSkeleton() {
   return (
@@ -35,7 +36,7 @@ function EmptyState() {
 }
 
 export default function ClientTasks() {
-  const { clientId } = useClientDetails();
+  const { clientId, clientName, mode } = useClientDetails();
   const { user } = useAuth();
   const [tasks, setTasks] = useState<ClientTaxRecordTaskItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,9 +44,13 @@ export default function ClientTasks() {
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [requestModalOpen, setRequestModalOpen] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   const showAssignees = hasPermission(user?.permissions, Permission.TASK_VIEW_ALL);
+  const canRequestTask =
+    mode !== "snapshot" &&
+    hasPermission(user?.permissions, Permission.TAX_RECORD_TASK_REQUEST_CREATE);
 
   const fetchTasks = useCallback(async () => {
     setIsLoading(true);
@@ -101,8 +106,19 @@ export default function ClientTasks() {
     return () => observer.disconnect();
   }, [hasMore, isLoadingMore, loadMore]);
 
+  const requestAction = canRequestTask ? (
+    <button
+      onClick={() => setRequestModalOpen(true)}
+      className="inline-flex items-center gap-1 rounded-md bg-accent px-2.5 py-1 text-xs font-semibold text-white hover:bg-accent-hover transition-colors"
+    >
+      <Plus className="w-3.5 h-3.5" />
+      Request
+    </button>
+  ) : undefined;
+
   return (
-    <SidebarCard title="Tasks">
+    <>
+    <SidebarCard title="Tasks" action={requestAction}>
       {isLoading ? (
         <TasksSkeleton />
       ) : error ? (
@@ -136,5 +152,15 @@ export default function ClientTasks() {
         </div>
       )}
     </SidebarCard>
+
+    {requestModalOpen && (
+      <RequestTaskModal
+        clientId={clientId}
+        clientDisplayName={clientName}
+        setModalOpen={setRequestModalOpen}
+        onSuccess={fetchTasks}
+      />
+    )}
+    </>
   );
 }

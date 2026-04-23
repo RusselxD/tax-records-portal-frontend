@@ -77,6 +77,8 @@ If a matching entry exists (same client / category / subcategory / taskName / ye
 
 ## Task Creation
 
+Three paths create a `TaxRecordTask`:
+
 ### Single Task
 
 Select a client (scoped to assigned clients for QTD/OOS/CSD, all active for Manager), then select one or more accountants assigned to that client. Cascading dropdowns for category --> subcategory --> taskName. New entries can be created inline via "+ Add New". Unused entries can be deleted from the dropdown (items referenced by existing tasks cannot be deleted).
@@ -90,6 +92,10 @@ Excel template upload --> preview table --> submit.
 - **Period**: case-insensitive (uppercased on import).
 - **Deadline**: must be a valid `YYYY-MM-DD` date.
 - **Duplicate check**: same client / category / subcategory / taskName / year / period / deadline.
+
+### Task Request Approval
+
+CSD and OOS cannot create tasks directly. They instead submit a **task request** that a reviewer (QTD or Manager) approves -- approval spawns the task with the reviewer-set deadline and assignees. See [features/task-requests.md](features/task-requests.md) for the full lifecycle, approval form, and endpoints.
 
 ## Task Deletion
 

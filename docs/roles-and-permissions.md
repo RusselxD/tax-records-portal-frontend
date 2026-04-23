@@ -55,7 +55,7 @@ Note: VIEWER has no dashboard -- it lands directly on the client list.
 
 ## Permissions
 
-There are 33 active permissions defined in `src/constants/permissions.ts`. Use the `hasPermission()` utility to check permissions:
+There are 35 active permissions defined in `src/constants/permissions.ts`. Use the `hasPermission()` utility to check permissions:
 
 ```ts
 import { hasPermission, Permission } from "../constants";
@@ -110,6 +110,13 @@ if (hasPermission(user.permissions, Permission.CLIENT_MANAGE)) {
 | `task.execute`    | `Permission.TASK_EXECUTE`  | Execute/work on tasks (upload files, submit) |
 | `task.review`     | `Permission.TASK_REVIEW`   | Review tasks (approve/reject)          |
 
+### Tax Record Task Requests
+
+| Permission Key                      | Constant                                    | Description                                                 |
+|-------------------------------------|---------------------------------------------|-------------------------------------------------------------|
+| `tax_records.task_request.create`   | `Permission.TAX_RECORD_TASK_REQUEST_CREATE` | Submit task requests (CSD/OOS) for a reviewer to approve    |
+| `tax_records.task_request.review`   | `Permission.TAX_RECORD_TASK_REQUEST_REVIEW` | Approve/reject task requests (QTD/Manager); spawns the task |
+
 ### Billing
 
 | Permission Key      | Constant                    | Description                            |
@@ -160,6 +167,8 @@ if (hasPermission(user.permissions, Permission.CLIENT_MANAGE)) {
 | Edit Client Profile     | Yes    | Edit client info sections                |
 | Profile Update Review   | Yes    | Review profile update submissions        |
 | Tax Record Task Details | Yes    | Task detail with workflow actions        |
+| Task Requests           | Yes    | Task request list (review + create)      |
+| Task Request Detail     | Yes    | Review / approve / reject a request      |
 | Invoice Detail          | Yes    | View invoice details                     |
 | Consultation Logs       | Yes    | Consultation log list                    |
 | Consultation Log Detail | Yes    | Individual consultation log              |
@@ -184,6 +193,8 @@ if (hasPermission(user.permissions, Permission.CLIENT_MANAGE)) {
 | Edit Client Profile     | Yes    | Edit client info sections                |
 | Profile Update Review   | Yes    | Review profile update submissions        |
 | Tax Record Task Details | Yes    | Task detail with workflow actions        |
+| Task Requests           | Yes    | Submit + track own task requests         |
+| Task Request Detail     | Yes    | Track a submitted request's status       |
 | Consultation Logs       | Yes    | Consultation log list                    |
 | Consultation Log Detail | Yes    | Individual consultation log              |
 | Notifications           | Yes    | Notification inbox                       |
@@ -203,6 +214,8 @@ if (hasPermission(user.permissions, Permission.CLIENT_MANAGE)) {
 | Client Details          | Yes    | Full client information view             |
 | Profile Update Review   | Yes    | Review profile update submissions        |
 | Tax Record Task Details | Yes    | Task detail with workflow actions        |
+| Task Requests           | Yes    | Task request review queue                |
+| Task Request Detail     | Yes    | Review / approve / reject a request      |
 | Consultation Logs       | Yes    | Consultation log list                    |
 | Consultation Log Detail | Yes    | Individual consultation log              |
 | Notifications           | Yes    | Notification inbox                       |
@@ -220,6 +233,8 @@ if (hasPermission(user.permissions, Permission.CLIENT_MANAGE)) {
 | Edit Client Profile     | Yes    | Edit client info sections                |
 | Profile Update Review   | Yes    | Review profile update submissions        |
 | Tax Record Task Details | Yes    | Task detail with workflow actions        |
+| Task Requests           | Yes    | Submit + track own task requests         |
+| Task Request Detail     | Yes    | Track a submitted request's status       |
 | Consultation Logs       | Yes    | Consultation log list                    |
 | Consultation Log Detail | Yes    | Individual consultation log              |
 | Notifications           | Yes    | Notification inbox                       |

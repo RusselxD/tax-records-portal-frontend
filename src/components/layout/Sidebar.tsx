@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 import { X } from "lucide-react";
 import { useNotifications } from "../../contexts/NotificationsContext";
+import { useTaskRequests } from "../../contexts/TaskRequestsContext";
 import type { NavItem } from "../../types/navigation";
 
 interface SidebarProps {
@@ -39,7 +40,14 @@ const NavItemLink = ({
 }) => {
   const Icon = item.icon;
   const { unreadCount } = useNotifications();
-  const showBadge = item.id === "notifications" && unreadCount > 0;
+  const { pendingCount } = useTaskRequests();
+  const badgeCount =
+    item.id === "notifications"
+      ? unreadCount
+      : item.id === "task-requests"
+        ? pendingCount
+        : 0;
+  const showBadge = badgeCount > 0;
 
   return (
     <li>
@@ -62,7 +70,7 @@ const NavItemLink = ({
               <span
                 className={`w-[1.30rem] h-[1.30rem] rounded-full flex items-center justify-center text-[10px] font-semibold ${isActive ? "bg-primary text-accent" : "bg-accent text-primary"}`}
               >
-                {unreadCount > 99 ? "99+" : unreadCount}
+                {badgeCount > 99 ? "99+" : badgeCount}
               </span>
             )}
           </>

@@ -22,6 +22,7 @@ In-app notification system for internal users. Client portal users do not receiv
 | Task Rejected | Task rejected |
 | Task Filed | Accountant marked a task as filed |
 | Task Completed | Task completed |
+| Task Request Submitted | CSD/OOS proposed a new task |
 | Client Handoff | Client handed off by OOS |
 | Profile Submitted | Client profile submitted for review |
 | Offboarding Assigned | OOS accountant assigned to offboard a client |
@@ -34,6 +35,8 @@ In-app notification system for internal users. Client portal users do not receiv
 | Task Approved | Submission approved by reviewer |
 | Task Rejected | Submission rejected |
 | Task Completed | Task completed |
+| Task Request Approved | Your task request was approved; links to the new task |
+| Task Request Rejected | Your task request was rejected; links to the rejection reason |
 | Client Handoff | Client handed off and assigned to you |
 | Offboarding Assigned | Assigned as offboarding accountant |
 | Profile Approved | Submitted profile was approved |
@@ -47,6 +50,8 @@ In-app notification system for internal users. Client portal users do not receiv
 | Task Approved | Submission approved by reviewer |
 | Task Rejected | Submission rejected |
 | Task Completed | Task completed |
+| Task Request Approved | Your task request was approved; links to the new task |
+| Task Request Rejected | Your task request was rejected; links to the rejection reason |
 | Client Handoff | Client handed off and assigned to you |
 
 ### QTD
@@ -56,6 +61,7 @@ In-app notification system for internal users. Client portal users do not receiv
 | Task Submitted | Accountant submitted a task for review |
 | Task Filed | Accountant marked a task as filed |
 | Task Completed | Task reviewed has been completed |
+| Task Request Submitted | CSD/OOS proposed a new task for review |
 | Profile Submitted | Client profile submitted for review |
 
 ## Frontend Architecture
@@ -88,3 +94,5 @@ Global context (`src/contexts/NotificationsContext.tsx`):
 | CLIENT_HANDOFF | Client details page |
 | All other client notifications | Client preview page |
 | Task notifications | Task details page |
+| `TAX_RECORD_TASK_REQUEST_SUBMITTED` / `_REJECTED` | Task request detail page |
+| `TAX_RECORD_TASK_REQUEST_APPROVED` | Spawned task detail page (reuses `TAX_RECORD_TASK` routing via the spawned task id, not the request id) |

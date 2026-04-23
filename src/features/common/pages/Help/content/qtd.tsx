@@ -3,6 +3,7 @@ import {
   Users,
   UserCheck,
   ListTodo,
+  ClipboardPlus,
   Bell,
   UserCircle,
   FileText,
@@ -257,6 +258,96 @@ export const qtdSections: HelpSection[] = [
     ),
   },
 
+  // ─── Task Requests ───
+  {
+    id: "task-requests",
+    title: "Task Requests",
+    subtitle: "Review proposed tasks from CSD and OOS",
+    icon: ClipboardPlus,
+    iconBg: "bg-indigo-50",
+    iconColor: "text-indigo-600",
+    content: (
+      <>
+        <P>
+          CSD and OOS accountants can propose new tax record tasks when they
+          spot something that needs to be tracked. You decide whether to
+          approve (which creates the actual task) or reject with feedback.
+        </P>
+        <P>
+          The sidebar badge on Task Requests shows how many are pending your
+          review — it updates live when a new request arrives.
+        </P>
+
+        <Heading>Reviewing a Request</Heading>
+        <Steps
+          items={[
+            "Open Task Requests from the sidebar — Pending tab is the default.",
+            "Click a row to open the request. You'll see the proposed client, category, sub-category, task name, year/period, and any notes from the requester.",
+            "Decide: Approve creates the task and assigns it to the requester. Reject sends the request back with your reason.",
+          ]}
+        />
+
+        <Heading>Approving a Request</Heading>
+        <P>
+          The approve action is a small form, not just a confirm. You set:
+        </P>
+        <BulletList
+          items={[
+            "Deadline — required. This is the deadline for the newly created task.",
+            "Assigned To — defaults to the requester. You can reassign to a teammate if someone else should execute the work; multiple assignees are allowed.",
+          ]}
+        />
+        <P>
+          Approved requests immediately create the real task. Click the
+          resulting task link on the approved request page to jump there.
+        </P>
+
+        <Heading>Rejecting a Request</Heading>
+        <P>
+          Provide a reason (optional but strongly recommended, 1000-char max).
+          Rejections are terminal — the requester cannot edit and resubmit;
+          they must file a new request. Clear feedback lets them fix the
+          category, task name, or period and refile cleanly.
+        </P>
+        <P>
+          You cannot edit the proposed fields during approval. If the proposed
+          category or task name is wrong, reject with a reason explaining the
+          fix; the requester refiles with the correct values.
+        </P>
+
+        <Heading>Request Statuses</Heading>
+        <StatusTable
+          rows={[
+            {
+              status: "Pending",
+              color: "bg-amber-50 text-amber-700",
+              description:
+                "Waiting for your review. Approve or reject.",
+            },
+            {
+              status: "Approved",
+              color: "bg-emerald-50 text-emerald-700",
+              description:
+                "You approved it and the task was created. The requester gets a notification linking directly to the new task.",
+            },
+            {
+              status: "Rejected",
+              color: "bg-red-50 text-red-700",
+              description:
+                "You rejected it. The requester sees your reason and can file a new request if still needed.",
+            },
+          ]}
+        />
+
+        <Tip>
+          The system blocks duplicate pending requests for the same client,
+          task name, year, and period — so you won't see two pending requests
+          for the exact same slot.
+        </Tip>
+      </>
+    ),
+  },
+
   // ─── Task Management ───
   {
     id: "tasks",
@@ -457,6 +548,7 @@ export const qtdSections: HelpSection[] = [
             "Task Submitted — an accountant submitted a task for your review.",
             "Task Filed — an accountant marked a task you approved as filed.",
             "Task Completed — a task you reviewed has been completed.",
+            "Task Request Submitted — CSD or OOS proposed a new task for your review.",
             "Profile Submitted — a client profile was submitted for your review (onboarding or update).",
           ]}
         />

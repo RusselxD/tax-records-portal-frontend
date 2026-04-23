@@ -1,6 +1,7 @@
 import {
   LayoutDashboard,
   ClipboardList,
+  ClipboardPlus,
   Users,
   Bell,
   UserPlus,
@@ -23,6 +24,12 @@ const oosNavItems: NavItem[] = [
     label: "Task List",
     path: "/oos/tasks",
     icon: ClipboardList,
+  },
+  {
+    id: "task-requests",
+    label: "Task Requests",
+    path: "/oos/task-requests",
+    icon: ClipboardPlus,
   },
   {
     id: "clients",
@@ -65,6 +72,7 @@ const oosNavItems: NavItem[] = [
 const pageTitles: Record<string, string> = {
   "/oos/dashboard": "Dashboard",
   "/oos/tasks": "Task List",
+  "/oos/task-requests": "Task Requests",
   "/oos/clients": "Assigned Clients",
   "/oos/client-onboarding": "Client Onboarding",
   "/oos/client-offboarding": "Client Offboarding",

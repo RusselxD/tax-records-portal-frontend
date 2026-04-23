@@ -17,6 +17,8 @@ const ProfileUpdateReview = lazy(() => import("../features/common/pages/ProfileU
 const ConsultationLogs = lazy(() => import("../features/common/pages/ConsultationLogs"));
 const ConsultationLogDetail = lazy(() => import("../features/common/pages/ConsultationLogDetail"));
 const Help = lazy(() => import("../features/common/pages/Help"));
+const TaxRecordTaskRequests = lazy(() => import("../features/common/pages/TaxRecordTaskRequests"));
+const TaxRecordTaskRequestDetails = lazy(() => import("../features/common/pages/TaxRecordTaskRequestDetails"));
 
 export const csdRoutes: RouteObject = {
   element: <RoleGuard allowedRoles={[UserRole.CSD]} />,
@@ -33,6 +35,8 @@ export const csdRoutes: RouteObject = {
         { path: "client-edit/:id", element: <EditClientProfile /> },
         { path: "profile-update-review/:id", element: <ProfileUpdateReview /> },
         { path: "tax-record-task/:id", element: <TaxRecordTaskDetails /> },
+        { path: "task-requests", element: <TaxRecordTaskRequests /> },
+        { path: "task-requests/:id", element: <TaxRecordTaskRequestDetails /> },
         { path: "consultation-logs", element: <ConsultationLogs /> },
         { path: "consultation-logs/:id", element: <ConsultationLogDetail /> },
         { path: "notifications", element: <Notifications /> },

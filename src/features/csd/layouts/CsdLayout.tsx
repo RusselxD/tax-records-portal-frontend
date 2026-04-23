@@ -1,6 +1,7 @@
 import {
   LayoutDashboard,
   ClipboardList,
+  ClipboardPlus,
   Users,
   Bell,
   BarChart2,
@@ -21,6 +22,12 @@ const csdNavItems: NavItem[] = [
     label: "Task List",
     path: "/csd/tasks",
     icon: ClipboardList,
+  },
+  {
+    id: "task-requests",
+    label: "Task Requests",
+    path: "/csd/task-requests",
+    icon: ClipboardPlus,
   },
   {
     id: "clients",
@@ -51,6 +58,7 @@ const csdNavItems: NavItem[] = [
 const pageTitles: Record<string, string> = {
   "/csd/dashboard": "Dashboard",
   "/csd/tasks": "Task List",
+  "/csd/task-requests": "Task Requests",
   "/csd/clients": "Assigned Clients",
   "/csd/analytics": "My Analytics",
   "/csd/consultation-logs": "Consultation Logs",

@@ -6,6 +6,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { ToastProvider } from "./contexts/ToastContext";
 import { DownloadProvider } from "./contexts/DownloadContext";
 import { NotificationsProvider } from "./contexts/NotificationsContext";
+import { TaskRequestsProvider } from "./contexts/TaskRequestsContext";
 import { WebSocketProvider } from "./contexts/WebSocketContext";
 import { useIsMobile } from "./hooks/useMediaQuery";
 import { router } from "./router";
@@ -36,6 +37,7 @@ export default function App() {
     <AuthProvider>
       <WebSocketProvider>
         <NotificationsProvider>
+          <TaskRequestsProvider>
           <ToastProvider>
             <DownloadProvider>
               <Suspense fallback={<PageLoader />}>
@@ -44,6 +46,7 @@ export default function App() {
             </DownloadProvider>
             <AppToastContainer />
           </ToastProvider>
+          </TaskRequestsProvider>
         </NotificationsProvider>
       </WebSocketProvider>
     </AuthProvider>

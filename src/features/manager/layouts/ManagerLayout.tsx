@@ -4,6 +4,7 @@ import {
   BarChart3,
   Building2,
   ClipboardList,
+  ClipboardPlus,
   UserCheck,
   Bell,
   MessageSquareText,
@@ -49,6 +50,12 @@ const managerNavItems: NavItem[] = [
     icon: ClipboardList,
   },
   {
+    id: "task-requests",
+    label: "Task Requests",
+    path: "/manager/task-requests",
+    icon: ClipboardPlus,
+  },
+  {
     id: "consultation-logs",
     label: "Consultation Logs",
     path: "/manager/consultation-logs",
@@ -69,6 +76,7 @@ const pageTitles: Record<string, string> = {
   "/manager/clients": "Client List",
   "/manager/client-profiles": "Client Profiles",
   "/manager/tasks": "Task Overview",
+  "/manager/task-requests": "Task Requests",
   "/manager/consultation-logs": "Consultation Logs",
   "/manager/client-template": "Client Info Template",
   "/manager/help": "Help & Guides",
