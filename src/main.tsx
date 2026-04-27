@@ -8,6 +8,9 @@ import "@fontsource/inter/700.css";
 import "./styles/global.css";
 import "react-toastify/dist/ReactToastify.css";
 import "./lib/pwa-install";
+import { initSentry } from "./lib/sentry";
+
+initSentry();
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>

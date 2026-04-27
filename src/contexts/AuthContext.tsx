@@ -13,6 +13,7 @@ import type { UserRoleType } from "../constants";
 import { authAPI } from "../api/auth";
 import { tokenStorage } from "../lib/token-storage";
 import { refreshAccessToken } from "../api/axios-config";
+import { setSentryUser } from "../lib/sentry";
 
 interface JwtClaims {
   sub: string; // user UUID
@@ -101,6 +102,10 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setSentryUser(user ? { id: user.id, email: user.email } : null);
+  }, [user]);
 
   /**
    * Initialize auth state from stored token on mount
