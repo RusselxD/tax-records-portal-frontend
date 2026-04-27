@@ -3,6 +3,7 @@ import type { ReactNode, Dispatch, SetStateAction } from "react";
 import { createPortal } from "react-dom";
 import { X, Download, Loader2 } from "lucide-react";
 import { fileAPI } from "../../api/file";
+import { captureException } from "../../lib/sentry";
 
 const PdfPreview = lazy(() => import("./previews/PdfPreview"));
 const DocPreview = lazy(() => import("./previews/DocPreview"));
@@ -109,6 +110,7 @@ export default function FilePreviewOverlay({
           else if (status === 404) setError("This file could not be found. It may have been removed.");
           else setError("Failed to load file preview.");
         }
+        captureException(err, { source: "FilePreviewOverlay", fileId });
       } finally {
         if (!revoked) setLoading(false);
       }

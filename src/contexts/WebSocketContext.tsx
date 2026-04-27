@@ -11,6 +11,7 @@ import {
 import { useAuth } from "./AuthContext";
 import { tokenStorage } from "../lib/token-storage";
 import { refreshAccessToken } from "../api/axios-config";
+import { captureException } from "../lib/sentry";
 
 export type WebSocketStatus = "idle" | "connecting" | "open" | "closed";
 
@@ -94,7 +95,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
       try {
         socket = new WebSocket(url);
       } catch (err) {
-        console.warn("[ws] Failed to construct WebSocket:", err);
+        captureException(err, { source: "WebSocket construct" });
         scheduleReconnect();
         return;
       }
@@ -119,7 +120,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
           try {
             h(msg);
           } catch (err) {
-            console.error("[ws] Handler error:", err);
+            captureException(err, { source: "WebSocket handler" });
           }
         });
       };
@@ -141,7 +142,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
               connect();
             })
             .catch((err) => {
-              console.error("[ws] Token refresh failed:", err);
+              captureException(err, { source: "WebSocket token refresh" });
               scheduleReconnect();
             });
           return;

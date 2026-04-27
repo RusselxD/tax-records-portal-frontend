@@ -1,9 +1,19 @@
+import { useEffect } from "react";
 import { useRouteError, isRouteErrorResponse } from "react-router-dom";
+import { captureException } from "../lib/sentry";
 
 export default function ErrorPage() {
   const error = useRouteError();
 
   const is404 = isRouteErrorResponse(error) && error.status === 404;
+
+  useEffect(() => {
+    if (is404) return;
+    captureException(error, {
+      source: "react-router errorElement",
+      url: window.location.href,
+    });
+  }, [error, is404]);
   const message = is404
     ? "The page you're looking for doesn't exist or may have been moved."
     : "Something unexpected went wrong. Please try again or return to your dashboard.";

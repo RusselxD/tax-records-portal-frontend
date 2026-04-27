@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Receipt, Loader2, AlertCircle } from "lucide-react";
 import { invoiceAPI } from "../../../../../api/invoice";
+import { captureException } from "../../../../../lib/sentry";
 import { formatCurrency, formatDate } from "../../../../../lib/formatters";
 import type { ClientOutstandingInvoice } from "../../../../../types/invoice";
 import InvoiceStatusBadge from "../../../../../components/common/InvoiceStatusBadge";
@@ -22,7 +23,7 @@ export default function OutstandingBilling() {
           setTotalOutstanding(data.totalOutstanding);
         }
       } catch (err) {
-        console.warn("Failed to load outstanding invoices", err);
+        captureException(err, { source: "OutstandingBilling load" });
       } finally {
         if (!cancelled) setIsLoading(false);
       }
