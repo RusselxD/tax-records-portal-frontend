@@ -13,6 +13,8 @@ interface TokenPair {
 
 let refreshPromise: Promise<TokenPair | null> | null = null;
 
+export const UPLOAD_TIMEOUT_MS = 60_000;
+
 const apiClient = axios.create({
   baseURL: `${import.meta.env.VITE_API_BASE_URL}/api/v1`,
   timeout: 10000,

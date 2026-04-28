@@ -1,4 +1,4 @@
-import apiClient from "./axios-config";
+import apiClient, { UPLOAD_TIMEOUT_MS } from "./axios-config";
 
 export const fileAPI = {
   getFilePreview: async (fileId: string): Promise<Blob> => {
@@ -16,6 +16,7 @@ export const fileAPI = {
     formData.append("file", file);
     const res = await apiClient.post(`/clients/${clientId}/files`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
+      timeout: UPLOAD_TIMEOUT_MS,
     });
     return res.data;
   },
@@ -29,6 +30,7 @@ export const fileAPI = {
     formData.append("file", file);
     const res = await apiClient.post("/files/images", formData, {
       headers: { "Content-Type": "multipart/form-data" },
+      timeout: UPLOAD_TIMEOUT_MS,
     });
     return res.data;
   },

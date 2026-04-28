@@ -21,7 +21,7 @@ import type {
 } from "../types/tax-record-task";
 import type { LogCommentResponse } from "../types/client";
 import type { RichTextContent } from "../types/client-info";
-import apiClient from "./axios-config";
+import apiClient, { UPLOAD_TIMEOUT_MS } from "./axios-config";
 import { buildParams } from "./api-utils";
 
 export const taxRecordTaskAPI = {
@@ -192,6 +192,7 @@ export const taxRecordTaskAPI = {
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },
+        timeout: UPLOAD_TIMEOUT_MS,
       },
     );
     return res.data;
@@ -224,6 +225,7 @@ export const taxRecordTaskAPI = {
     formData.append("file", file);
     await apiClient.put(`/tax-record-tasks/${id}/output-file`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
+      timeout: UPLOAD_TIMEOUT_MS,
     });
   },
 
@@ -237,6 +239,7 @@ export const taxRecordTaskAPI = {
     formData.append("file", file);
     await apiClient.put(`/tax-record-tasks/${id}/proof-of-filing`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
+      timeout: UPLOAD_TIMEOUT_MS,
     });
   },
 

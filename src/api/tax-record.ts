@@ -8,7 +8,7 @@ import type {
   TaxRecordEntryResponse,
   OverrideTaxRecordEntryPayload,
 } from "../types/tax-record";
-import apiClient from "./axios-config";
+import apiClient, { UPLOAD_TIMEOUT_MS } from "./axios-config";
 import { buildParams } from "./api-utils";
 
 export const taxRecordAPI = {
@@ -72,6 +72,7 @@ export const taxRecordAPI = {
     }
     const res = await apiClient.patch(`/tax-record-entries/${id}`, form, {
       headers: { "Content-Type": "multipart/form-data" },
+      timeout: UPLOAD_TIMEOUT_MS,
     });
     return res.data;
   },

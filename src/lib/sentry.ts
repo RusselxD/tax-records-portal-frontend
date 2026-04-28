@@ -32,8 +32,10 @@ export function initSentry() {
       const err = hint.originalException;
       if (err instanceof AxiosError) {
         const status = err.response?.status;
-        if (status === 401 || status === 403 || status === 404 || status === 429) return null;
-        if (err.code === "ERR_CANCELED") return null;
+        // Drop expected 4xx — these are user/business errors, not bugs
+        if (status && status >= 400 && status < 500 && status !== 408) return null;
+        // Drop client-side connectivity failures (offline, blocked, DNS)
+        if (err.code === "ERR_NETWORK" || err.code === "ERR_CANCELED") return null;
       }
       return event;
     },

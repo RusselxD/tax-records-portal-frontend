@@ -1,4 +1,4 @@
-import apiClient from "./axios-config";
+import apiClient, { UPLOAD_TIMEOUT_MS } from "./axios-config";
 import { buildParams } from "./api-utils";
 import type {
   ManagedUser,
@@ -109,6 +109,7 @@ export const usersAPI = {
     formData.append("file", file);
     const res = await apiClient.post("/users/me/avatar", formData, {
       headers: { "Content-Type": "multipart/form-data" },
+      timeout: UPLOAD_TIMEOUT_MS,
     });
     return res.data as { profileUrl: string; accessToken: string };
   },

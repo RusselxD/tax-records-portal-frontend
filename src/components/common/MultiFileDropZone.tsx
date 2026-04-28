@@ -1,25 +1,11 @@
 import { useState, useRef, type DragEvent } from "react";
 import { Upload, Loader2 } from "lucide-react";
-import { AxiosError } from "axios";
 import FileRow from "./FileRow";
 import FilePreviewOverlay from "./FilePreviewOverlay";
 import { useToast } from "../../contexts/ToastContext";
 import { validateDocumentFile } from "../../lib/file-validation";
-import { captureException } from "../../lib/sentry";
+import { getErrorMessage } from "../../lib/api-error";
 import type { FileReference } from "../../types/client-info";
-
-function userFacingUploadError(err: unknown): string {
-  if (err instanceof AxiosError) {
-    const status = err.response?.status;
-    const data = err.response?.data as { message?: string } | undefined;
-    if (data?.message) return data.message;
-    if (status === 413) return "The file is too large to upload.";
-    if (status === 415) return "This file type isn't supported.";
-    if (status && status >= 500) return "The server couldn't process the upload. Please try again later.";
-    if (err.code === "ERR_NETWORK") return "Couldn't reach the server. Check your connection and try again.";
-  }
-  return "We couldn't upload your file. Please try again.";
-}
 
 interface MultiFileDropZoneProps {
   label: string;
@@ -61,8 +47,7 @@ export default function MultiFileDropZone({
         onChange(updated);
       }
     } catch (err) {
-      captureException(err, { component: "MultiFileDropZone", label });
-      setError(userFacingUploadError(err));
+      setError(getErrorMessage(err, "We couldn't upload your file. Please try again."));
     } finally {
       setIsUploading(false);
     }

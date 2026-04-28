@@ -1,15 +1,34 @@
 import { AxiosError } from "axios";
 import { captureException } from "./sentry";
 
-export function getErrorMessage(
-  err: unknown,
-  fallback = "Something went wrong. Please try again.",
-): string {
-  captureException(err);
+const GENERIC_FALLBACK = "Something went wrong. Please try again.";
+
+function isNoiseError(err: AxiosError): boolean {
+  const status = err.response?.status;
+  if (status && status >= 400 && status < 500 && status !== 408) return true;
+  if (err.code === "ERR_NETWORK" || err.code === "ERR_CANCELED") return true;
+  return false;
+}
+
+function isTimeout(err: AxiosError): boolean {
+  return err.code === "ECONNABORTED" || err.code === "ETIMEDOUT" || err.message?.includes("timeout");
+}
+
+export function getErrorMessage(err: unknown, fallback = GENERIC_FALLBACK): string {
   if (err instanceof AxiosError) {
-    const data = err.response?.data as { message?: string; errors?: Record<string, string> } | undefined;
-    return data?.message || fallback;
+    if (!isNoiseError(err)) captureException(err);
+
+    const data = err.response?.data as { message?: string } | undefined;
+    if (data?.message) return data.message;
+
+    const status = err.response?.status;
+    if (status && status >= 500) return "The server ran into a problem. Please try again in a moment.";
+    if (isTimeout(err)) return "The request took too long. Check your connection and try again.";
+    if (err.code === "ERR_NETWORK") return "Couldn't reach the server. Check your connection and try again.";
+    return fallback;
   }
+
+  captureException(err);
   return fallback;
 }
 
