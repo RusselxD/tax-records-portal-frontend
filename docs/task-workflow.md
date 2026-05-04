@@ -81,14 +81,14 @@ Three paths create a `TaxRecordTask`:
 
 ### Single Task
 
-Select a client (scoped to assigned clients for QTD/OOS/CSD, all active for Manager), then select one or more accountants assigned to that client. Cascading dropdowns for category --> subcategory --> taskName. New entries can be created inline via "+ Add New". Unused entries can be deleted from the dropdown (items referenced by existing tasks cannot be deleted).
+Select a client (scoped to assigned clients for QTD/OOS/CSD, all task-eligible clients for Manager — i.e. status ≠ `INACTIVE_CLIENT`, with at least one assigned accountant), then select one or more accountants assigned to that client. Cascading dropdowns for category --> subcategory --> taskName. New entries can be created inline via "+ Add New". Unused entries can be deleted from the dropdown (items referenced by existing tasks cannot be deleted).
 
 ### Bulk Import
 
 Excel template upload --> preview table --> submit.
 
 - **Category / SubCategory / TaskName**: case-insensitive matching; auto-creates if not found.
-- **Client / Accountant**: matched by UUID, not name. Client must have status `ACTIVE_CLIENT`. Accountant must be CSD/OOS and assigned to the client.
+- **Client / Accountant**: matched by UUID, not name. Client status must not be `INACTIVE_CLIENT` (so `ONBOARDING`, `ACTIVE_CLIENT`, and `OFFBOARDING` are all allowed). Accountant must be CSD/OOS and assigned to the client.
 - **Period**: case-insensitive (uppercased on import).
 - **Deadline**: must be a valid `YYYY-MM-DD` date.
 - **Duplicate check**: same client / category / subcategory / taskName / year / period / deadline.

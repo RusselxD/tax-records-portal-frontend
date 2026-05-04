@@ -80,7 +80,8 @@ Source: `src/api/client.ts`
 | Method | Path | Description | Params / Body | Response |
 |--------|------|-------------|---------------|----------|
 | GET | `/clients` | Paginated client list | Query: `page`, `size`, `search` | `ClientPageResponse` |
-| GET | `/clients/active` | Active clients lookup (Manager: all; QTD/OOS/CSD: assigned only) | -- | `LookupResponse[]` |
+| GET | `/clients/active` | Active clients lookup, status = `ACTIVE_CLIENT` (Manager: all; QTD/OOS/CSD: assigned only). Used by billing and consultation pickers. | -- | `LookupResponse[]` |
+| GET | `/clients/task-eligible` | Task-eligible clients lookup, status ≠ `INACTIVE_CLIENT` and at least one assigned accountant (Manager: all; QTD/OOS/CSD: assigned only). Used by single create, bulk import, and task-request proposal pickers. | -- | `LookupResponse[]` |
 | GET | `/clients/{clientId}/accountants` | Accountants assigned to a client | -- | `ClientAccountantResponse[]` |
 | GET | `/clients/assigned` | Current user's assigned clients | Query: `page`, `size` | `AssignedClientsResponse` |
 | POST | `/clients` | Create new client (OOS) — backend auto-assigns the creating OOS as the sole initial accountant | -- | `CreateClientResponse` (201) |
