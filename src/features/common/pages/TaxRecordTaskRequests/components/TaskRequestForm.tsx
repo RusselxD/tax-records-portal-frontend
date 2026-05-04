@@ -72,7 +72,7 @@ export default function TaskRequestForm({
     ];
     if (needsClientPicker) {
       fetches.push(
-        clientAPI.getActiveClients().then((data) => {
+        clientAPI.getTaskEligibleClients().then((data) => {
           if (!cancelled) setClients(data);
         }),
       );

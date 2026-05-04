@@ -140,7 +140,7 @@ export default function useImportTaxRecordTasks() {
 
     try {
       const [clientsResult, accountantsResult] = await Promise.allSettled([
-        clientAPI.getActiveClients(),
+        clientAPI.getTaskEligibleClients(),
         usersAPI.getAccountants("CSD,OOS"),
       ]);
 

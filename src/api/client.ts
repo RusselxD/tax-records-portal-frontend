@@ -174,6 +174,11 @@ export const clientAPI = {
     return res.data;
   },
 
+  getTaskEligibleClients: async (): Promise<LookupResponse[]> => {
+    const res = await apiClient.get("/clients/task-eligible");
+    return res.data;
+  },
+
   getClientAccountants: async (
     clientId: string,
   ): Promise<ClientAccountantResponse[]> => {

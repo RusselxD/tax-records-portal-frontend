@@ -65,7 +65,7 @@ export default function CreateTaxRecordTaskForm({ onCancel, onSuccess }: CreateT
     async function fetchRefs() {
       try {
         const [clientsData, categoriesData] = await Promise.all([
-          clientAPI.getActiveClients(),
+          clientAPI.getTaskEligibleClients(),
           taxRecordTaskAPI.getCategories(),
         ]);
         if (!cancelled) {
